@@ -22,7 +22,7 @@ apply plugin: 'eclipse'
 apply plugin: 'eclipse-wtp'
 
 group = 'oyeah'
-archivesBaseName = 'itvgame-platform'
+archivesBaseName = 'itvgame'
 version = '1.0.0-SNAPSHOT'
 webAppDirName = 'WebContent'
 

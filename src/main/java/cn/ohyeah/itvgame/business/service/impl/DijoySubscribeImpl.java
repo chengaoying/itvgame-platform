@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 
+import cn.ohyeah.itvgame.global.Configuration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -28,7 +29,6 @@ public class DijoySubscribeImpl extends AbstractSubscribeImpl {
 		super("dijoy");
 	}
 	
-	
 	protected DijoySubscribeImpl(String implName) {
 		super(implName);
 	}
@@ -37,7 +37,9 @@ public class DijoySubscribeImpl extends AbstractSubscribeImpl {
 	public PurchaseRelation queryPurchaseRelation(ProductDetail detail,
 			String subscribeType, int period, int amount) {
 		String subType = subscribeType;
-		if ("recharge".equals(subscribeType) && (detail.isRechargeManagerGame() || detail.isRechargeManagerPlatform())) {
+		if ("recharge".equals(subscribeType)
+                && (Configuration.isRechargeManagerGame(detail.getAppName())
+                || Configuration.isRechargeManagerPlatform(detail.getAppName()))) {
 			subType = "expend";
 		}
 		log.info("subType:"+subType);
@@ -80,8 +82,6 @@ public class DijoySubscribeImpl extends AbstractSubscribeImpl {
 		String payKey = (String) props.get("checkKey");
 		return DijoySubscribeUtil.consumeCoins(userId, appId, number, feeCode, returnUrl, notifyUrl, platformExt, appExt, payKey);
 	}
-	
-	
 	
 	@Override
 	public ResultInfo subscribeReqAction(RequestContext rc,

@@ -161,4 +161,16 @@
 			<![CDATA[IPTV_Advance/FavorGameServlet?userID=%s&user=%s&gameID=%s&spid=%s&code=%s&timeStmp=%s]]>
 		</property>
 	</configuration>
+
+    <configuration id="dijoy">
+        <property name="amountUnit">元</property>
+        <property name="cashToAmountRatio">10</property>
+        <property name="supportPoints">false</property>
+        <property name="payKey">5AD6AFFC5414489A469D6DF1E49DB24C</property>
+        <property name="feeCode">dijoyFeeCode</property>
+        <property name="subscribeMode">webservice</property>
+        <property name="paymentUrl">
+            <![CDATA[http://119.145.9.218:3280/epg_svn/source/common/php/business/apppay.php]]>
+        </property>
+    </configuration>
 </configurations>

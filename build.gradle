@@ -44,7 +44,6 @@ dependencies {
 	groovy 'org.codehaus.groovy:groovy-all:2.0.0'
 	
 	compile 'mysql:mysql-connector-java:5.1.20'
-	compile 'net.sourceforge.jtds:jtds:1.2.4'
 	compile 'c3p0:c3p0:0.9.1.2'
 	compile 'net.sf.ehcache:ehcache-core:2.5.2'
 	compile 'commons-beanutils:commons-beanutils:1.8.3'

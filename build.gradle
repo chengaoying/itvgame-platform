@@ -93,10 +93,18 @@ def renderTemplateFile(f, binding) {
     renderTemplate(file.getText("utf-8"), binding)
 }
 
-processResources << {
+task createConf {
+    dependsOn processResources
+}
+
+createConf << {
     if (project.hasProperty('telcom')&&project.hasProperty('sp')) {
         def binding = ['telcom': telcom, 'sp': sp]
         def text = renderTemplateFile("${processResources.destinationDir}/configurations.tpl", binding)
         file("${processResources.destinationDir}/configurations.xml").write(text, "utf-8")
     }
+}
+
+classes {
+    dependsOn createConf
 }

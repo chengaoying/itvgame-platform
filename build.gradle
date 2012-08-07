@@ -25,6 +25,8 @@ group = 'oyeah'
 archivesBaseName = 'itvgame'
 version = '1.0.0-SNAPSHOT'
 webAppDirName = 'WebContent'
+sourceCompatibility = '1.6'
+targetCompatibility = '1.6'
 
 repositories {
     flatDir { dirs "lib" }
@@ -78,8 +80,8 @@ dependencies {
 	compile ':the9-ws-acc:0.1@jar'
 	
 	runtime 'jstl:jstl:1.2'
-	runtime 'javax.faces:jsf-api:2.1'
-	runtime 'com.sun.faces:jsf-impl:2.1.10'
+	runtime 'javax.faces:jsf-api:1.2_15'
+	runtime 'javax.faces:jsf-impl:1.2_15'
 }
 
 def renderTemplate(text, binding) {

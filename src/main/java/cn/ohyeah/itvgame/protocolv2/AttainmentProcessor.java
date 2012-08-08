@@ -244,6 +244,9 @@ public class AttainmentProcessor implements IProcessor {
 	private void processCommandReadRsp(ProcessorContext context, ByteBuffer rsp) {
 		GameAttainment attainment = (GameAttainment)context.getResult();
 		if (attainment != null) {
+            if (attainment.getData() != null) {
+                rsp.expand(attainment.getData().length+128);
+            }
 			rsp.writeInt(attainment.getAttainmentId());
 			rsp.writeInt(attainment.getPlayDuration());
 			rsp.writeInt(attainment.getScores());

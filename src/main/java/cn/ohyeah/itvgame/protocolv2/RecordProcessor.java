@@ -165,6 +165,9 @@ public class RecordProcessor implements IProcessor {
 	private void processCommandReadRsp(ProcessorContext context, ByteBuffer rsp) {
 		GameRecord record = (GameRecord)context.getResult();
 		if (record != null) {
+            if (record.getData() != null) {
+                rsp.expand(record.getData().length+128);
+            }
 			rsp.writeInt(record.getRecordId());
 			rsp.writeInt(record.getPlayDuration());
 			rsp.writeInt(record.getScores());

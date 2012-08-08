@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import cn.ohyeah.stb.utils.ByteBuffer;
-import cn.ohyeah.stb.utils.Frame;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -50,15 +50,11 @@ public class ProcessorServlet extends HttpServlet {
 		}
 	}
 
-    private ByteBuffer receiveRequest(InputStream is) throws IOException {
-        ByteBuffer buf = new ByteBuffer(256);
-        ByteBuffer result = null;
-        Frame frame = new Frame();
-        while(result == null) {
-            buf.slurp(is);
-            result = frame.decode(buf);
+    private void encode(HeadWrapper head, ByteBuffer rsp) {
+        //从版本2开始, 编码length字段
+        if (head.getVersion() >= 2) {
+            rsp.setInt(rsp.length()-8, rsp.readerIndex()+4);
         }
-        return result;
     }
 
     private void processRequest(ProcessorContext context, HttpServletRequest req) throws IOException {
@@ -66,7 +62,8 @@ public class ProcessorServlet extends HttpServlet {
         try {
             is = req.getInputStream();
             /*接受请求数据*/
-            ByteBuffer reqBuf = receiveRequest(is);
+            byte[] reqBytes = IOUtils.toByteArray(is);
+            ByteBuffer reqBuf = new ByteBuffer(reqBytes);
 
             /*处理请求*/
             processor.processRequest(context, reqBuf);
@@ -86,9 +83,7 @@ public class ProcessorServlet extends HttpServlet {
             /*返回响应数据*/
             rsp.setContentType("application/octet-stream");
             rsp.setContentLength(rspBuf.length());
-            Frame frame = new Frame();
-            frame.encode(rspBuf);
-
+            encode(context.getHeadWrapper(), rspBuf);
             os = rsp.getOutputStream();
             rspBuf.spit(os);
             os.flush();
@@ -108,7 +103,7 @@ public class ProcessorServlet extends HttpServlet {
             /*处理响应*/
             processResponse(context, rsp);
 		}
-		catch (Throwable e) {
+		catch (RequestProcessException e) {
 			log.error("协议处理错误", e);
             /*处理响应*/
             processResponse(context, rsp);

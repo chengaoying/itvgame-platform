@@ -19,8 +19,10 @@ public class DefaultProcessor implements IProcessor {
 	public void processRequest(ProcessorContext context, ByteBuffer req) {
 		HeadWrapper headWrapper = new HeadWrapper(req.readInt());
         context.setHeadWrapper(headWrapper);
-		//跳过length字段
-		req.readInt();
+		//从版本2开始, 跳过length字段
+        if (headWrapper.getVersion() >= 2) {
+		    req.readInt();
+        }
 		if (headWrapper.getVersion() != Constant.PROTOCOL_VERSION) {
 			String msg = "协议版本不匹配,当前版本version="+Constant.PROTOCOL_VERSION
 			+", 请求版本version="+headWrapper.getVersion();
@@ -62,8 +64,12 @@ public class DefaultProcessor implements IProcessor {
 	}
 	
 	public void processResponse(ProcessorContext context, ByteBuffer rsp) {
-        rsp.writeInt(context.getHeadWrapper().getHead());
-        rsp.writeInt(0);
+        HeadWrapper headWrapper = context.getHeadWrapper();
+        rsp.writeInt(headWrapper.getHead());
+        //从版本2开始, 写入length字段
+        if (headWrapper.getVersion() >= 2) {
+            rsp.writeInt(0);
+        }
 		if (context.getErrorCode() == 0) {
             rsp.writeInt(0);
 			context.getProcessor().processResponse(context, rsp);

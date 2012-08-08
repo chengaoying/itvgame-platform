@@ -375,6 +375,20 @@ public class ByteBuffer {
 			readerIndex = 0;
 		}
 	}
+
+    public void expand(int size) {
+        expandTo(capacity()+size);
+    }
+
+    public void expandTo(int size) {
+        if (size > capacity()) {
+            byte[] buf = new byte[size];
+            BytesUtil.writeBytes(buf, 0, buffer, readerIndex, length());
+            buffer = buf;
+            writerIndex = length();
+            readerIndex = 0;
+        }
+    }
 	
 	public void skipWriter(int len) {
 		checkWriteBounds(len);

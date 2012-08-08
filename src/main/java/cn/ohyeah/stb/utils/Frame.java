@@ -1,7 +1,5 @@
 package cn.ohyeah.stb.utils;
 
-import cn.ohyeah.stb.utils.ByteBuffer;
-
 /**
  * 协议请求中的一帧数据
  * @author maqian
@@ -9,8 +7,6 @@ import cn.ohyeah.stb.utils.ByteBuffer;
  */
 public class Frame {
 	//心跳包
-	//private static final ByteBuffer TICKS = new ByteBuffer(8);
-	
 	private ByteBuffer value;
 	
 	public boolean tryDecode(ByteBuffer buf){
@@ -45,25 +41,18 @@ public class Frame {
 		ByteBuffer result = value;
 		if (result == null) {
 			if (buf.length() >= 8) {
-				int dataLen = buf.getInt(buf.readerIndex()+4);
-				if (dataLen == 0) {
-					//心跳包
-					result = TICKS;
-					result.writeByteBuffer(buf, 8);
-					buf.slide();
-				}
-				else {
-					result = new ByteBuffer(dataLen+8);
-					if (buf.length() >= dataLen+8) {
-						result.writeByteBuffer(buf, dataLen+8);
-						buf.slide();
-					}
-					else {
-						result.writeByteBuffer(buf);
-						buf.slide();
-						value = result;
-					}
-				}
+                int dataLen = buf.getInt(buf.readerIndex()+4);
+                result = new ByteBuffer(dataLen+8);
+                //接受到完整的数据包
+                if (buf.length() >= dataLen+8) {
+                    result.writeByteBuffer(buf, dataLen+8);
+                    buf.slide();
+                }
+                else {
+                    result.writeByteBuffer(buf);
+                    buf.slide();
+                    value = result;
+                }
 			}
 		}
 		else {

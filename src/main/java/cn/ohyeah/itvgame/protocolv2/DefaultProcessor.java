@@ -1,8 +1,6 @@
 package cn.ohyeah.itvgame.protocolv2;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import cn.ohyeah.stb.utils.ByteBuffer;
 
 /**
  * 默认协议处理器
@@ -18,12 +16,11 @@ public class DefaultProcessor implements IProcessor {
 	private static final IProcessor accountProcessor = new AccountProcessor();
 	private static final IProcessor sysServProcessor = new SysServProcessor();
 	
-	public void processRequest(ProcessorContext context, DataInputStream dis) throws IOException {
-		HeadWrapper headWrapper = new HeadWrapper();
-		headWrapper.setHead(dis.readInt());
+	public void processRequest(ProcessorContext context, ByteBuffer req) {
+		HeadWrapper headWrapper = new HeadWrapper(req.readInt());
+        context.setHeadWrapper(headWrapper);
 		//跳过length字段
-		dis.readInt();
-		context.setHeadWrapper(headWrapper);
+		req.readInt();
 		if (headWrapper.getVersion() != Constant.PROTOCOL_VERSION) {
 			String msg = "协议版本不匹配,当前版本version="+Constant.PROTOCOL_VERSION
 			+", 请求版本version="+headWrapper.getVersion();
@@ -61,19 +58,19 @@ public class DefaultProcessor implements IProcessor {
 			throw new RequestProcessException(msg);
 		}
 		context.setProcessor(processor);
-		processor.processRequest(context, dis);
+		processor.processRequest(context, req);
 	}
 	
-	public void processResponse(ProcessorContext context, DataOutputStream dos) throws IOException {
-		dos.writeInt(context.getHeadWrapper().getHead());
-		dos.writeInt(0);
+	public void processResponse(ProcessorContext context, ByteBuffer rsp) {
+        rsp.writeInt(context.getHeadWrapper().getHead());
+        rsp.writeInt(0);
 		if (context.getErrorCode() == 0) {
-			dos.writeInt(0);
-			context.getProcessor().processResponse(context, dos);
+            rsp.writeInt(0);
+			context.getProcessor().processResponse(context, rsp);
 		}
 		else {
-			dos.writeInt(context.getErrorCode());
-			dos.writeUTF(context.getMessage());
+            rsp.writeInt(context.getErrorCode());
+            rsp.writeUTF(context.getMessage());
 		}
 	}
 }

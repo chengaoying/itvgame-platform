@@ -1,8 +1,5 @@
 package cn.ohyeah.itvgame.protocolv2;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +15,7 @@ import cn.ohyeah.itvgame.platform.service.AuthorizationService;
 import cn.ohyeah.itvgame.platform.service.PlatformService;
 import cn.ohyeah.itvgame.platform.service.ProductService;
 import cn.ohyeah.itvgame.platform.service.ServiceException;
+import cn.ohyeah.stb.utils.ByteBuffer;
 
 public class AccountProcessor implements IProcessor {
 	private static final AuthorizationService authServ;
@@ -33,17 +31,16 @@ public class AccountProcessor implements IProcessor {
 	}
 	
 	@Override
-	public void processRequest(ProcessorContext context, DataInputStream dis)
-			throws IOException {
+	public void processRequest(ProcessorContext context, ByteBuffer req) {
 		switch (context.getHeadWrapper().getCommand()) {
 		case Constant.ACCOUNT_CMD_QUERY_AUTHORIZATION: 
-			processCommandQueryAuthorization(context, dis);
+			processCommandQueryAuthorizationReq(context, req);
 			break;
 		case Constant.ACCOUNT_CMD_QUERY_SUB_PROPS:
-			processCommandQuerySubProps(context, dis);
+			processCommandQuerySubPropsReq(context, req);
 			break;
 		case Constant.ACCOUNT_CMD_USER_LOGIN:
-			processCommandUserLogin(context, dis);
+			processCommandUserLoginReq(context, req);
 			break;
 		default: 
 			String msg = "无效的协议命令, cmd="+context.getHeadWrapper().getCommand();
@@ -53,14 +50,14 @@ public class AccountProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandQuerySubProps(ProcessorContext context,
-			DataInputStream dis) throws IOException {
-		String buyURL = dis.readUTF();
-		int accountId = dis.readInt();
-		String accountName = dis.readUTF();
-		String userToken = dis.readUTF();
-		int productId = dis.readInt();
-		String checkKey = dis.readUTF();
+	private void processCommandQuerySubPropsReq(ProcessorContext context,
+			ByteBuffer req) {
+		String buyURL = req.readUTF();
+		int accountId = req.readInt();
+		String accountName = req.readUTF();
+		String userToken = req.readUTF();
+		int productId = req.readInt();
+		String checkKey = req.readUTF();
 		try {
 			Map<String, Object> props = new HashMap<String, Object>();
 			props.put("buyURL", buyURL);
@@ -77,14 +74,14 @@ public class AccountProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandUserLogin(ProcessorContext context,
-			DataInputStream dis) throws IOException {
-		String buyURL = dis.readUTF();
-		String userId = dis.readUTF();
-		String accountName = dis.readUTF();
-		String userToken = dis.readUTF();
-		String appName = dis.readUTF();
-		String checkKey = dis.readUTF();
+	private void processCommandUserLoginReq(ProcessorContext context,
+			ByteBuffer req) {
+		String buyURL = req.readUTF();
+		String userId = req.readUTF();
+		String accountName = req.readUTF();
+		String userToken = req.readUTF();
+		String appName = req.readUTF();
+		String checkKey = req.readUTF();
 		try {
 			LoginInfo info = new LoginInfo();
 			context.setResult(info);
@@ -126,10 +123,10 @@ public class AccountProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandQueryAuthorization(ProcessorContext context,
-			DataInputStream dis) throws IOException {
-		int accountId = dis.readInt();
-		int productId = dis.readInt();
+	private void processCommandQueryAuthorizationReq(ProcessorContext context,
+			ByteBuffer req) {
+		int accountId = req.readInt();
+		int productId = req.readInt();
 		try {
 			Authorization auth = authServ.checkAuthorization(accountId, productId);
 			if (auth != null) {
@@ -148,87 +145,84 @@ public class AccountProcessor implements IProcessor {
 	}
 
 	@Override
-	public void processResponse(ProcessorContext context, DataOutputStream dos)
-			throws IOException {
+	public void processResponse(ProcessorContext context, ByteBuffer rsp) {
 		switch (context.getHeadWrapper().getCommand()) {
 		case Constant.ACCOUNT_CMD_QUERY_AUTHORIZATION: 
-			processCommandQueryAuthorization(context, dos);
+			processCommandQueryAuthorizationRsp(context, rsp);
 			break;
 		case Constant.ACCOUNT_CMD_QUERY_SUB_PROPS:
-			processCommandQuerySubProps(context, dos);
+			processCommandQuerySubPropsRsp(context, rsp);
 			break;
 		case Constant.ACCOUNT_CMD_USER_LOGIN:
-			processCommandUserLogin(context, dos);
+			processCommandUserLoginRsp(context, rsp);
 		default: 
 			break;
 		}
 	}
 
-	private void processCommandQuerySubProps(ProcessorContext context,
-			DataOutputStream dos) throws IOException {
+	private void processCommandQuerySubPropsRsp(ProcessorContext context,
+			ByteBuffer rsp) {
 		SubscribeProperties subProps = (SubscribeProperties)context.getResult();
-		writeSubProps(dos, subProps);
+		writeSubProps(rsp, subProps);
 	}
 
-	private void writeSubProps(DataOutputStream dos,
-			SubscribeProperties subProps) throws IOException {
-		dos.writeBoolean(subProps.isSupportSubscribe());
-		dos.writeUTF(subProps.getSubscribeAmountUnit());
-		dos.writeInt(subProps.getSubscribeCashToAmountRatio());
-		dos.writeBoolean(subProps.isSupportPointsService());
-		dos.writeUTF(subProps.getPointsUnit());
-		dos.writeInt(subProps.getAvailablePoints());
-		dos.writeInt(subProps.getCashToPointsRatio());
-		dos.writeBoolean(subProps.isSupportRecharge());
-		dos.writeUTF(subProps.getExpendAmountUnit());
-		dos.writeInt(subProps.getExpendCashToAmountUnit());
-		dos.writeInt(subProps.getBalance());
-		dos.writeInt(subProps.getRechargeRatio());
+	private void writeSubProps(ByteBuffer rsp, SubscribeProperties subProps) {
+		rsp.writeBoolean(subProps.isSupportSubscribe());
+		rsp.writeUTF(subProps.getSubscribeAmountUnit());
+		rsp.writeInt(subProps.getSubscribeCashToAmountRatio());
+		rsp.writeBoolean(subProps.isSupportPointsService());
+		rsp.writeUTF(subProps.getPointsUnit());
+		rsp.writeInt(subProps.getAvailablePoints());
+		rsp.writeInt(subProps.getCashToPointsRatio());
+		rsp.writeBoolean(subProps.isSupportRecharge());
+		rsp.writeUTF(subProps.getExpendAmountUnit());
+		rsp.writeInt(subProps.getExpendCashToAmountUnit());
+		rsp.writeInt(subProps.getBalance());
+		rsp.writeInt(subProps.getRechargeRatio());
 	}
 
-	private void processCommandUserLogin(ProcessorContext context,
-			DataOutputStream dos) throws IOException {
+	private void processCommandUserLoginRsp(ProcessorContext context,
+			ByteBuffer rsp) {
 		LoginInfo info = (LoginInfo)context.getResult();
 		/*写入用户及产品信息*/
-		dos.writeInt(info.getAccountId());
-		dos.writeUTF(info.getUserId());
-		dos.writeInt(info.getProductId());
-		dos.writeUTF(info.getProductName());
-		dos.writeUTF(info.getAppName());
-		dos.writeLong(info.getSystemTime().getTime());
+		rsp.writeInt(info.getAccountId());
+		rsp.writeUTF(info.getUserId());
+		rsp.writeInt(info.getProductId());
+		rsp.writeUTF(info.getProductName());
+		rsp.writeUTF(info.getAppName());
+		rsp.writeLong(info.getSystemTime().getTime());
 		
 		/*写入鉴权信息*/
 		Authorization auth = info.getAuth();
-		writeAuth(dos, auth);
+		writeAuth(rsp, auth);
 		
 		/*写入计费相关信息*/
 		SubscribeProperties subProps = info.getSubProps();
-		writeSubProps(dos, subProps);
+		writeSubProps(rsp, subProps);
 	}
 
-	private void processCommandQueryAuthorization(ProcessorContext context,
-			DataOutputStream dos) throws IOException {
+	private void processCommandQueryAuthorizationRsp(ProcessorContext context,
+			ByteBuffer rsp) {
 		Authorization auth = (Authorization)context.getResult();
-		writeAuth(dos, auth);
+		writeAuth(rsp, auth);
 	}
 
-	private void writeAuth(DataOutputStream dos, Authorization auth)
-			throws IOException {
-		dos.writeInt(auth.getAuthorizationType());
-		dos.writeInt(auth.getLeftTryNumber());
-		dos.writeInt(auth.getLeftValidSeconds());
-		dos.writeInt(auth.getLeftValidCount());
+	private void writeAuth(ByteBuffer rsp, Authorization auth) {
+		rsp.writeInt(auth.getAuthorizationType());
+		rsp.writeInt(auth.getLeftTryNumber());
+		rsp.writeInt(auth.getLeftValidSeconds());
+		rsp.writeInt(auth.getLeftValidCount());
 		if (auth.getAuthorizationStartTime() != null) {
-			dos.writeLong(auth.getAuthorizationStartTime().getTime());
+			rsp.writeLong(auth.getAuthorizationStartTime().getTime());
 		}
 		else {
-			dos.writeLong(0);
+			rsp.writeLong(0);
 		}
 		if (auth.getAuthorizationEndTime() != null) {
-			dos.writeLong(auth.getAuthorizationEndTime().getTime());
+			rsp.writeLong(auth.getAuthorizationEndTime().getTime());
 		}
 		else {
-			dos.writeLong(0);
+			rsp.writeLong(0);
 		}
 	}
 }

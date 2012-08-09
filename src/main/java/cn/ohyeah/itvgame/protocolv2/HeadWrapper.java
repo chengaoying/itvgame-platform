@@ -10,7 +10,9 @@ public class HeadWrapper implements IHeadAccessor {
 	private int head;
 
     public HeadWrapper() {}
-    public HeadWrapper(int head) {}
+    public HeadWrapper(int head) {
+        this.head = head;
+    }
 	
 	public int getHead() {
 		return head;

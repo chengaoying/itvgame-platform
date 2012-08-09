@@ -23,7 +23,7 @@ public class DefaultProcessor implements IProcessor {
         if (headWrapper.getVersion() >= 2) {
 		    req.readInt();
         }
-		if (headWrapper.getVersion() != Constant.PROTOCOL_VERSION) {
+		if (headWrapper.getVersion() > Constant.PROTOCOL_VERSION) {
 			String msg = "协议版本不匹配,当前版本version="+Constant.PROTOCOL_VERSION
 			+", 请求版本version="+headWrapper.getVersion();
 			context.setErrorCode(Constant.EC_INVALID_CMD);

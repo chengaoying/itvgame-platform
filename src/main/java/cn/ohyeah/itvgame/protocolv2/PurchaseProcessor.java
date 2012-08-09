@@ -1,10 +1,8 @@
 package cn.ohyeah.itvgame.protocolv2;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.List;
 
+import cn.ohyeah.stb.utils.ByteBuffer;
 import org.apache.commons.lang.time.DateFormatUtils;
 
 import cn.ohyeah.itvgame.business.ErrorCode;
@@ -31,16 +29,16 @@ public class PurchaseProcessor implements IProcessor {
 	}
 	
 	@Override
-	public void processRequest(ProcessorContext context, DataInputStream dis) throws IOException {
+	public void processRequest(ProcessorContext context, ByteBuffer req) {
 		switch (context.getHeadWrapper().getCommand()) {
 		case Constant.PURCHASE_CMD_PURCHASE_PROP: 
-			processCommandPurchaseProp(context, dis);
+			processCommandPurchasePropReq(context, req);
 			break;
 		case Constant.PURCHASE_CMD_EXPEND: 
-			processCommandPurchaseExpend(context, dis);
+			processCommandPurchaseExpendReq(context, req);
 			break;
 		case Constant.PURCHASE_CMD_QUERY_PURCHASE_RECORD: 
-			processCommandQueryPurchaseRecord(context, dis);
+			processCommandQueryPurchaseRecordReq(context, req);
 			break;
 		default: 
 			String msg = "无效的协议命令, cmd="+context.getHeadWrapper().getCommand();
@@ -50,11 +48,11 @@ public class PurchaseProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandQueryPurchaseRecord(ProcessorContext context, DataInputStream dis) throws IOException {
-		int accountId = dis.readInt();
-		int productId = dis.readInt();
-		int offset = dis.readInt();
-		int length = dis.readInt();
+	private void processCommandQueryPurchaseRecordReq(ProcessorContext context, ByteBuffer req) {
+		int accountId = req.readInt();
+		int productId = req.readInt();
+		int offset = req.readInt();
+		int length = req.readInt();
 		
 		try {
 			List<PurchaseDesc> descList = purchaseRevServ.queryPurchaseList(accountId, productId, offset, length);
@@ -67,18 +65,18 @@ public class PurchaseProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandPurchaseExpend(ProcessorContext context, DataInputStream dis) throws IOException {
-		String buyURL = dis.readUTF();
+	private void processCommandPurchaseExpendReq(ProcessorContext context, ByteBuffer req) {
+		String buyURL = req.readUTF();
 		context.setProp("buyURL", buyURL);
-		int accountId = dis.readInt();
-		String accountName = dis.readUTF();
+		int accountId = req.readInt();
+		String accountName = req.readUTF();
 		context.setProp("accountName", accountName);
-		String userToken = dis.readUTF();
+		String userToken = req.readUTF();
 		context.setProp("userToken", userToken);
-		int productId = dis.readInt();
-		int amount = dis.readInt();
-		String remark = dis.readUTF();
-		String checkKey = dis.readUTF();
+		int productId = req.readInt();
+		int amount = req.readInt();
+		String remark = req.readUTF();
+		String checkKey = req.readUTF();
 		context.setProp("checkKey", checkKey);
 		try {
 			ResultInfo info = purchaseServ.expend(context.getPropsMap(), accountId, productId, amount, remark);
@@ -97,19 +95,19 @@ public class PurchaseProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandPurchaseProp(ProcessorContext context, DataInputStream dis) throws IOException {
-		String buyURL = dis.readUTF();
+	private void processCommandPurchasePropReq(ProcessorContext context, ByteBuffer req) {
+		String buyURL = req.readUTF();
 		context.setProp("buyURL", buyURL);
-		int accountId = dis.readInt();
-		String accountName = dis.readUTF();
+		int accountId = req.readInt();
+		String accountName = req.readUTF();
 		context.setProp("accountName", accountName);
-		String userToken = dis.readUTF();
+		String userToken = req.readUTF();
 		context.setProp("userToken", userToken);
-		int productId = dis.readInt();
-		int propId = dis.readInt();
-		int propCount = dis.readInt();
-		String remark = dis.readUTF();
-		String checkKey = dis.readUTF();
+		int productId = req.readInt();
+		int propId = req.readInt();
+		int propCount = req.readInt();
+		String remark = req.readUTF();
+		String checkKey = req.readUTF();
 		context.setProp("checkKey", checkKey);
 		try {
 			ResultInfo info = purchaseServ.purchaseProp(context.getPropsMap(), accountId, productId, propId, propCount, remark);
@@ -129,45 +127,45 @@ public class PurchaseProcessor implements IProcessor {
 	}
 
 	@Override
-	public void processResponse(ProcessorContext context, DataOutputStream dos) throws IOException {
+	public void processResponse(ProcessorContext context, ByteBuffer rsp) {
 		switch (context.getHeadWrapper().getCommand()) {
 		case Constant.PURCHASE_CMD_PURCHASE_PROP: 
-			processCommandPurchaseProp(context, dos);
+			processCommandPurchasePropRsp(context, rsp);
 			break;
 		case Constant.PURCHASE_CMD_EXPEND: 
-			processCommandPurchaseExpend(context, dos);
+			processCommandPurchaseExpendRsp(context, rsp);
 			break;
 		case Constant.PURCHASE_CMD_QUERY_PURCHASE_RECORD: 
-			processCommandQueryPurchaseRecord(context, dos);
+			processCommandQueryPurchaseRecordRsp(context, rsp);
 			break;
 		default:break;
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void processCommandQueryPurchaseRecord(ProcessorContext context, DataOutputStream dos) throws IOException {
+	private void processCommandQueryPurchaseRecordRsp(ProcessorContext context, ByteBuffer rsp) {
 		List<PurchaseDesc> descList = (List<PurchaseDesc>)context.getResult();
 		if (descList!=null && descList.size()>0) {
-			dos.writeShort(descList.size());
+			rsp.writeShort((short)descList.size());
 			for (PurchaseDesc desc : descList) {
-				dos.writeInt(desc.getPropId());
-				dos.writeInt(desc.getPropCount());
-				dos.writeInt(desc.getAmount());
-				dos.writeUTF(desc.getRemark());
-				dos.writeUTF(DateFormatUtils.format(desc.getTime(), "yyyy/MM/dd HH:mm:ss"));
+				rsp.writeInt(desc.getPropId());
+				rsp.writeInt(desc.getPropCount());
+				rsp.writeInt(desc.getAmount());
+				rsp.writeUTF(desc.getRemark());
+				rsp.writeUTF(DateFormatUtils.format(desc.getTime(), "yyyy/MM/dd HH:mm:ss"));
 			}
 		}
 		else {
-			dos.writeShort(0);
+			rsp.writeShort((short)0);
 		}
 	}
 
-	private void processCommandPurchaseExpend(ProcessorContext context, DataOutputStream dos) throws IOException {
-		dos.writeInt((Integer)context.getResult());	/*balance*/
+	private void processCommandPurchaseExpendRsp(ProcessorContext context, ByteBuffer rsp) {
+		rsp.writeInt((Integer) context.getResult());	/*balance*/
 	}
 
-	private void processCommandPurchaseProp(ProcessorContext context, DataOutputStream dos) throws IOException {
-		dos.writeInt((Integer)context.getResult());	/*balance*/
+	private void processCommandPurchasePropRsp(ProcessorContext context, ByteBuffer rsp) {
+		rsp.writeInt((Integer) context.getResult());	/*balance*/
 	}
 
 }

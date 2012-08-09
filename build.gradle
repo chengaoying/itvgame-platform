@@ -93,15 +93,25 @@ def renderTemplateFile(f, binding) {
     renderTemplate(file.getText("utf-8"), binding)
 }
 
+def validprop(name) {
+    project.hasProperty(name)?project.property(name):''
+}
+
 task createConf {
     dependsOn processResources
+    ext.tplPath = "${processResources.destinationDir}/configurations.tpl"
+    ext.xmlPath = "${processResources.destinationDir}/configurations.xml"
+    inputs.property 'telcom', validprop('telcom')
+    inputs.property 'sp', validprop('sp')
+    inputs.file tplPath
+    outputs.file xmlPath
 }
 
 createConf << {
     if (project.hasProperty('telcom')&&project.hasProperty('sp')) {
         def binding = ['telcom': telcom, 'sp': sp]
-        def text = renderTemplateFile("${processResources.destinationDir}/configurations.tpl", binding)
-        file("${processResources.destinationDir}/configurations.xml").write(text, "utf-8")
+        def text = renderTemplateFile(tplPath, binding)
+        file(xmlPath).write(text, "utf-8")
     }
 }
 

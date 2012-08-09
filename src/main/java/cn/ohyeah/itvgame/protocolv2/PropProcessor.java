@@ -1,8 +1,5 @@
 package cn.ohyeah.itvgame.protocolv2;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.List;
 
 import cn.ohyeah.itvgame.business.ErrorCode;
@@ -11,6 +8,7 @@ import cn.ohyeah.itvgame.platform.model.GameProp;
 import cn.ohyeah.itvgame.platform.service.GamePropService;
 import cn.ohyeah.itvgame.platform.service.ServiceException;
 import cn.ohyeah.itvgame.platform.viewmodel.OwnPropDesc;
+import cn.ohyeah.stb.utils.ByteBuffer;
 
 /**
  * 道具协议处理器
@@ -25,19 +23,19 @@ public class PropProcessor implements IProcessor {
 	}
 	
 	@Override
-	public void processRequest(ProcessorContext context, DataInputStream dis) throws IOException {
+	public void processRequest(ProcessorContext context, ByteBuffer req) {
 		switch (context.getHeadWrapper().getCommand()) {
 		case Constant.PROP_CMD_QUERY_PROP_LIST: 
-			processCommandQueryPropList(context, dis);
+			processCommandQueryPropListReq(context, req);
 			break;
 		case Constant.PROP_CMD_QUERY_OWN_PROP_LIST: 
-			processCommandQueryOwnPropList(context, dis);
+			processCommandQueryOwnPropListReq(context, req);
 			break;
 		case Constant.PROP_CMD_USE_PROPS:
-			processCommandUseProps(context, dis);
+			processCommandUsePropsReq(context, req);
 			break;
 		case Constant.PROP_CMD_SYN_PROPS:
-			processCommandSynProps(context, dis);
+			processCommandSynPropsReq(context, req);
 			break;
 		default: 
 			String msg = "无效的协议命令, cmd="+context.getHeadWrapper().getCommand();
@@ -47,16 +45,15 @@ public class PropProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandSynProps(ProcessorContext context,
-			DataInputStream dis) throws IOException {
-		int accountId = dis.readInt();
-		int productId = dis.readInt();
-		short num = dis.readShort();
+	private void processCommandSynPropsReq(ProcessorContext context, ByteBuffer req) {
+		int accountId = req.readInt();
+		int productId = req.readInt();
+		short num = req.readShort();
 		int[] propIds = new int[num];
 		int[] counts = new int[num];
 		for (int i = 0; i < num; ++i) {
-			propIds[i] = dis.readInt();
-			counts[i] = dis.readInt();
+			propIds[i] = req.readInt();
+			counts[i] = req.readInt();
 		}
 		try {
 			propServ.synProps(accountId, productId, propIds, counts);
@@ -68,15 +65,15 @@ public class PropProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandUseProps(ProcessorContext context, DataInputStream dis) throws IOException {
-		int accountId = dis.readInt();
-		int productId = dis.readInt();
-		short num = dis.readShort();
+	private void processCommandUsePropsReq(ProcessorContext context, ByteBuffer req) {
+		int accountId = req.readInt();
+		int productId = req.readInt();
+		short num = req.readShort();
 		int[] propIds = new int[num];
 		int[] nums = new int[num];
 		for (int i = 0; i < num; ++i) {
-			propIds[i] = dis.readInt();
-			nums[i] = dis.readInt();
+			propIds[i] = req.readInt();
+			nums[i] = req.readInt();
 		}
 		try {
 			propServ.useProps(accountId, productId, propIds, nums);
@@ -88,9 +85,9 @@ public class PropProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandQueryOwnPropList(ProcessorContext context, DataInputStream dis) throws IOException {
-		int accountId = dis.readInt();
-		int productId = dis.readInt();
+	private void processCommandQueryOwnPropListReq(ProcessorContext context, ByteBuffer req) {
+		int accountId = req.readInt();
+		int productId = req.readInt();
 		try {
 			List<OwnPropDesc> ownPropList = propServ.queryOwnPropList(accountId, productId);
 			context.setResult(ownPropList);
@@ -102,8 +99,8 @@ public class PropProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandQueryPropList(ProcessorContext context, DataInputStream dis) throws IOException {
-		int productId = dis.readInt();
+	private void processCommandQueryPropListReq(ProcessorContext context, ByteBuffer req) {
+		int productId = req.readInt();
 		try {
 			List<GameProp> propList = propServ.queryPropList(productId);
 			context.setResult(propList);
@@ -116,59 +113,51 @@ public class PropProcessor implements IProcessor {
 	}
 
 	@Override
-	public void processResponse(ProcessorContext context, DataOutputStream dos) throws IOException {
+	public void processResponse(ProcessorContext context, ByteBuffer rsp) {
 		switch (context.getHeadWrapper().getCommand()) {
 		case Constant.PROP_CMD_QUERY_PROP_LIST: 
-			processCommandQueryPropList(context, dos);
+			processCommandQueryPropListRsp(context, rsp);
 			break;
 		case Constant.PROP_CMD_QUERY_OWN_PROP_LIST: 
-			processCommandQueryOwnPropList(context, dos);
+			processCommandQueryOwnPropListRsp(context, rsp);
 			break;
 		case Constant.PROP_CMD_USE_PROPS:
-			processCommandUseProps(context, dos);
 			break;
 		case Constant.PROP_CMD_SYN_PROPS:
-			processCommandSynProps(context, dos);
-		default: 
+		default:
 			break;
 		}
 	}
 
-	private void processCommandSynProps(ProcessorContext context, DataOutputStream dos) throws IOException {
-	}
-
-	private void processCommandUseProps(ProcessorContext context, DataOutputStream dos) throws IOException {
-	}
-
 	@SuppressWarnings("unchecked")
-	private void processCommandQueryOwnPropList(ProcessorContext context, DataOutputStream dos) throws IOException {
+	private void processCommandQueryOwnPropListRsp(ProcessorContext context, ByteBuffer rsp) {
 		List<OwnPropDesc> ownPropList = (List<OwnPropDesc>)context.getResult();
 		if (ownPropList!=null && ownPropList.size()>0) {
-			dos.writeShort(ownPropList.size());
+			rsp.writeShort((short)ownPropList.size());
 			for (OwnPropDesc desc : ownPropList) {
-				dos.writeInt(desc.getPropId());
-				dos.writeInt(desc.getCount());
+				rsp.writeInt(desc.getPropId());
+				rsp.writeInt(desc.getCount());
 			}
 		}
 		else {
-			dos.writeInt(0);
+			rsp.writeInt(0);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void processCommandQueryPropList(ProcessorContext context, DataOutputStream dos) throws IOException {
+	private void processCommandQueryPropListRsp(ProcessorContext context, ByteBuffer rsp) {
 		List<GameProp> propList = (List<GameProp>)context.getResult();
 		if (propList!=null && propList.size()>0) {
-			dos.writeShort(propList.size());
+			rsp.writeShort((short)propList.size());
 			for (GameProp prop : propList) {
-				dos.writeInt(prop.getPropId());
-				dos.writeUTF(prop.getPropName());
-				dos.writeInt(prop.getPrice());
-				dos.writeUTF(prop.getDescription());
+				rsp.writeInt(prop.getPropId());
+				rsp.writeUTF(prop.getPropName());
+				rsp.writeInt(prop.getPrice());
+				rsp.writeUTF(prop.getDescription());
 			}
 		}
 		else {
-			dos.writeInt(0);
+			rsp.writeInt(0);
 		}
 	}
 

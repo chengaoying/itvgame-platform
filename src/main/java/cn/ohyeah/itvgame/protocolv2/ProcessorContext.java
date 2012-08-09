@@ -1,5 +1,7 @@
 package cn.ohyeah.itvgame.protocolv2;
 
+import cn.ohyeah.stb.utils.ByteBuffer;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,8 +26,8 @@ public class ProcessorContext {
 		this.message = null;
 		this.result = null;
 	}
-	
-	public int getErrorCode() {
+
+    public int getErrorCode() {
 		return errorCode;
 	}
 	public void setErrorCode(int errorCode) {

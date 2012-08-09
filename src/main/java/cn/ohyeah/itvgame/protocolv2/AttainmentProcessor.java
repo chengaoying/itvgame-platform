@@ -1,10 +1,8 @@
 package cn.ohyeah.itvgame.protocolv2;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.List;
 
+import cn.ohyeah.stb.utils.ByteBuffer;
 import org.apache.commons.lang.time.DateFormatUtils;
 
 import cn.ohyeah.itvgame.business.ErrorCode;
@@ -28,22 +26,22 @@ public class AttainmentProcessor implements IProcessor {
 	}
 	
 	@Override
-	public void processRequest(ProcessorContext context, DataInputStream dis) throws IOException {
+	public void processRequest(ProcessorContext context, ByteBuffer req) {
 		switch (context.getHeadWrapper().getCommand()) {
 		case Constant.ATTAINMENT_CMD_SAVE: 
-			processCommandSave(context, dis);
+			processCommandSaveReq(context, req);
 			break;
 		case Constant.ATTAINMENT_CMD_READ: 
-			processCommandRead(context, dis);
+			processCommandReadReq(context, req);
 			break;
 		case Constant.ATTAINMENT_CMD_UPDATE: 
-			processCommandUpdate(context, dis);
+			processCommandUpdateReq(context, req);
 			break;
 		case Constant.ATTAINMENT_CMD_QUERY_DESC_LIST: 
-			processCommandQueryDescList(context, dis);
+			processCommandQueryDescListReq(context, req);
 			break;
 		case Constant.ATTAINMENT_CMD_QUERY_RANKING_LIST: 
-			processCommandQueryRankingList(context, dis);
+			processCommandQueryRankingListReq(context, req);
 			break;
 		default: 
 			String msg = "无效的协议命令, cmd="+context.getHeadWrapper().getCommand();
@@ -53,13 +51,13 @@ public class AttainmentProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandQueryRankingList(ProcessorContext context, DataInputStream dis) throws IOException {
-		int productId = dis.readInt();
-		String orderCmd = dis.readUTF();
-		long startMillis = dis.readLong();
-		long endMillis = dis.readLong();
-		int offset = dis.readInt();
-		int length = dis.readInt();
+	private void processCommandQueryRankingListReq(ProcessorContext context, ByteBuffer req) {
+		int productId = req.readInt();
+		String orderCmd = req.readUTF();
+		long startMillis = req.readLong();
+		long endMillis = req.readLong();
+		int offset = req.readInt();
+		int length = req.readInt();
 		try {
 			List<GameRanking> rankList = null;
 			if (startMillis > 0 && endMillis > 0) {
@@ -79,12 +77,12 @@ public class AttainmentProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandQueryDescList(ProcessorContext context, DataInputStream dis) throws IOException {
-		int accountId = dis.readInt();
-		int productId = dis.readInt();
-		String orderCmd = dis.readUTF();
-		long startMillis = dis.readLong();
-		long endMillis = dis.readLong();
+	private void processCommandQueryDescListReq(ProcessorContext context, ByteBuffer req) {
+		int accountId = req.readInt();
+		int productId = req.readInt();
+		String orderCmd = req.readUTF();
+		long startMillis = req.readLong();
+		long endMillis = req.readLong();
 		try {
 			List<GameAttainmentDesc> descList = null;
 			if (startMillis > 0 && endMillis > 0) {
@@ -104,8 +102,8 @@ public class AttainmentProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandUpdate(ProcessorContext context, DataInputStream dis) throws IOException {
-		GameAttainment attainment = extractGameAttainment(context, dis);
+	private void processCommandUpdateReq(ProcessorContext context, ByteBuffer req) {
+		GameAttainment attainment = extractGameAttainment(context, req);
 		try {
 			attainmentServ.saveOrUpdate(attainment, context.getProductId());
 		}
@@ -116,13 +114,13 @@ public class AttainmentProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandRead(ProcessorContext context, DataInputStream dis) throws IOException {
-		int accountId = dis.readInt();
-		int productId = dis.readInt();
-		int attainmentId = dis.readInt();
-		String orderCmd = dis.readUTF();
-		long startMillis = dis.readLong();
-		long endMillis = dis.readLong();
+	private void processCommandReadReq(ProcessorContext context, ByteBuffer req) {
+		int accountId = req.readInt();
+		int productId = req.readInt();
+		int attainmentId = req.readInt();
+		String orderCmd = req.readUTF();
+		long startMillis = req.readLong();
+		long endMillis = req.readLong();
 		
 		try {
 			GameAttainment attainment = null;
@@ -143,8 +141,8 @@ public class AttainmentProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandSave(ProcessorContext context, DataInputStream dis) throws IOException {
-		GameAttainment attainment = extractGameAttainment(context, dis);
+	private void processCommandSaveReq(ProcessorContext context, ByteBuffer req) {
+		GameAttainment attainment = extractGameAttainment(context, req);
 		try {
 			attainmentServ.saveOrUpdate(attainment, context.getProductId());
 		}
@@ -155,27 +153,19 @@ public class AttainmentProcessor implements IProcessor {
 		}
 	}
 	
-	private GameAttainment extractGameAttainment(ProcessorContext context, DataInputStream dis) throws IOException {
-		int accountId = dis.readInt();
-		String userId = dis.readUTF();
-		int productId = dis.readInt();
+	private GameAttainment extractGameAttainment(ProcessorContext context, ByteBuffer req) {
+		int accountId = req.readInt();
+		String userId = req.readUTF();
+		int productId = req.readInt();
 		context.setProductId(productId);
-		int attainmentId = dis.readInt();
-		int playDuration = dis.readInt();
-		int scores = dis.readInt();
-		String remark = dis.readUTF();
-		int dataLen = dis.readInt();
+		int attainmentId = req.readInt();
+		int playDuration = req.readInt();
+		int scores = req.readInt();
+		String remark = req.readUTF();
+		int dataLen = req.readInt();
 		byte[] data = null;
 		if (dataLen > 0) {
-			data = new byte[dataLen];
-			int readLen = 0;
-			int curReadLen = 0;
-			while (readLen < data.length) {
-				curReadLen = dis.read(data, readLen, data.length-readLen);
-				if (curReadLen > 0) {
-					readLen += curReadLen;
-				}
-			}
+            data = req.readBytes(dataLen);
 		}
 		
 		GameAttainment attainment = new GameAttainment();
@@ -192,89 +182,84 @@ public class AttainmentProcessor implements IProcessor {
 	}
  
 	@Override
-	public void processResponse(ProcessorContext context, DataOutputStream dos) throws IOException {
+	public void processResponse(ProcessorContext context, ByteBuffer rsp) {
 		switch (context.getHeadWrapper().getCommand()) {
 		case Constant.ATTAINMENT_CMD_SAVE: 
-			processCommandSave(context, dos);
 			break;
 		case Constant.ATTAINMENT_CMD_READ: 
-			processCommandRead(context, dos);
+			processCommandReadRsp(context, rsp);
 			break;
 		case Constant.ATTAINMENT_CMD_UPDATE: 
-			processCommandUpdate(context, dos);
 			break;
 		case Constant.ATTAINMENT_CMD_QUERY_DESC_LIST: 
-			processCommandQueryDescList(context, dos);
+			processCommandQueryDescListRsp(context, rsp);
 			break;
 		case Constant.ATTAINMENT_CMD_QUERY_RANKING_LIST: 
-			processCommandQueryRankingList(context, dos);
+			processCommandQueryRankingListRsp(context, rsp);
 			break;
 		default: 
 			break;
 		}
 	}
 
-	private void processCommandUpdate(ProcessorContext context, DataOutputStream dos) throws IOException {
-	}
-
-	private void processCommandSave(ProcessorContext context, DataOutputStream dos) throws IOException {
-	}
-
 	@SuppressWarnings("unchecked")
-	private void processCommandQueryRankingList(ProcessorContext context, DataOutputStream dos) throws IOException {
+	private void processCommandQueryRankingListRsp(ProcessorContext context, ByteBuffer rsp) {
 		List<GameRanking> rankingList = (List<GameRanking>)context.getResult();
 		if (rankingList!=null && rankingList.size()>0) {
-			dos.writeShort(rankingList.size());
+			rsp.writeShort((short)rankingList.size());
 			for (GameRanking ranking : rankingList) {
-				dos.writeInt(ranking.getAccountId());
-				dos.writeUTF(ranking.getUserId());
-				dos.writeInt(ranking.getPlayDuration());
-				dos.writeInt(ranking.getScores());
-				dos.writeInt(ranking.getRanking());
-				dos.writeUTF(ranking.getRemark());
-				dos.writeUTF(DateFormatUtils.format(ranking.getTime(), "yyyy/MM/dd HH:mm:ss"));
+				rsp.writeInt(ranking.getAccountId());
+				rsp.writeUTF(ranking.getUserId());
+				rsp.writeInt(ranking.getPlayDuration());
+				rsp.writeInt(ranking.getScores());
+				rsp.writeInt(ranking.getRanking());
+				rsp.writeUTF(ranking.getRemark());
+				rsp.writeUTF(DateFormatUtils.format(ranking.getTime(), "yyyy/MM/dd HH:mm:ss"));
 			}
 		}
 		else {
-			dos.writeShort(0);
+			rsp.writeShort((short)0);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void processCommandQueryDescList(ProcessorContext context, DataOutputStream dos) throws IOException {
+	private void processCommandQueryDescListRsp(ProcessorContext context, ByteBuffer rsp) {
 		List<GameAttainmentDesc> descList = (List<GameAttainmentDesc>)context.getResult();
 		if (descList!=null && descList.size()>0) {
-			dos.writeShort(descList.size());
+			rsp.writeShort((short)descList.size());
 			for (GameAttainmentDesc desc : descList) {
-				dos.writeInt(desc.getAttainmentId());
-				dos.writeInt(desc.getPlayDuration());
-				dos.writeInt(desc.getScores());
-				dos.writeInt((int)desc.getRanking());
-				dos.writeUTF(desc.getRemark());
-				dos.writeUTF(DateFormatUtils.format(desc.getTime(), "yyyy/MM/dd HH:mm:ss"));
+				rsp.writeInt(desc.getAttainmentId());
+				rsp.writeInt(desc.getPlayDuration());
+				rsp.writeInt(desc.getScores());
+				rsp.writeInt((int) desc.getRanking());
+				rsp.writeUTF(desc.getRemark());
+				rsp.writeUTF(DateFormatUtils.format(desc.getTime(), "yyyy/MM/dd HH:mm:ss"));
 			}
 		}
 		else {
-			dos.writeShort(0);
+			rsp.writeShort((short)0);
 		}
 	}
 
-	private void processCommandRead(ProcessorContext context, DataOutputStream dos) throws IOException {
+	private void processCommandReadRsp(ProcessorContext context, ByteBuffer rsp) {
 		GameAttainment attainment = (GameAttainment)context.getResult();
 		if (attainment != null) {
-			dos.writeInt(attainment.getAttainmentId());
-			dos.writeInt(attainment.getPlayDuration());
-			dos.writeInt(attainment.getScores());
-			dos.writeInt((int)attainment.getRanking());	/*ranking*/
-			dos.writeUTF(attainment.getRemark());
-			dos.writeUTF(DateFormatUtils.format(attainment.getTime(), "yyyy/MM/dd HH:mm:ss"));
+            if (attainment.getData() != null) {
+                rsp.expand(attainment.getData().length+128);
+            }
+			rsp.writeInt(attainment.getAttainmentId());
+			rsp.writeInt(attainment.getPlayDuration());
+			rsp.writeInt(attainment.getScores());
+			rsp.writeInt((int) attainment.getRanking());	/*ranking*/
+			rsp.writeUTF(attainment.getRemark());
+			rsp.writeUTF(DateFormatUtils.format(attainment.getTime(), "yyyy/MM/dd HH:mm:ss"));
 			byte[] data = attainment.getData();
 			if (data!=null && data.length>0) {
-				dos.writeInt(data.length);
-				dos.write(data, 0, data.length);
+				rsp.writeInt(data.length);
+				rsp.writeBytes(data, 0, data.length);
 			}
 			else {
-				dos.writeInt(0);
+				rsp.writeInt(0);
 			}
 		}
 	}

@@ -1,10 +1,8 @@
 package cn.ohyeah.itvgame.protocolv2;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.List;
 
+import cn.ohyeah.stb.utils.ByteBuffer;
 import org.apache.commons.lang.time.DateFormatUtils;
 
 import cn.ohyeah.itvgame.business.ErrorCode;
@@ -29,27 +27,30 @@ public class SubscribeProcessor implements IProcessor {
 	}
 	
 	@Override
-	public void processRequest(ProcessorContext context, DataInputStream dis) throws IOException {
+	public void processRequest(ProcessorContext context, ByteBuffer req) {
 
 		switch (context.getHeadWrapper().getCommand()) {
 		case Constant.SUBSCRIBE_CMD_SUBSCRIBE: 
-			processCommandSubscribe(context, dis);
+			processCommandSubscribeReq(context, req);
 			break;
 		case Constant.SUBSCRIBE_CMD_RECHARGE: 
-			processCommandRecharge(context, dis);
+			processCommandRechargeReq(context, req);
 			break;
 		case Constant.SUBSCRIBE_CMD_QUERY_BALANCE:
-			processCommandQueryBalance(context, dis);
+			processCommandQueryBalanceReq(context, req);
 			break;
 		case Constant.SUBSCRIBE_CMD_QUERY_SUBSCRIBE_RECORD:
-			processCommandQuerySubscribeRecord(context, dis);
+			processCommandQuerySubscribeRecordReq(context, req);
 			break;
 		case Constant.SUBSCRIBE_CMD_SUBSCRIBE_PRODUCT:
-			processCommandSubscribeProduct(context, dis);
+			processCommandSubscribeProductReq(context, req);
 			break;
 		case Constant.SUBSCRIBE_CMD_RECHARGE_WINSIDEGD:
-			processCommandRechargeWinsidegd(context, dis);
+			processCommandRechargeWinsidegdReq(context, req);
 			break;
+        case Constant.SUBSCRIBE_CMD_RECHARGE_DIJOY:
+            processCommandRechargeDijoyReq(context, req);
+            break;
 		default: 
 			String msg = "无效的协议命令, cmd="+context.getHeadWrapper().getCommand();
 			context.setErrorCode(Constant.EC_INVALID_CMD);
@@ -58,38 +59,84 @@ public class SubscribeProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandRechargeWinsidegd(ProcessorContext context,
-			DataInputStream dis) throws IOException {
-		String buyURL = dis.readUTF();
+    private void processCommandRechargeDijoyReq(ProcessorContext context, ByteBuffer req) {
+        String buyURL = req.readUTF();
+        context.setProp("buyURL", buyURL);
+        int accountId = req.readInt();
+        String accountName = req.readUTF();
+        context.setProp("accountName", accountName);
+        String userToken = req.readUTF();
+        context.setProp("userToken", userToken);
+        int productId = req.readInt();
+        int amount = req.readInt();
+        int payType = req.readInt();
+        context.setProp("payType", payType);
+        String remark = req.readUTF();
+        String checkKey = req.readUTF();
+        context.setProp("checkKey", checkKey);
+        String appId = req.readUTF();
+        context.setProp("appId", appId);
+        String platformExt = req.readUTF();
+        context.setProp("platformExt", platformExt);
+        String appExt = req.readUTF();
+        context.setProp("appExt", appExt);
+        try {
+            String password = req.readUTF();
+            context.setProp("password", password);
+        }
+        catch (Exception e) {
+            context.setProp("password", "");
+        }
+        try {
+            ResultInfo info = rechargeServ.recharge(context.getPropsMap(), accountId, productId,
+                    amount, remark, new java.util.Date());
+            if (info.isSuccess()) {
+                context.setResult((Integer)info.getInfo());
+            }
+            else {
+                context.setErrorCode(info.getErrorCode());
+                context.setMessage(info.getMessage());
+            }
+        }
+        catch (ServiceException e) {
+            context.setErrorCode(ErrorCode.EC_SERVICE_FAILED);
+            context.setMessage(ErrorCode.getErrorMessage(ErrorCode.EC_SERVICE_FAILED));
+            throw new RequestProcessException(e);
+        }
+    }
+
+    private void processCommandRechargeWinsidegdReq(ProcessorContext context,
+			ByteBuffer req) {
+		String buyURL = req.readUTF();
 		context.setProp("buyURL", buyURL);
-		int accountId = dis.readInt();
-		String accountName = dis.readUTF();
+		int accountId = req.readInt();
+		String accountName = req.readUTF();
 		context.setProp("accountName", accountName);
-		String userToken = dis.readUTF();
+		String userToken = req.readUTF();
 		context.setProp("userToken", userToken);
-		int productId = dis.readInt();
-		int amount = dis.readInt();
-		int ratio = dis.readInt();
+		int productId = req.readInt();
+		int amount = req.readInt();
+		int ratio = req.readInt();
 		context.setProp("ratio", ratio);
-		int payType = dis.readInt();
+		int payType = req.readInt();
 		context.setProp("payType", payType);
-		String remark = dis.readUTF();
-		String checkKey = dis.readUTF();
+		String remark = req.readUTF();
+		String checkKey = req.readUTF();
 		context.setProp("checkKey", checkKey);
-		String spid = dis.readUTF();
+		String spid = req.readUTF();
 		context.setProp("spid", spid);
-		String gameid = dis.readUTF();
+		String gameid = req.readUTF();
 		context.setProp("gameid", gameid);
-		String enterURL = dis.readUTF();
+		String enterURL = req.readUTF();
 		context.setProp("enterURL", enterURL);
 		context.setProp("zyUserToken", userToken);
-		String stbType = dis.readUTF();
+		String stbType = req.readUTF();
 		context.setProp("stbType", stbType);
 		try {
-			String password = dis.readUTF();
+			String password = req.readUTF();
 			context.setProp("password", password);
 		}
-		catch (IOException e) {
+		catch (Exception e) {
 			context.setProp("password", "");
 		}
 		try {
@@ -110,21 +157,20 @@ public class SubscribeProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandSubscribeProduct(ProcessorContext context,
-			DataInputStream dis) throws IOException {
-		String buyURL = dis.readUTF();
+	private void processCommandSubscribeProductReq(ProcessorContext context, ByteBuffer req) {
+		String buyURL = req.readUTF();
 		context.setProp("buyURL", buyURL);
-		int accountId = dis.readInt();
-		String accountName = dis.readUTF();
+		int accountId = req.readInt();
+		String accountName = req.readUTF();
 		context.setProp("accountName", accountName);
-		String userToken = dis.readUTF();
+		String userToken = req.readUTF();
 		context.setProp("userToken", userToken);
-		int productId = dis.readInt();
-		String subscribeType = dis.readUTF();
-		int payType = dis.readInt();
+		int productId = req.readInt();
+		String subscribeType = req.readUTF();
+		int payType = req.readInt();
 		context.setProp("payType", payType);
-		String remark = dis.readUTF();
-		String checkKey = dis.readUTF();
+		String remark = req.readUTF();
+		String checkKey = req.readUTF();
 		context.setProp("checkKey", checkKey);
 		try {
 			ResultInfo info = subServ.subscribeProduct(context.getPropsMap(), 
@@ -142,13 +188,13 @@ public class SubscribeProcessor implements IProcessor {
 		
 	}
 
-	private void processCommandQueryBalance(ProcessorContext context, DataInputStream dis) throws IOException {
-		String buyURL = dis.readUTF();
+	private void processCommandQueryBalanceReq(ProcessorContext context, ByteBuffer req) {
+		String buyURL = req.readUTF();
 		context.setProp("buyURL", buyURL);
-		int accountId = dis.readInt();
-		String accountName = dis.readUTF();
+		int accountId = req.readInt();
+		String accountName = req.readUTF();
 		context.setProp("accountName", accountName);
-		int productId = dis.readInt();
+		int productId = req.readInt();
 		try {
 			ResultInfo info = rechargeServ.queryBanlance(context.getPropsMap(), accountId, productId);
 			if (info.isSuccess()) {
@@ -167,30 +213,30 @@ public class SubscribeProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandRecharge(ProcessorContext context, DataInputStream dis) throws IOException {
-		String buyURL = dis.readUTF();
+	private void processCommandRechargeReq(ProcessorContext context, ByteBuffer req) {
+		String buyURL = req.readUTF();
 		context.setProp("buyURL", buyURL);
-		int accountId = dis.readInt();
-		String accountName = dis.readUTF();
+		int accountId = req.readInt();
+		String accountName = req.readUTF();
 		context.setProp("accountName", accountName);
-		String userToken = dis.readUTF();
+		String userToken = req.readUTF();
 		context.setProp("userToken", userToken);
-		int productId = dis.readInt();
-		int amount = dis.readInt();
-		int ratio = dis.readInt();
+		int productId = req.readInt();
+		int amount = req.readInt();
+		int ratio = req.readInt();
 		context.setProp("ratio", ratio);
-		int payType = dis.readInt();
+		int payType = req.readInt();
 		context.setProp("payType", payType);
-		String remark = dis.readUTF();
-		String checkKey = dis.readUTF();
+		String remark = req.readUTF();
+		String checkKey = req.readUTF();
 		context.setProp("checkKey", checkKey);
-		String spid = dis.readUTF();
+		String spid = req.readUTF();
 		context.setProp("spid", spid);
 		try {
-			String password = dis.readUTF();
+			String password = req.readUTF();
 			context.setProp("password", password);
 		}
-		catch (IOException e) {
+		catch (Exception e) {
 			context.setProp("password", "");
 		}
 		try {
@@ -211,41 +257,16 @@ public class SubscribeProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandSubscribe(ProcessorContext context, DataInputStream dis) throws IOException {
-		String buyURL = dis.readUTF();
-		context.setProp("buyURL", buyURL);
-		int accountId = dis.readInt();
-		String accountName = dis.readUTF();
-		context.setProp("accountName", accountName);
-		String userToken = dis.readUTF();
-		context.setProp("userToken", userToken);
-		int productId = dis.readInt();
-		int purchaseId = dis.readInt();
-		int payType = dis.readInt();
-		context.setProp("payType", payType);
-		String remark = dis.readUTF();
-		String checkKey = dis.readUTF();
-		context.setProp("checkKey", checkKey);
-		try {
-			ResultInfo info = subServ.subscribe(context.getPropsMap(), accountId, productId, 
-					purchaseId, remark, new java.util.Date());
-			if (!info.isSuccess()) {
-				context.setErrorCode(info.getErrorCode());
-				context.setMessage(info.getMessage());
-			}
-		}
-		catch (ServiceException e) {
-			context.setErrorCode(ErrorCode.EC_SERVICE_FAILED);
-			context.setMessage(ErrorCode.getErrorMessage(ErrorCode.EC_SERVICE_FAILED));
-			throw new RequestProcessException(e);
-		}
+	private void processCommandSubscribeReq(ProcessorContext context, ByteBuffer req) {
+        context.setErrorCode(ErrorCode.EC_SERVICE_FAILED);
+        context.setMessage("不支持此操作");
 	}
 
-	private void processCommandQuerySubscribeRecord(ProcessorContext context, DataInputStream dis) throws IOException {
-		String userId = dis.readUTF();
-		int productId = dis.readInt();
-		int offset = dis.readInt();
-		int length = dis.readInt();
+	private void processCommandQuerySubscribeRecordReq(ProcessorContext context, ByteBuffer req) {
+		String userId = req.readUTF();
+		int productId = req.readInt();
+		int offset = req.readInt();
+		int length = req.readInt();
 		try {
 			List<SubscribeDesc> descList = subRevServ.querySubscribeDescList(userId, productId, offset, length);
 			context.setResult(descList);
@@ -258,64 +279,56 @@ public class SubscribeProcessor implements IProcessor {
 	}
 
 	@Override
-	public void processResponse(ProcessorContext context, DataOutputStream dos) throws IOException {
+	public void processResponse(ProcessorContext context, ByteBuffer rsp) {
 		switch (context.getHeadWrapper().getCommand()) {
 		case Constant.SUBSCRIBE_CMD_SUBSCRIBE: 
-			processCommandSubscribe(context, dos);
 			break;
 		case Constant.SUBSCRIBE_CMD_RECHARGE: 
-			processCommandRecharge(context, dos);
+			processCommandRechargeRsp(context, rsp);
 			break;
 		case Constant.SUBSCRIBE_CMD_QUERY_BALANCE:
-			processCommandQueryBalance(context, dos);
+			processCommandQueryBalanceRsp(context, rsp);
 			break;
 		case Constant.SUBSCRIBE_CMD_QUERY_SUBSCRIBE_RECORD:
-			processCommandQuerySubscribeRecord(context, dos);
+			processCommandQuerySubscribeRecordRsp(context, rsp);
 			break;
 		case Constant.SUBSCRIBE_CMD_SUBSCRIBE_PRODUCT:
-			processCommandSubscribeProduct(context, dos);
 			break;
 		case Constant.SUBSCRIBE_CMD_RECHARGE_WINSIDEGD:
-			processCommandRechargeWinsidegd(context, dos);
+			processCommandRechargeWinsidegdRsp(context, rsp);
 			break;
 		default: break;
 		}
 	}
 
-	private void processCommandRechargeWinsidegd(ProcessorContext context,
-			DataOutputStream dos) throws IOException {
-		dos.writeInt((Integer)context.getResult());
-	}
-
-	private void processCommandSubscribeProduct(ProcessorContext context,
-			DataOutputStream dos) throws IOException {
+	private void processCommandRechargeWinsidegdRsp(ProcessorContext context,
+			ByteBuffer rsp) {
+		rsp.writeInt((Integer) context.getResult());
 	}
 
 	@SuppressWarnings("unchecked")
-	private void processCommandQuerySubscribeRecord(ProcessorContext context, DataOutputStream dos) throws IOException {
+	private void processCommandQuerySubscribeRecordRsp(ProcessorContext context, ByteBuffer rsp) {
 		List<SubscribeDesc> descList = (List<SubscribeDesc>)context.getResult();
 		if (descList!=null && descList.size()>0) {
-			dos.writeShort(descList.size());
+			rsp.writeShort((short)descList.size());
 			for (SubscribeDesc desc : descList) {
-				dos.writeInt(desc.getAmount());
-				dos.writeUTF(desc.getRemark());
-				dos.writeUTF(DateFormatUtils.format(desc.getTime(), "yyyy/MM/dd HH:mm:ss"));
+				rsp.writeInt(desc.getAmount());
+				rsp.writeUTF(desc.getRemark());
+				rsp.writeUTF(DateFormatUtils.format(desc.getTime(), "yyyy/MM/dd HH:mm:ss"));
 			}
 		}
 		else {
-			dos.writeShort(0);
+			rsp.writeShort((short)0);
 		}
 	}
 
-	private void processCommandQueryBalance(ProcessorContext context, DataOutputStream dos) throws IOException {
-		dos.writeInt((Integer)context.getResult());	/*balance*/
+	private void processCommandQueryBalanceRsp(ProcessorContext context, ByteBuffer rsp) {
+		rsp.writeInt((Integer) context.getResult());	/*balance*/
 	}
 
-	private void processCommandRecharge(ProcessorContext context, DataOutputStream dos) throws IOException {
-		dos.writeInt((Integer)context.getResult());
+	private void processCommandRechargeRsp(ProcessorContext context, ByteBuffer rsp) {
+		rsp.writeInt((Integer) context.getResult());
 	}
 
-	private void processCommandSubscribe(ProcessorContext context, DataOutputStream dos) throws IOException {
-	}
 
 }

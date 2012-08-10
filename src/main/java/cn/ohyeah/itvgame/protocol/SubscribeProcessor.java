@@ -135,6 +135,13 @@ public class SubscribeProcessor implements IProcessor {
 		context.setProp("platformExt", platformExt);
 		String appExt = dis.readUTF();
 		context.setProp("appExt", appExt);
+        try {
+            String password = dis.readUTF();
+            context.setProp("password", password);
+        }
+        catch (IOException e) {
+            context.setProp("password", "");
+        }
 		try {
 			ResultInfo info = rechargeServ.recharge(context.getPropsMap(), accountId, productId, 
 					amount, remark, new java.util.Date());

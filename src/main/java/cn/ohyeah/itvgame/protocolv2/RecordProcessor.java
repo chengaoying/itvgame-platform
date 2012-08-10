@@ -1,10 +1,8 @@
 package cn.ohyeah.itvgame.protocolv2;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.List;
 
+import cn.ohyeah.stb.utils.ByteBuffer;
 import org.apache.commons.lang.time.DateFormatUtils;
 
 import cn.ohyeah.itvgame.business.ErrorCode;
@@ -27,19 +25,19 @@ public class RecordProcessor implements IProcessor {
 	}
 
 	@Override
-	public void processRequest(ProcessorContext context, DataInputStream dis) throws IOException {
+	public void processRequest(ProcessorContext context, ByteBuffer req) {
 		switch (context.getHeadWrapper().getCommand()) {
 		case Constant.RECORD_CMD_SAVE: 
-			processCommandSave(context, dis);
+			processCommandSaveReq(context, req);
 			break;
 		case Constant.RECORD_CMD_READ: 
-			processCommandRead(context, dis);
+			processCommandReadReq(context, req);
 			break;
 		case Constant.RECORD_CMD_QUERY_DESC_LIST: 
-			processCommandQueryDescList(context, dis);
+			processCommandQueryDescListReq(context, req);
 			break;
 		case Constant.RECORD_CMD_UPDATE: 
-			processCommandUpdate(context, dis);
+			processCommandUpdateReq(context, req);
 			break;
 		default: 
 			String msg = "无效的协议命令, cmd="+context.getHeadWrapper().getCommand();
@@ -49,8 +47,8 @@ public class RecordProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandUpdate(ProcessorContext context, DataInputStream dis) throws IOException {
-		GameRecord record = extractGameRecord(context, dis);
+	private void processCommandUpdateReq(ProcessorContext context, ByteBuffer req) {
+		GameRecord record = extractGameRecord(context, req);
 		try {
 			recordServ.saveOrUpdate(record, context.getProductId());
 		}
@@ -61,9 +59,9 @@ public class RecordProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandQueryDescList(ProcessorContext context, DataInputStream dis) throws IOException {
-		int accountId = dis.readInt();
-		int productId = dis.readInt();
+	private void processCommandQueryDescListReq(ProcessorContext context, ByteBuffer req) {
+		int accountId = req.readInt();
+		int productId = req.readInt();
 		try {
 			List<GameRecordDesc> descList = recordServ.queryRecordDescList(accountId, productId);
 			context.setResult(descList);
@@ -75,10 +73,10 @@ public class RecordProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandRead(ProcessorContext context, DataInputStream dis) throws IOException {
-		int accountId = dis.readInt();
-		int productId = dis.readInt();
-		int recordId = dis.readInt();
+	private void processCommandReadReq(ProcessorContext context, ByteBuffer req) {
+		int accountId = req.readInt();
+		int productId = req.readInt();
+		int recordId = req.readInt();
 		try {
 			GameRecord record = recordServ.read(accountId, productId, recordId);
 			context.setResult(record);
@@ -90,8 +88,8 @@ public class RecordProcessor implements IProcessor {
 		}
 	}
 
-	private void processCommandSave(ProcessorContext context, DataInputStream dis) throws IOException {
-		GameRecord record = extractGameRecord(context, dis);
+	private void processCommandSaveReq(ProcessorContext context, ByteBuffer req) {
+		GameRecord record = extractGameRecord(context, req);
 		try {
 			recordServ.saveOrUpdate(record, context.getProductId());
 		}
@@ -102,26 +100,18 @@ public class RecordProcessor implements IProcessor {
 		}
 	}
 	
-	private GameRecord extractGameRecord(ProcessorContext context, DataInputStream dis) throws IOException {
-		int accountId = dis.readInt();
-		int productId = dis.readInt();
+	private GameRecord extractGameRecord(ProcessorContext context, ByteBuffer req) {
+		int accountId = req.readInt();
+		int productId = req.readInt();
 		context.setProductId(productId);
-		int recordId = dis.readInt();
-		int playDuration = dis.readInt();
-		int scores = dis.readInt();
-		String remark = dis.readUTF();
-		int dataLen = dis.readInt();
+		int recordId = req.readInt();
+		int playDuration = req.readInt();
+		int scores = req.readInt();
+		String remark = req.readUTF();
+		int dataLen = req.readInt();
 		byte[] data = null;
 		if (dataLen > 0) {
-			data = new byte[dataLen];
-			int readLen = 0;
-			int curReadLen = 0;
-			while (readLen < data.length) {
-				curReadLen = dis.read(data, readLen, data.length-readLen);
-				if (curReadLen > 0) {
-					readLen += curReadLen;
-				}
-			}
+            data = req.readBytes(dataLen);
 		}
 		
 		GameRecord record = new GameRecord();
@@ -137,64 +127,59 @@ public class RecordProcessor implements IProcessor {
 	}
 	
 	@Override
-	public void processResponse(ProcessorContext context, DataOutputStream dos) throws ServiceException, IOException {
+	public void processResponse(ProcessorContext context, ByteBuffer rsp) {
 		switch (context.getHeadWrapper().getCommand()) {
 		case Constant.RECORD_CMD_SAVE: 
-			processCommandSave(context, dos);
 			break;
 		case Constant.RECORD_CMD_READ: 
-			processCommandRead(context, dos);
+			processCommandReadRsp(context, rsp);
 			break;
 		case Constant.RECORD_CMD_QUERY_DESC_LIST: 
-			processCommandQueryDescList(context, dos);
+			processCommandQueryDescListRsp(context, rsp);
 			break;
 		case Constant.RECORD_CMD_UPDATE: 
-			processCommandUpdate(context, dos);
 			break;
 		default: 
 			break;
 		}
 	}
 
-	private void processCommandUpdate(ProcessorContext context, DataOutputStream dos) throws IOException {
-	}
-
-	private void processCommandSave(ProcessorContext context, DataOutputStream dos) throws IOException {
-	}
-
 	@SuppressWarnings("unchecked")
-	private void processCommandQueryDescList(ProcessorContext context, DataOutputStream dos) throws IOException {
+	private void processCommandQueryDescListRsp(ProcessorContext context, ByteBuffer rsp) {
 		List<GameRecordDesc> descList = (List<GameRecordDesc>)context.getResult();
 		if (descList!=null && descList.size()>0) {
-			dos.writeShort(descList.size());
+			rsp.writeShort((short)descList.size());
 			for (GameRecordDesc desc : descList) {
-				dos.writeInt(desc.getRecordId());
-				dos.writeInt(desc.getPlayDuration());
-				dos.writeInt(desc.getScores());
-				dos.writeUTF(desc.getRemark());
-				dos.writeUTF(DateFormatUtils.format(desc.getTime(), "yyyy/MM/dd HH:mm:ss"));
+				rsp.writeInt(desc.getRecordId());
+				rsp.writeInt(desc.getPlayDuration());
+				rsp.writeInt(desc.getScores());
+				rsp.writeUTF(desc.getRemark());
+				rsp.writeUTF(DateFormatUtils.format(desc.getTime(), "yyyy/MM/dd HH:mm:ss"));
 			}
 		}
 		else {
-			dos.writeShort(0);
+			rsp.writeShort((short)0);
 		}
 	}
 
-	private void processCommandRead(ProcessorContext context, DataOutputStream dos) throws IOException {
+	private void processCommandReadRsp(ProcessorContext context, ByteBuffer rsp) {
 		GameRecord record = (GameRecord)context.getResult();
 		if (record != null) {
-			dos.writeInt(record.getRecordId());
-			dos.writeInt(record.getPlayDuration());
-			dos.writeInt(record.getScores());
-			dos.writeUTF(record.getRemark());
-			dos.writeUTF(DateFormatUtils.format(record.getTime(), "yyyy/MM/dd HH:mm:ss"));
+            if (record.getData() != null) {
+                rsp.expand(record.getData().length+128);
+            }
+			rsp.writeInt(record.getRecordId());
+			rsp.writeInt(record.getPlayDuration());
+			rsp.writeInt(record.getScores());
+			rsp.writeUTF(record.getRemark());
+			rsp.writeUTF(DateFormatUtils.format(record.getTime(), "yyyy/MM/dd HH:mm:ss"));
 			byte[] data = record.getData();
 			if (data!=null && data.length>0) {
-				dos.writeInt(data.length);
-				dos.write(data, 0, data.length);
+				rsp.writeInt(data.length);
+				rsp.writeBytes(data, 0, data.length);
 			}
 			else {
-				dos.writeInt(0);
+				rsp.writeInt(0);
 			}
 		}
 	}

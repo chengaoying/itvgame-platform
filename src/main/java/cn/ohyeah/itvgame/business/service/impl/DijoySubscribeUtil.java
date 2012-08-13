@@ -1,11 +1,21 @@
 package cn.ohyeah.itvgame.business.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.protocol.HttpProcessor;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,20 +47,34 @@ public class DijoySubscribeUtil {
 	public static ResultInfo consumeCoins(String userId, String appId, int number, int feeCode, 
 									  String returnUrl, String notifyUrl, String platformExt, String appExt, String payKey){
 		try {
+			
 			String sign = userId + appId + feeCode + number + returnUrl + notifyUrl + platformExt + appExt + payKey;
 			sign = DigestUtils.md5Hex(sign).toUpperCase();
-			String pattern = "userId="+ userId +"&appId="+ appId +"&feeCode="+ feeCode +"&number="+ number
+			/*String pattern = "userId="+ userId +"&appId="+ appId +"&feeCode="+ feeCode +"&number="+ number
 							+ "&returnUrl="+""+"&notifyUrl="+""+"&platformExt="+ platformExt +"&appExt="
 							+ appExt +"&sign="+sign;
-			log.debug("[Dijoy expend UrlPattern] ==> "+paymentUrl+pattern);
-	    	//HttpGet httpget = new HttpGet(paymentUrl+pattern);
-			HttpPost httpPost = new HttpPost(paymentUrl);
-			StringEntity reqEntity = new StringEntity(pattern);
-			// 设置类型
-		    reqEntity.setContentType("application/x-www-form-urlencoded");
-		    // 设置请求的数据
-		    httpPost.setEntity(reqEntity);
-	    	String body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpPost);
+							
+			log.debug("[Dijoy expend UrlPattern] ==> "+paymentUrl);
+	    	HttpGet httpget = new HttpGet(paymentUrl+"?"+pattern);
+	    	String body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpget);
+*/
+			
+			List <NameValuePair> nvps = new ArrayList <NameValuePair>();
+			nvps.add(new BasicNameValuePair("userId", userId));
+			nvps.add(new BasicNameValuePair("appId", appId));
+			nvps.add(new BasicNameValuePair("feeCode", String.valueOf(feeCode)));
+			nvps.add(new BasicNameValuePair("number", String.valueOf(number)));
+			nvps.add(new BasicNameValuePair("returnUrl", returnUrl));
+			nvps.add(new BasicNameValuePair("notifyUrl", notifyUrl));
+			nvps.add(new BasicNameValuePair("platformExt", platformExt));
+			nvps.add(new BasicNameValuePair("appExt", appExt));
+			nvps.add(new BasicNameValuePair("sign", sign));
+			HttpPost httpost = new HttpPost(paymentUrl);
+						UrlEncodedFormEntity urlEntity = new UrlEncodedFormEntity(nvps, HTTP.UTF_8);
+						httpost.setEntity(urlEntity);
+
+	    	String body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpost);
+	    	
 	    	ObjectMapper op = new ObjectMapper();
 	    	JsonNode node = op.readValue(body, JsonNode.class);
 	    	/*{"order":"","feeCode":"","Sum":0,"payResult":1003,"appExt":"","sign":""}*/
@@ -59,9 +83,9 @@ public class DijoySubscribeUtil {
 	    	entry.setFeeCode(String.valueOf(node.get("feeCode")));
 	    	entry.setSum(Integer.parseInt(String.valueOf(node.get("Sum"))));
 	    	entry.setPayResult(Integer.parseInt(String.valueOf(node.get("payResult"))));
-	    	entry.setAppExt(String.valueOf(node.get("appExt")));
+	    	//entry.setAppExt(String.valueOf(node.get("appExt")));
 	    	entry.setSign(String.valueOf(node.get("sign")));
-	    	//System.out.println(entry);
+	    	System.out.println(entry);
 	    	ResultInfo info = new ResultInfo();
 	    	//info.setInfo(entry.getSum());
 	    	if(entry.getPayResult()==0){

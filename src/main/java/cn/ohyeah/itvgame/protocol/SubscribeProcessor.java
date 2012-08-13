@@ -127,14 +127,14 @@ public class SubscribeProcessor implements IProcessor {
 		int payType = dis.readInt();
 		context.setProp("payType", payType);
 		String remark = dis.readUTF();
-		String checkKey = dis.readUTF();
-		context.setProp("checkKey", checkKey);
+		/*String checkKey = dis.readUTF();
+		context.setProp("checkKey", checkKey);*/
 		String appId = dis.readUTF();
 		context.setProp("appId", appId);
 		String platformExt = dis.readUTF();
 		context.setProp("platformExt", platformExt);
-		String appExt = dis.readUTF();
-		context.setProp("appExt", appExt);
+		/*String appExt = dis.readUTF();
+		context.setProp("appExt", appExt);*/
         try {
             String password = dis.readUTF();
             context.setProp("password", password);

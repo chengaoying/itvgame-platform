@@ -72,14 +72,14 @@ public class SubscribeProcessor implements IProcessor {
         int payType = req.readInt();
         context.setProp("payType", payType);
         String remark = req.readUTF();
-        String checkKey = req.readUTF();
-        context.setProp("checkKey", checkKey);
+       /* String checkKey = req.readUTF();
+        context.setProp("checkKey", checkKey);*/
         String appId = req.readUTF();
         context.setProp("appId", appId);
         String platformExt = req.readUTF();
         context.setProp("platformExt", platformExt);
-        String appExt = req.readUTF();
-        context.setProp("appExt", appExt);
+       /* String appExt = req.readUTF();
+        context.setProp("appExt", appExt);*/
         try {
             String password = req.readUTF();
             context.setProp("password", password);

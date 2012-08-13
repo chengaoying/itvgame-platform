@@ -64,7 +64,7 @@ public class DijoyRechargeImpl implements IRecharge {
 
 	@Override
 	public boolean isSupportRecharge(ProductDetail detail) {
-		return false;
+		return true;
 	}
 
 	@Override

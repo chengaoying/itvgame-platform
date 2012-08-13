@@ -167,7 +167,6 @@
         <property name="cashToAmountRatio">10</property>
         <property name="supportPoints">false</property>
         <property name="payKey">5AD6AFFC5414489A469D6DF1E49DB24C</property>
-        <property name="feeCode">dijoyFeeCode</property>
         <property name="subscribeMode">webservice</property>
         <property name="paymentUrl">
             <![CDATA[http://220.248.44.50:3280/common/php/business/apppay.php]]>

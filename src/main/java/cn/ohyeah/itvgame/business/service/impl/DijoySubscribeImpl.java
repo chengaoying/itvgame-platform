@@ -74,7 +74,7 @@ public class DijoySubscribeImpl extends AbstractSubscribeImpl {
 		String userId = account.getUserId();
 		String appId = (String) props.get("appId");
 		int number = 1; 
-		int feeCode = pr.getAmount();
+		int feeCode = 1;//pr.getAmount();
 		String returnUrl = "";
 		String notifyUrl = "";
 		String platformExt = (String) props.get("platformExt");

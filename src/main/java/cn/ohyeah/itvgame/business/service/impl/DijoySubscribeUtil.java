@@ -41,14 +41,18 @@ public class DijoySubscribeUtil {
 	}
 	
 	public static ResultInfo consumeCoins(String userId, String appId, int number, int feeCode, 
-									  String returnUrl, String notifyUrl, String platformExt, String appExt, String payKey){
+									  String returnUrl, String notifyUrl, String platformExt, String appExt, 
+									  String payKey, String buyUrl){
 		try {
 			String sign = userId + appId + feeCode + number + returnUrl + notifyUrl + platformExt + appExt + payKey;
 			sign = DigestUtils.md5Hex(sign).toUpperCase();
 		/*	String pattern = "userId="+ userId +"&appId="+ appId +"&feeCode="+ feeCode +"&number="+ number
 							+ "&returnUrl="+""+"&notifyUrl="+""+"&platformExt="+ platformExt +"&appExt="
 							+ appExt +"&sign="+sign;*/
-			log.debug("[Dijoy expend UrlPattern] ==> "+paymentUrl);
+			if("".equals(buyUrl) || buyUrl==null){
+				buyUrl = paymentUrl;
+			}
+			log.debug("[Dijoy expend UrlPattern] ==> "+buyUrl);
 	    	/*//HttpGet httpget = new HttpGet(paymentUrl+pattern);
 			HttpPost httpPost = new HttpPost(paymentUrl);
 			StringEntity reqEntity = new StringEntity(pattern);
@@ -66,7 +70,7 @@ public class DijoySubscribeUtil {
 			nvps.add(new BasicNameValuePair("platformExt", platformExt));
 			nvps.add(new BasicNameValuePair("appExt", appExt));
 			nvps.add(new BasicNameValuePair("sign", sign));
-			HttpPost httpPost = new HttpPost(paymentUrl);
+			HttpPost httpPost = new HttpPost(buyUrl);
 						UrlEncodedFormEntity urlEntity = new UrlEncodedFormEntity(nvps, HTTP.UTF_8);
 						httpPost.setEntity(urlEntity);
 
@@ -75,6 +79,7 @@ public class DijoySubscribeUtil {
 	    	JsonNode node = op.readValue(body, JsonNode.class);
 	    	/*{"order":"","feeCode":"","Sum":0,"payResult":1003,"appExt":"","sign":""}*/
 	    	DijoyResponseEntry entry = new DijoyResponseEntry();
+	    	//entry.setUserId(Integer.parseInt(String.valueOf(node.get("userId"))));
 	    	entry.setOrder(String.valueOf(node.get("order")));
 	    	entry.setFeeCode(String.valueOf(node.get("feeCode")));
 	    	entry.setSum(Integer.parseInt(String.valueOf(node.get("Sum"))));

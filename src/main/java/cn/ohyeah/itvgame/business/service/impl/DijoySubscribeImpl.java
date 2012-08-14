@@ -20,9 +20,13 @@ import cn.ohyeah.itvgame.platform.model.PurchaseRelation;
 public class DijoySubscribeImpl extends AbstractSubscribeImpl {
 	private static final Log log = LogFactory.getLog(DijoySubscribeImpl.class);
 	private static final IPurchaseRelationDao prDao;
+	private static final String[] feecodes;
+	private static final String[] amounts;
 	
 	static {
 		prDao = (IPurchaseRelationDao)BeanManager.getDao("purchaseRelationDao");
+		feecodes = Configuration.getProperty("dijoy", "feecodes").split("/");
+		amounts = Configuration.getProperty("dijoy", "amounts").split("/");
 	}
 
 	public DijoySubscribeImpl() {
@@ -74,13 +78,14 @@ public class DijoySubscribeImpl extends AbstractSubscribeImpl {
 		String userId = account.getUserId();
 		String appId = (String) props.get("appId");
 		int number = 1; 
-		int feeCode = 1;//pr.getAmount();
+		int feeCode = convertFeecode(pr.getAmount());
 		String returnUrl = "";
 		String notifyUrl = "";
+		String buyUrl = (String) props.get("buyURL");
 		String platformExt = (String) props.get("platformExt");
-		String appExt = "appExt";//(String) props.get("platformExt");
-		String payKey = Configuration.getProperty("dijoy", "payKey");//(String) props.get("checkKey");
-		return DijoySubscribeUtil.consumeCoins(userId, appId, number, feeCode, returnUrl, notifyUrl, platformExt, appExt, payKey);
+		String appExt = "appExt";
+		String payKey = (String) props.get("payKey");
+		return DijoySubscribeUtil.consumeCoins(userId, appId, number, feeCode, returnUrl, notifyUrl, platformExt, appExt, payKey, buyUrl);
 	}
 	
 	@Override
@@ -96,6 +101,16 @@ public class DijoySubscribeImpl extends AbstractSubscribeImpl {
 			Map<String, Object> props, Account account, ProductDetail detail,
 			PurchaseRelation pr, String remark, Date time) {
 		throw new BusinessException("not supported");
+	}
+	
+	private int convertFeecode(int amount){
+		for(int i=0;i<amounts.length;i++){
+			int a = Integer.parseInt(amounts[i]);
+			if(amount==a){
+				return Integer.parseInt(feecodes[i]);
+			}
+		}
+		return -1;
 	}
 
 }

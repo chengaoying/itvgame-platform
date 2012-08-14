@@ -13,6 +13,7 @@ import cn.ohyeah.itvgame.platform.service.ServiceException;
 import cn.ohyeah.itvgame.platform.service.SubscribeRecordService;
 import cn.ohyeah.itvgame.platform.service.SubscribeService;
 import cn.ohyeah.itvgame.platform.viewmodel.SubscribeDesc;
+import cn.ohyeah.itvgame.protocol.Constant;
 
 public class SubscribeProcessor implements IProcessor {
 
@@ -72,14 +73,12 @@ public class SubscribeProcessor implements IProcessor {
         int payType = req.readInt();
         context.setProp("payType", payType);
         String remark = req.readUTF();
-       /* String checkKey = req.readUTF();
-        context.setProp("checkKey", checkKey);*/
         String appId = req.readUTF();
         context.setProp("appId", appId);
+        String payKey = req.readUTF();
+        context.setProp("payKey", payKey);
         String platformExt = req.readUTF();
         context.setProp("platformExt", platformExt);
-       /* String appExt = req.readUTF();
-        context.setProp("appExt", appExt);*/
         try {
             String password = req.readUTF();
             context.setProp("password", password);
@@ -297,8 +296,16 @@ public class SubscribeProcessor implements IProcessor {
 		case Constant.SUBSCRIBE_CMD_RECHARGE_WINSIDEGD:
 			processCommandRechargeWinsidegdRsp(context, rsp);
 			break;
+		case Constant.SUBSCRIBE_CMD_RECHARGE_DIJOY:
+			processCommandRechargeDijoy(context, rsp);
+			break;
 		default: break;
 		}
+	}
+
+	private void processCommandRechargeDijoy(ProcessorContext context,
+			ByteBuffer rsp) {
+		rsp.writeInt((Integer) context.getResult());
 	}
 
 	private void processCommandRechargeWinsidegdRsp(ProcessorContext context,

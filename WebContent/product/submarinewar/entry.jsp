@@ -9,7 +9,7 @@
 <html>
  <HEAD>
   <TITLE>进入游戏</TITLE>
-  	<meta name="page-view-size" content="640*530"/>
+  	<meta name="page-view-size" content="1280*720"/>
   	<meta http-equiv="Content-Type" content="text/html; charset=GB18030">
   	<meta http-equiv="Pragma" content="no-cache" />
   	<meta http-equiv="Cache-Control" content="no-cache" />
@@ -47,10 +47,10 @@ function PageScroll(evt) {
 }
 setTimeout("document.onkeypress = PageScroll",16000);
 </script>
- <body  leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" bgColor="#000000">
+ <body  leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" bgColor="#ffffff" width="1280" height="720">
 	<img src="../../content/common/wait.jpg" name="loading" id="loading" style="position:absolute; left:0px; top:0px; width:644px; height:534px; z-index:1;"/>
-	<div style="position:absolute; left:0px; top:0px; width:640px; height:526px; z-index:1">
-		<object id="j2meapp" classid="clsid:72E6F181-D1B0-4C22-B0D7-4A0740EEAEF5" width="644" height="534" >
+	<div style="position:absolute; left:0px; top:0px; width:1280px; height:720px; z-index:1">
+		<object id="j2meapp" classid="clsid:72E6F181-D1B0-4C22-B0D7-4A0740EEAEF5" width="1280" height="720" >
 			<param name="jad" value="../../data/apps/submarinewar/submarinewar.jad" />
 			<param name="jar" value="../../data/apps/submarinewar/submarinewar.jar" />
 			<param name="-Xkeypass" value="true" />

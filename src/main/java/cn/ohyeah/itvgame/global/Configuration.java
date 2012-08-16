@@ -247,7 +247,7 @@ public class Configuration {
         pointsServiceImplementors = loadProperties("/pointsServiceImplementors.properties");
         pointsServiceImplementor = pointsServiceImplementors.getProperty(
                 getTelcomOperator()+"."+getServiceProvider(),
-                subscribeImplementors.getProperty(getTelcomOperator(),"notsupport")
+                pointsServiceImplementors.getProperty(getTelcomOperator(),"notsupport")
         );
     }
 
@@ -255,7 +255,7 @@ public class Configuration {
         rechargeImplementors = loadProperties("/rechargeImplementors.properties");
         rechargeImplementor = rechargeImplementors.getProperty(
                 getTelcomOperator()+"."+getServiceProvider(),
-                subscribeImplementors.getProperty(getServiceProvider())
+                rechargeImplementors.getProperty(getServiceProvider())
         );
         if (StringUtils.isEmpty(rechargeImplementor)) {
             throw new RuntimeException("can not find appropriate rechargeImplementor");

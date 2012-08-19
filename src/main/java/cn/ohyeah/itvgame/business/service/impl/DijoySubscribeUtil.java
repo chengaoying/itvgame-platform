@@ -22,16 +22,15 @@ import cn.ohyeah.itvgame.business.ResultInfo;
 import cn.ohyeah.itvgame.business.model.DijoyResponseEntry;
 import cn.ohyeah.itvgame.business.service.BusinessException;
 import cn.ohyeah.itvgame.business.service.SubscribeException;
-import cn.ohyeah.itvgame.global.Configuration;
 
 public class DijoySubscribeUtil {
 	private static final Log log = LogFactory.getLog(WinsideSubscribeUtil.class);
 	private static final DefaultHttpClient httpClient;
-	private static final String paymentUrl;
+	//private static final String paymentUrl;
 	
 	static {
 		httpClient = ThreadSafeClientConnManagerUtil.buildDefaultHttpClient();
-		paymentUrl = Configuration.getProperty("dijoy", "paymentUrl");
+		//paymentUrl = Configuration.getProperty("dijoy", "paymentUrl");
 	}
 	
 	public static ResultInfo recharge(String userId, String appId, int number, String feeCode, 
@@ -48,10 +47,12 @@ public class DijoySubscribeUtil {
 			sign = DigestUtils.md5Hex(sign).toUpperCase();
 		/*	String pattern = "userId="+ userId +"&appId="+ appId +"&feeCode="+ feeCode +"&number="+ number
 							+ "&returnUrl="+""+"&notifyUrl="+""+"&platformExt="+ platformExt +"&appExt="
-							+ appExt +"&sign="+sign;*/
+							+ appExt +"&sign="+sign;
 			if("".equals(buyUrl) || buyUrl==null){
 				buyUrl = paymentUrl;
 			}
+		*/
+			
 			log.debug("[Dijoy expend UrlPattern] ==> "+buyUrl);
 	    	/*//HttpGet httpget = new HttpGet(paymentUrl+pattern);
 			HttpPost httpPost = new HttpPost(paymentUrl);

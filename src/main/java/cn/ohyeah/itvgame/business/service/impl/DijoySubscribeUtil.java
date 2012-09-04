@@ -78,23 +78,19 @@ public class DijoySubscribeUtil {
 	    	String body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpPost);
 	    	ObjectMapper op = new ObjectMapper();
 	    	JsonNode node = op.readValue(body, JsonNode.class);
-	    	/*{"order":"","feeCode":"","Sum":0,"payResult":1003,"appExt":"","sign":""}*/
 	    	DijoyResponseEntry entry = new DijoyResponseEntry();
-	    	//entry.setUserId(Integer.parseInt(String.valueOf(node.get("userId"))));
 	    	entry.setOrder(String.valueOf(node.get("order")));
 	    	entry.setFeeCode(String.valueOf(node.get("feeCode")));
 	    	entry.setSum(Integer.parseInt(String.valueOf(node.get("Sum"))));
 	    	entry.setPayResult(Integer.parseInt(String.valueOf(node.get("payResult"))));
-	    	//entry.setAppExt(String.valueOf(node.get("appExt")));
 	    	entry.setSign(String.valueOf(node.get("sign")));
 	    	System.out.println(entry);
 	    	ResultInfo info = new ResultInfo();
-	    	//info.setInfo(entry.getSum());
 	    	if(entry.getPayResult()==0){
 	    		info.setInfo(entry.getSum());
 	    	}else{
 	    		info.setErrorCode(ErrorCode.EC_SUBSCRIBE_FAILED);
-	    		info.setMessage(getRechargegdErrorMessage(entry.getPayResult()));
+	    		info.setMessage(getRechargegdErrorMessage(entry.getPayResult())+"("+String.valueOf(entry.getPayResult())+")");
 	    	}
 	    	return info;
 		} catch (Exception e) {

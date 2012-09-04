@@ -43,8 +43,8 @@ function init() {
 <body bgcolor="#000000"	leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="init();">
 <div style="position:absolute;left:0px;top:0px;width:634px;height:520px;background-image:url('../../content/product/worldwar/info.png');background-repeat:no-repeat;">
 	<div style="left:436px;top:426px;position:absolute">
-		<a href="<%=returnUrl %>"><img width="84" height="34" src="../../content/common/empty.gif" border="0"/></a>
-	</div>
+		<!--<a href="<%=returnUrl %>"><img width="84" height="34" src="../../content/common/empty.gif" border="0"/></a>
+	--></div>
 </div>
 </body>
 </html>

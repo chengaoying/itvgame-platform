@@ -63,9 +63,9 @@ setTimeout("document.onkeypress = PageScroll",16000);
 			<param name="productId" value="<%=productId %>" />
 			<param name="appName" value="<%=product.getAppName() %>" />
 			<param name="server" value="<%=protocolLocation %>" />
-			<!--<param name="price" value="<%=1/3/5/10 %>" />
+			<param name="price" value="<%=1/3/5/10 %>" />
 			 
-		--></object>
+		</object>
 	</div>
  </body>
 </html>

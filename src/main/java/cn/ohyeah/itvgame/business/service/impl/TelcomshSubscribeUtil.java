@@ -316,7 +316,7 @@ public final class TelcomshSubscribeUtil {
         	String subUrlPre = getUrlPrefix(subscribeUrl);
         	String returnUrl = "/itvgame/subresult";
             String subUrl = String.format(subscribeUrl, userId, subscribeId, userToken, spid, returnUrl);
-            log.debug("[subscribe url] ==> "+subUrl);
+            log.info("[subscribe url] ==> "+subUrl);
             String body = execSubRequest(subUrl);
             log.debug("body: "+body);
             if (body == null) {

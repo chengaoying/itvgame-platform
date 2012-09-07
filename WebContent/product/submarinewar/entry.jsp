@@ -50,15 +50,14 @@ function PageScroll(evt) {
 }
 setTimeout("document.onkeypress = PageScroll",16000);
 </script>
- <body  leftmargin="0" style="background-Repeat:no-repeat" topmargin="0" marginwidth="0" marginheight="0" bgColor="#ffffff" width="640" height="530">
-	<img src="../../content/common/wait.jpg" name="loading" id="loading" style="position:absolute; left:0px; top:0px; width:640px; height:530px; z-index:1;"/>
-	<div style="position:absolute; left:0px; top:0px; width:640px; height:530px; z-index:1">
-		<object id="j2meapp" classid="clsid:72E6F181-D1B0-4C22-B0D7-4A0740EEAEF5" width="1280" height="720" >
+ <body  leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" bgColor="#000000">
+	<img src="../../content/common/wait.jpg" name="loading" id="loading" style="position:absolute; left:0px; top:0px; width:644px; height:534px; z-index:1;"/>
+	<div style="position:absolute; left:0px; top:0px; width:644px; height:534px; z-index:1">
+		<object id="j2meapp" classid="clsid:72E6F181-D1B0-4C22-B0D7-4A0740EEAEF5" width="644" height="534" >
 			<param name="jad" value="../../data/apps/submarinewar/submarinewar.jad" />
 			<param name="jar" value="../../data/apps/submarinewar/submarinewar.jar" />
 			<param name="-Xkeypass" value="true" />
-			
-			<%-- <param name="systemTimeMillis" value="<%=time.getTime() %>" />
+			<param name="systemTimeMillis" value="<%=time.getTime() %>" />
 			<param name="accountId" value="<%=accountId %>" />
 			<param name="userId" value="<%=userId %>" />
 			<param name="accountName" value="<%=accountName %>" />
@@ -66,18 +65,7 @@ setTimeout("document.onkeypress = PageScroll",16000);
 			<param name="productId" value="<%=productId %>" />
 			<param name="appName" value="<%=product.getAppName() %>" />
 			<param name="server" value="<%=protocolLocation %>" />
-			<param name="price" value="<%=5 %>" /> --%>
-			
-			<param name="LoginID" value="<%=15045 %>" />
-			<param name="HomeUrl" value="<%=str %>" />
-			<param name="UserID" value="<%=15045 %>" />
-			<param name="AppID" value="<%=21114 %>" />
-			<param name="ReturnUrl" value="<%=str %>" />
-			<param name="PlatformExt" value="<%=str %>" />
-			<param name="BuyWebUrl" value="<%=str %>" />
-			<param name="RechargeUrl" value="<%=str %>" />
-			<param name="BuyService" value="<%=buyUrl %>" />
-			 
+			<param name="price" value="<%=2/5/10/20 %>"/>
 		</object>
 	</div>
  </body>

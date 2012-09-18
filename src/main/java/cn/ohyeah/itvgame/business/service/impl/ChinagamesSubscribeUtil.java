@@ -161,12 +161,14 @@ public class ChinagamesSubscribeUtil {
             	}
             	else {
 		            body = filterSubRedirect(userId, payType, subUrlPre, body, 3);
+		            log.debug("return body ===>"+body);
 		            if (body == null) {
 		            	info.setErrorCode(ErrorCode.EC_SUBSCRIBE_FAILED);
 						info.setMessage("无法解析电信订购确认页面");
 		            }
 		            else {
 		            	String backUrl = extractBackUrl(body);
+		            	log.debug("[backUrl ===>]"+backUrl);
 			            String result = extractSubResult(backUrl);
 			            execStatRequest(backUrl);
 			            log.debug("[subscribe result] ==> "+result);

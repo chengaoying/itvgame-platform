@@ -22,16 +22,13 @@ import cn.ohyeah.itvgame.business.ResultInfo;
 import cn.ohyeah.itvgame.business.model.DijoyResponseEntry;
 import cn.ohyeah.itvgame.business.service.BusinessException;
 import cn.ohyeah.itvgame.business.service.SubscribeException;
-import cn.ohyeah.itvgame.global.Configuration;
 
 public class DijoySubscribeUtil {
 	private static final Log log = LogFactory.getLog(WinsideSubscribeUtil.class);
 	private static final DefaultHttpClient httpClient;
-	private static final String paymentUrl;
 	
 	static {
 		httpClient = ThreadSafeClientConnManagerUtil.buildDefaultHttpClient();
-		paymentUrl = Configuration.getProperty("dijoy", "paymentUrl");
 	}
 	
 	public static ResultInfo recharge(String userId, String appId, int number, String feeCode, 
@@ -46,20 +43,7 @@ public class DijoySubscribeUtil {
 		try {
 			String sign = userId + appId + feeCode + number + returnUrl + notifyUrl + platformExt + appExt + payKey;
 			sign = DigestUtils.md5Hex(sign).toUpperCase();
-		/*	String pattern = "userId="+ userId +"&appId="+ appId +"&feeCode="+ feeCode +"&number="+ number
-							+ "&returnUrl="+""+"&notifyUrl="+""+"&platformExt="+ platformExt +"&appExt="
-							+ appExt +"&sign="+sign;*/
-			if("".equals(buyUrl) || buyUrl==null){
-				buyUrl = paymentUrl;
-			}
 			log.debug("[Dijoy expend UrlPattern] ==> "+buyUrl);
-	    	/*//HttpGet httpget = new HttpGet(paymentUrl+pattern);
-			HttpPost httpPost = new HttpPost(paymentUrl);
-			StringEntity reqEntity = new StringEntity(pattern);
-			// 设置类型
-		    reqEntity.setContentType("application/x-www-form-urlencoded");
-		    // 设置请求的数据
-		    httpPost.setEntity(reqEntity);*/
 			List <NameValuePair> nvps = new ArrayList <NameValuePair>();
 			nvps.add(new BasicNameValuePair("userId", userId));
 			nvps.add(new BasicNameValuePair("appId", appId));
@@ -77,23 +61,19 @@ public class DijoySubscribeUtil {
 	    	String body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpPost);
 	    	ObjectMapper op = new ObjectMapper();
 	    	JsonNode node = op.readValue(body, JsonNode.class);
-	    	/*{"order":"","feeCode":"","Sum":0,"payResult":1003,"appExt":"","sign":""}*/
 	    	DijoyResponseEntry entry = new DijoyResponseEntry();
-	    	//entry.setUserId(Integer.parseInt(String.valueOf(node.get("userId"))));
 	    	entry.setOrder(String.valueOf(node.get("order")));
 	    	entry.setFeeCode(String.valueOf(node.get("feeCode")));
 	    	entry.setSum(Integer.parseInt(String.valueOf(node.get("Sum"))));
 	    	entry.setPayResult(Integer.parseInt(String.valueOf(node.get("payResult"))));
-	    	//entry.setAppExt(String.valueOf(node.get("appExt")));
 	    	entry.setSign(String.valueOf(node.get("sign")));
 	    	System.out.println(entry);
 	    	ResultInfo info = new ResultInfo();
-	    	//info.setInfo(entry.getSum());
 	    	if(entry.getPayResult()==0){
 	    		info.setInfo(entry.getSum());
 	    	}else{
 	    		info.setErrorCode(ErrorCode.EC_SUBSCRIBE_FAILED);
-	    		info.setMessage(getRechargegdErrorMessage(entry.getPayResult()));
+	    		info.setMessage(getRechargegdErrorMessage(entry.getPayResult())+"("+String.valueOf(entry.getPayResult())+")");
 	    	}
 	    	return info;
 		} catch (Exception e) {

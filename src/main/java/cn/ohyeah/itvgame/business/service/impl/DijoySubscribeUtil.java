@@ -67,7 +67,7 @@ public class DijoySubscribeUtil {
 	    	entry.setSum(Integer.parseInt(String.valueOf(node.get("Sum"))));
 	    	entry.setPayResult(Integer.parseInt(String.valueOf(node.get("payResult"))));
 	    	entry.setSign(String.valueOf(node.get("sign")));
-	    	System.out.println(entry);
+	    	log.info("entry-->"+entry);
 	    	ResultInfo info = new ResultInfo();
 	    	if(entry.getPayResult()==0){
 	    		info.setInfo(entry.getSum());
@@ -117,7 +117,8 @@ public class DijoySubscribeUtil {
 		case 1002: message = "用户数据缺失"; break;
 		case 1001: message = "认证信息缺失"; break;
 		case 1000: message = "后台请求失败"; break;
-		default: message = "未知错误"; break;
+		case 30013: message = "充值金额超过上限"; break;
+		default: message = "余额不足，请到大厅充值"; break;
 		}
 		return message;
 	}

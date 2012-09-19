@@ -2,8 +2,8 @@
 <configurations>
 	<configuration id="global">
 		<property name="supportCache">true</property>
-		<property name="sql.dialect">sqlserver</property>
-		<property name="connection.xml">/sqlserver.config.xml</property>
+		<property name="sql.dialect">mysql</property>
+		<property name="connection.xml">/mysql.config.xml</property>
 		<property name="telcomOperator">telcomCommon</property>
 		<property name="serviceProvider">dijoy</property>
 		<users>
@@ -163,14 +163,10 @@
 	</configuration>
 
     <configuration id="dijoy">
-        <property name="amountUnit">元</property>
+        <property name="amountUnit">金币</property>
         <property name="cashToAmountRatio">1</property>
         <property name="supportPoints">false</property>
         <property name="feecodes">1/2/3/4</property>
         <property name="amounts">1/2/5/10</property>
-        <property name="subscribeMode">webservice</property>
-        <property name="paymentUrl">
-            <![CDATA[http://220.248.44.50:3280/common/php/business/apppay.php]]>
-        </property>
     </configuration>
 </configurations>

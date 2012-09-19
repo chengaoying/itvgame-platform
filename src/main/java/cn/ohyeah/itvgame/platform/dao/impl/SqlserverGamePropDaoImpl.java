@@ -23,9 +23,9 @@ public class SqlserverGamePropDaoImpl implements IGamePropDao {
 	@Override
 	public void save(GameProp prop) {
 		java.math.BigDecimal key = (java.math.BigDecimal)QueryHelper.updateReturnKey("insert into " +
-				"[GameProp](propName, price, validPeriod, productId, description) values(?, ?, ?, ?, ?)", 
+				"[GameProp](propName, price, validPeriod, productId, feeCode, description) values(?, ?, ?, ?, ?, ?)", 
 				prop.getPropName(), prop.getPrice(), prop.getValidPeriod(), 
-				prop.getProductId(), prop.getDescription());
+				prop.getProductId(), prop.getFeeCode(), prop.getDescription());
 		prop.setPropId(key.intValue());
 		Configuration.setCache("gameProp", prop.getPropId(), prop);
 	}

@@ -13,8 +13,8 @@ public class DefaultProcessor implements IProcessor {
 	private static final IProcessor recordProcessor = new RecordProcessor();
 	private static final IProcessor attainmentProcessor = new AttainmentProcessor();
 	private static final IProcessor propProcessor = new PropProcessor();
-	private static final IProcessor subscribeProcessor = new SubscribeProcessor();
-	private static final IProcessor purchaseProcessor = new PurchaseProcessor();
+	//private static final IProcessor subscribeProcessor = new SubscribeProcessor();
+	//private static final IProcessor purchaseProcessor = new PurchaseProcessor();
 	private static final IProcessor accountProcessor = new AccountProcessor();
 	private static final IProcessor sysServProcessor = new SysServProcessor();
 	
@@ -41,10 +41,10 @@ public class DefaultProcessor implements IProcessor {
 			processor = propProcessor;
 			break;
 		case Constant.PROTOCOL_TAG_SUBSCRIBE:
-			processor = subscribeProcessor;
+			//processor = subscribeProcessor;
 			break;
 		case Constant.PROTOCOL_TAG_PURCHASE: 
-			processor = purchaseProcessor;
+			//processor = purchaseProcessor;
 			break;
 		case Constant.PROTOCOL_TAG_ACCOUNT:
 			processor = accountProcessor;

@@ -2,8 +2,6 @@ package cn.ohyeah.itvgame.protocolv2;
 
 import cn.ohyeah.stb.utils.ByteBuffer;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**

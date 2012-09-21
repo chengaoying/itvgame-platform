@@ -2,8 +2,8 @@
 <configurations>
 	<configuration id="global">
 		<property name="supportCache">true</property>
-		<property name="sql.dialect">mysql</property>
-		<property name="connection.xml">/mysql.config.xml</property>
+		<property name="sql.dialect">sqlserver</property>
+		<property name="connection.xml">/sqlserver.config.xml</property>
 		<property name="telcomOperator">telcomCommon</property>
 		<property name="serviceProvider">dijoy</property>
 		<users>

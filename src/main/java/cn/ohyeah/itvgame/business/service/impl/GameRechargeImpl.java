@@ -45,7 +45,7 @@ public class GameRechargeImpl implements IRecharge{
 
 	@Override
 	public boolean isSupportRecharge(ProductDetail detail) {
-		return false;
+		return true;
 	}
 
 	@Override

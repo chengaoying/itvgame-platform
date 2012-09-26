@@ -8,6 +8,7 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import cn.ohyeah.itvgame.business.ErrorCode;
 import cn.ohyeah.itvgame.business.ResultInfo;
 import cn.ohyeah.itvgame.global.BeanManager;
+import cn.ohyeah.itvgame.platform.service.GamePropService;
 import cn.ohyeah.itvgame.platform.service.PurchaseRecordService;
 import cn.ohyeah.itvgame.platform.service.PurchaseService;
 import cn.ohyeah.itvgame.platform.service.ServiceException;
@@ -23,10 +24,12 @@ public class PurchaseProcessor implements IProcessor {
 
 	private static final PurchaseService purchaseServ;
 	private static final PurchaseRecordService purchaseRevServ;
+	private static final GamePropService propServ;
 	
 	static {
 		purchaseServ = (PurchaseService)BeanManager.getBean("purchaseService");
 		purchaseRevServ = (PurchaseRecordService)BeanManager.getBean("purchaseRecordService");
+		propServ = (GamePropService)BeanManager.getBean("gamePropService");
 	}
 	
 	@Override
@@ -62,8 +65,9 @@ public class PurchaseProcessor implements IProcessor {
 	        context.setProp("userToken", userToken);
 	        int productId = req.readInt();
 	        int amount = req.readInt();
+	        context.setProp("amount", amount);
 	        int propId = req.readInt();
-	        context.setProp("propId", propId);
+	        //context.setProp("propId", propId);
 	        int payType = req.readInt();
 	        context.setProp("payType", payType);
 	        String remark = req.readUTF();
@@ -73,6 +77,8 @@ public class PurchaseProcessor implements IProcessor {
 	        context.setProp("payKey", payKey);
 	        String platformExt = req.readUTF();
 	        context.setProp("platformExt", platformExt);
+	        int feeCode = propServ.read(propId).getFeeCode();
+	        context.setProp("feeCode", feeCode);
 	        try {
 	            String password = req.readUTF();
 	            context.setProp("password", password);
@@ -81,7 +87,8 @@ public class PurchaseProcessor implements IProcessor {
 	            context.setProp("password", "");
 	        }
 	        try {
-	            ResultInfo info = purchaseServ.expend(context.getPropsMap(), accountId, productId, amount, remark);
+	        	//ResultInfo info = purchaseServ.expend(context.getPropsMap(), accountId, productId, amount, remark);
+	            ResultInfo info = purchaseServ.purchaseProp(context.getPropsMap(), accountId, productId, propId, 1, remark);
 	            if (info.isSuccess()) {
 	                context.setResult((Integer)info.getInfo());
 	            }

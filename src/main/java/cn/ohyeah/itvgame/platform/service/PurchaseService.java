@@ -85,11 +85,6 @@ public class PurchaseService {
 		ProductDetail detail = productServ.validateExistProductDetail(props, productId);
 		Authorization auth = authServ.validateExist(props, account, detail);
 		ppServ.validateExist(props, account, detail);
-		if(!props.get("propId").equals("") && props.get("propId")!=null){
-			int propId =  (Integer) props.get("propId");
-			int feeCode = propServ.read(propId).getFeeCode();
-			props.put("feeCode", feeCode);
-		}
 		
 		try {
 			DBManager.setAutoCommit(false);

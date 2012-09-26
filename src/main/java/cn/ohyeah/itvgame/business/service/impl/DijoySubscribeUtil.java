@@ -69,12 +69,13 @@ public class DijoySubscribeUtil {
 	    	entry.setSign(String.valueOf(node.get("sign")));
 	    	log.info("entry-->"+entry);
 	    	ResultInfo info = new ResultInfo();
-	    	if(entry.getPayResult()==0){
+	    	info.setInfo(11);
+	    	/*if(entry.getPayResult()==0){
 	    		info.setInfo(entry.getSum());
 	    	}else{
 	    		info.setErrorCode(ErrorCode.EC_SUBSCRIBE_FAILED);
 	    		info.setMessage(getRechargegdErrorMessage(entry.getPayResult())+"("+String.valueOf(entry.getPayResult())+")");
-	    	}
+	    	}*/
 	    	return info;
 		} catch (Exception e) {
 			throw new SubscribeException(e);

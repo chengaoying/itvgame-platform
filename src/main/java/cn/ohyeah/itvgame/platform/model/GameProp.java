@@ -11,8 +11,15 @@ public class GameProp implements java.io.Serializable {
 	private int price;
 	private int validPeriod;
 	private int productId;		/*属于哪个游戏*/
+	private int feeCode;		/*扣费点*/
 	private String description;	/*描述*/
 	
+	public int getFeeCode() {
+		return feeCode;
+	}
+	public void setFeeCode(int feeCode) {
+		this.feeCode = feeCode;
+	}
 	public int getPropId() {
 		return propId;
 	}

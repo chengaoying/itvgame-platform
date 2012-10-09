@@ -160,6 +160,7 @@ create table [GameProp](
 	price int not null,
 	validPeriod int not null,
 	productId int not null,
+	feeCode int not null,
 	description varchar(255) not null,
 	primary key(propId)
 );

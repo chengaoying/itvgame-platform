@@ -160,6 +160,7 @@ create table if not exists GameProp(
 	price int not null,
 	validPeriod int not null default 0,
 	productId int not null,
+	feeCode int not null,
 	description varchar(255) not null,
 	primary key(propId),
 	index(productId)

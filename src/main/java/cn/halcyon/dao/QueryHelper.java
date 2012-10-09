@@ -39,6 +39,7 @@ public class QueryHelper {
 		}
 	};
 	
+	@SuppressWarnings("serial")
 	private final static List<Class<?>> PrimitiveClasses = new ArrayList<Class<?>>(){{
 		add(Long.class);
 		add(Integer.class);

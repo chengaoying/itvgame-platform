@@ -207,6 +207,8 @@ public class InitUtil {
 			cell = sheet.getCell(c++, r);
 			prop.setProductId(Integer.parseInt(cell.getContents()));
 			cell = sheet.getCell(c++, r);
+			prop.setFeeCode(Integer.parseInt(cell.getContents()));
+			cell = sheet.getCell(c++, r);
 			prop.setDescription(cell.getContents());
 			propServ.save(prop);
 		}

@@ -41,7 +41,7 @@ public class RequestContext {
 		ConvertUtils.register(new Converter(){
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d");
 			SimpleDateFormat sdf_time = new SimpleDateFormat("yyyy-M-d H:m");
-			@SuppressWarnings("unchecked")
+			@SuppressWarnings("rawtypes")
 			public Object convert(Class type, Object value) {
 				if(value == null) return null;
 		        if (value instanceof Date) return (value);

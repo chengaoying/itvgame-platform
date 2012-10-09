@@ -56,7 +56,7 @@ public class DijoyRechargeImpl implements IRecharge {
 			return info;
 		}
 		props.put("purchaseRelation", pr);
-		int newAmount = amount/detail.getRechargeRatio();
+		int newAmount = amount;
 		pr.setAmount(newAmount);
 		log.debug("[Expend Amount] ==> "+newAmount);
 		return subImpl.subscribe(props, account, detail, auth, pr, remark, prTime);
@@ -64,7 +64,7 @@ public class DijoyRechargeImpl implements IRecharge {
 
 	@Override
 	public boolean isSupportRecharge(ProductDetail detail) {
-		return true;
+		return false;
 	}
 
 	@Override

@@ -23,9 +23,9 @@ public class MysqlGamePropDaoImpl implements IGamePropDao {
 	@Override
 	public void save(GameProp prop) {
 		QueryHelper.update("insert into " +
-				"GameProp(propName, price, validPeriod, productId, description) values(?, ?, ?, ?, ?)", 
+				"GameProp(propName, price, validPeriod, productId, feeCode, description) values(?, ?, ?, ?, ?, ?)", 
 				prop.getPropName(), prop.getPrice(), prop.getValidPeriod(), 
-				prop.getProductId(), prop.getDescription());
+				prop.getProductId(), prop.getFeeCode(), prop.getDescription());
 		int propId =  QueryHelper.read(long.class, "select LAST_INSERT_ID()").intValue();
 		prop.setPropId(propId);
 		Configuration.setCache("gameProp", prop.getPropId(), prop);

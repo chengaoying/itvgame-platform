@@ -22,7 +22,7 @@
 	
 	<configuration id="ohyeah">
 		<property name="protocolLocation">
-			<![CDATA[/protocol/processor]]>
+			<![CDATA[/protocolv2/processor]]>
 		</property>
 		<property name="amountUnit">元宝</property>
 		<property name="cashToAmountRatio">10</property>
@@ -163,14 +163,10 @@
 	</configuration>
 
     <configuration id="dijoy">
-        <property name="amountUnit">元</property>
+        <property name="amountUnit">金币</property>
         <property name="cashToAmountRatio">1</property>
         <property name="supportPoints">false</property>
         <property name="feecodes">1/2/3/4</property>
         <property name="amounts">1/2/5/10</property>
-        <property name="subscribeMode">webservice</property>
-        <property name="paymentUrl">
-            <![CDATA[http://220.248.44.50:3280/common/php/business/apppay.php]]>
-        </property>
     </configuration>
 </configurations>

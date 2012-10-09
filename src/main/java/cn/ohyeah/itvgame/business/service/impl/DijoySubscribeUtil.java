@@ -69,13 +69,13 @@ public class DijoySubscribeUtil {
 	    	entry.setSign(String.valueOf(node.get("sign")));
 	    	log.info("entry-->"+entry);
 	    	ResultInfo info = new ResultInfo();
-	    	info.setInfo(11);
-	    	/*if(entry.getPayResult()==0){
+	    	//info.setInfo(11);
+	    	if(entry.getPayResult()==0){
 	    		info.setInfo(entry.getSum());
 	    	}else{
 	    		info.setErrorCode(ErrorCode.EC_SUBSCRIBE_FAILED);
 	    		info.setMessage(getRechargegdErrorMessage(entry.getPayResult())+"("+String.valueOf(entry.getPayResult())+")");
-	    	}*/
+	    	}
 	    	return info;
 		} catch (Exception e) {
 			throw new SubscribeException(e);
@@ -98,14 +98,26 @@ public class DijoySubscribeUtil {
 		case 70002: message = "上次登录验证请求正在处理中"; break;
 		case 70001: message = "账号状态不可用"; break;
 		case 70000: message = "账号或密码错误"; break;
+		case 60006: message = "兑换失败！单号不存在"; break;
+		case 60005: message = "兑换失败！单号格式错误。"; break;
+		case 60004: message = "兑换失败！单号重复。"; break;
 		case 60003: message = "支付项目不存在"; break;
 		case 60002: message = "支付密钥不存在"; break;
 		case 60001: message = "此应用不存在或已下架"; break;
+		case 60000: message = "兑换失败！数据库错误。"; break;
 		case 41001: message = "数据库错误"; break;
 		case 41000: message = "请求的内容不存在"; break;
 		case 40009: message = "数据库格式错误"; break;
 		case 40001: message = "数据库错误"; break;
 		case 30000: message = "没有查找到数据"; break;
+		case 30011: message = "存款订单号重复"; break;
+		case 30012: message = "存款账户不存在。"; break;
+		case 30013: message = "充值超过上限"; break;
+		case 30021: message = "取款订单号重复"; break;
+		case 30022: message = "取款账户不存在。"; break;
+		case 30023: message = "取款金额不足。"; break;
+		case 30024: message = "超过单次支付上限"; break;
+		case 30025: message = "余额不足，请到广电营业厅充值，详情咨询96296。"; break;
 		case 20005: message = "没有找到应用"; break;
 		case 20004: message = "没有找到目录"; break;
 		case 20003: message = "购买数量超过限制"; break;
@@ -118,8 +130,7 @@ public class DijoySubscribeUtil {
 		case 1002: message = "用户数据缺失"; break;
 		case 1001: message = "认证信息缺失"; break;
 		case 1000: message = "后台请求失败"; break;
-		case 30013: message = "充值金额超过上限"; break;
-		default: message = "余额不足，请到大厅充值"; break;
+		default: message = "余额不足，请到广电营业厅充值，详情咨询96296"; break;
 		}
 		return message;
 	}

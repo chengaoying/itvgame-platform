@@ -50,6 +50,9 @@ public class SubscribeProcessor implements IProcessor {
 		case Constant.SUBSCRIBE_CMD_RECHARGE_WINSIDEGD:
 			processCommandRechargeWinsidegd(context, dis);
 			break;
+		case Constant.SUBSCRIBE_CMD_RECHARGE_DIJOY:
+			processCommandRechargeDijoy(context, dis);
+			break;
 		default: 
 			String msg = "无效的协议命令, cmd="+context.getHeadWrapper().getCommand();
 			context.setErrorCode(Constant.EC_INVALID_CMD);
@@ -110,6 +113,52 @@ public class SubscribeProcessor implements IProcessor {
 		}
 	}
 	
+	private void processCommandRechargeDijoy(ProcessorContext context,
+			DataInputStream dis) throws IOException {
+		String buyURL = dis.readUTF();
+		context.setProp("buyURL", buyURL);
+		int accountId = dis.readInt();
+		String accountName = dis.readUTF();
+		context.setProp("accountName", accountName);
+		String userToken = dis.readUTF();
+		context.setProp("userToken", userToken);
+		int productId = dis.readInt();
+		int amount = dis.readInt();
+		int payType = dis.readInt();
+		context.setProp("payType", payType);
+		String remark = dis.readUTF();
+		String checkKey = dis.readUTF();
+		context.setProp("checkKey", checkKey);
+		String appId = dis.readUTF();
+		context.setProp("appId", appId);
+		String platformExt = dis.readUTF();
+		context.setProp("platformExt", platformExt);
+		String appExt = dis.readUTF();
+		context.setProp("appExt", appExt);
+        try {
+            String password = dis.readUTF();
+            context.setProp("password", password);
+        }
+        catch (IOException e) {
+            context.setProp("password", "");
+        }
+		try {
+			ResultInfo info = rechargeServ.recharge(context.getPropsMap(), accountId, productId, 
+					amount, remark, new java.util.Date());
+			if (info.isSuccess()) {
+				context.setResult((Integer)info.getInfo());
+			}
+			else {
+				context.setErrorCode(info.getErrorCode());
+				context.setMessage(info.getMessage());
+			}
+		}
+		catch (ServiceException e) {
+			context.setErrorCode(ErrorCode.EC_SERVICE_FAILED);
+			context.setMessage(ErrorCode.getErrorMessage(ErrorCode.EC_SERVICE_FAILED));
+			throw new RequestProcessException(e);
+		}
+	}
 
 	private void processCommandSubscribeProduct(ProcessorContext context,
 			DataInputStream dis) throws IOException {
@@ -279,8 +328,18 @@ public class SubscribeProcessor implements IProcessor {
 		case Constant.SUBSCRIBE_CMD_RECHARGE_WINSIDEGD:
 			processCommandRechargeWinsidegd(context, dos);
 			break;
+		case Constant.SUBSCRIBE_CMD_RECHARGE_DIJOY:
+			processCommandRechargeDijoy(context, dos);
+			break;
 		default: break;
 		}
+	}
+
+	private void processCommandRechargeDijoy(ProcessorContext context,
+			DataOutputStream dos) throws IOException {
+		dos.writeInt(context.getHeadWrapper().getHead());
+		dos.writeInt(0);	/*result*/
+		dos.writeInt((Integer)context.getResult());
 	}
 	
 	private void processCommandRechargeWinsidegd(ProcessorContext context,

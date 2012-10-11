@@ -1,25 +1,80 @@
 package cn.ohyeah.itvgame.utils;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import org.apache.commons.lang.StringUtils;
 
 public class DateUtil {
-	public static java.sql.Timestamp convertToSqlDate(java.util.Date date) {
-		return date==null?null:new java.sql.Timestamp(date.getTime());
+
+	public static final String PATTERN_DEFAULT = "yyyyMMddHHmmss";
+
+	public static final String PATTERN_DATETIME = "yyyy-MM-dd";
+	
+	public static final String PATTERN_1 = "yyyy-MM-dd HH:mm:ss";
+	
+	public static final String PATTERN_2 = "MM月dd日HH时mm分";
+	
+	public static final String PATTERN_3 = "yyyy-MM-dd HH:mm";
+	
+	public static final String PATTERN_4 = "yyyyMMdd";
+	
+	public static final String PATTERN_5 = "yyyyMMddHHmm";
+	
+	/**
+	 * 返回当时间戳,默认格式为yyyyMMddHHmmss
+	 * 
+	 * @param patternFormat
+	 * 
+	 *            返回时间格式
+	 * @return
+	 */
+	public static String createTimeId(String patternFormat) {
+		Date now = new Date();
+		return new SimpleDateFormat(
+				StringUtils.isEmpty(patternFormat) ? PATTERN_DEFAULT
+						: patternFormat).format(now);
+	}
+
+	public static Date parseDate(String datestring, String pattern) {
+		try {
+			if(datestring==null||datestring.equals("")){
+				return null;
+			}else
+				return new SimpleDateFormat(pattern).parse(datestring);
+		} catch (ParseException e) {
+			return null;
+		}
+	}
+
+	public static String formatDate(Date date, String pattern) {
+		if(date==null){
+			return "";
+		}else
+			return new SimpleDateFormat(
+				StringUtils.isEmpty(pattern) ? PATTERN_DEFAULT : pattern)
+				.format(date);
 	}
 	
-	public static java.sql.Timestamp convertToSqlDate(java.sql.Timestamp date) {
+	public static Timestamp convertToSqlDate(Date date) {
+		return date==null?null:new Timestamp(date.getTime());
+	}
+	
+	public static Timestamp convertToSqlDate(Timestamp date) {
 		return date;
 	}
 	
-	public static java.util.Date convertToUtilDate(java.sql.Timestamp date) {
-		return date==null?null:new java.util.Date(date.getTime());
+	public static Date convertToUtilDate(Timestamp date) {
+		return date==null?null:new Date(date.getTime());
 	}
 	
-	public static java.util.Date convertToUtilDate(java.util.Date date) {
+	public static Date convertToUtilDate(Date date) {
 		return date;
 	}
 	
-	public static java.util.Date getMonthStartTime(java.util.Date t) {
+	public static Date getMonthStartTime(Date t) {
 		Calendar c = Calendar.getInstance();
 		c.setTime(t);
 		c.set(Calendar.DAY_OF_MONTH, c.getActualMinimum(Calendar.DAY_OF_MONTH));
@@ -30,7 +85,7 @@ public class DateUtil {
 		return c.getTime();
 	}
 	
-	public static java.util.Date getMonthEndTime(java.util.Date t) {
+	public static Date getMonthEndTime(Date t) {
 		Calendar c = Calendar.getInstance();
 		c.setTime(t);
 		c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));

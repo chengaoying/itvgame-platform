@@ -60,6 +60,7 @@ function init() {
 <h2>欧耶游戏测试--<%=request.getParameter("entrance")+"平台"%></h2>
 <hr/>
 <ul>
+<li><a href="http://192.168.16.70:8080/itvgame/action/gateway/chinagamesEntry?productId=9">参数测试</a></li> 
 <li><a href="http://222.66.209.183/winside/iptv/tank/index.do">超级坦克测试</a></li> 
 <li><a href="<%=rootPath+"/TVGame/XiYouGameEntry" %>">西游大乱斗测试</a></li> 
 <%

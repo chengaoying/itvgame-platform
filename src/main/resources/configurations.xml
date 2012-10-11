@@ -4,8 +4,8 @@
 		<property name="supportCache">true</property>
 		<property name="sql.dialect">sqlserver</property>
 		<property name="connection.xml">/sqlserver.config.xml</property>
-		<property name="telcomOperator">telcomCommon</property>
-		<property name="serviceProvider">dijoy</property>
+		<property name="telcomOperator">telcomhn</property>
+		<property name="serviceProvider">shengyi</property>
 		<users>
 			<user>
 				<name>igtest01</name>
@@ -59,6 +59,14 @@
 	</configuration>
 	
 	<configuration id="telcomjs">
+		<property name="amountUnit">元</property>
+		<property name="cashToAmountRatio">1</property>
+		<property name="supportPoints">false</property>
+		<property name="pointsUnit">积分</property>
+		<property name="cashToPointsRatio">100</property>
+	</configuration>
+	
+	<configuration id="telcomhn">
 		<property name="amountUnit">元</property>
 		<property name="cashToAmountRatio">1</property>
 		<property name="supportPoints">false</property>
@@ -169,4 +177,14 @@
         <property name="feecodes">1/2/3/4</property>
         <property name="amounts">1/2/5/10</property>
     </configuration>
+    
+    <configuration id="shengyi">
+		<property name="amountUnit">元宝</property>
+		<property name="cashToAmountRatio">10</property>
+		<property name="supportPoints">true</property>
+		<property name="subscribeMode">webservice</property>
+		<property name="rechargeUrl">
+			<![CDATA[order_coins?userid=%s&username=%s&spid=%s&stbType=%s&product=%s&money=%s&gameid=%s&enterURL=%s&zyUserToken=%s&checkCode=%s&payType=%s]]>
+		</property>
+	</configuration>
 </configurations>

@@ -63,6 +63,10 @@
 	<bean name="dijoy.subscribeImpl" class="cn.ohyeah.itvgame.business.service.impl.DijoySubscribeImpl"/>
 	<bean name="dijoy.rechargeImpl" class="cn.ohyeah.itvgame.business.service.impl.DijoyRechargeImpl"/>
 	
+	<!-- shengyi -->
+	<bean name="shengyi.subscribeImpl" class="cn.ohyeah.itvgame.business.service.impl.ShengyiSubscribeImpl"/>
+	<bean name="shengyi.rechargeImpl" class="cn.ohyeah.itvgame.business.service.impl.ShengyiRechargeImpl"/>
+	
 	<!-- winside at guangdong -->
 	<bean name="winsidegd.subscribeImpl" class="cn.ohyeah.itvgame.business.service.impl.WinsidegdSubscribeImpl"/>
 	<bean name="winsidegd.pointsServiceImpl" class="cn.ohyeah.itvgame.business.service.impl.WinsidegdPointsServiceImpl"/>

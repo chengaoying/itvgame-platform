@@ -86,6 +86,7 @@ public class ShengyiSubscribeImpl extends AbstractSubscribeImpl {
 		String timeStamp = DateUtil.createTimeId(DateUtil.PATTERN_DEFAULT);
 		String transactionID = shengyiCPID + timeStamp + ToolUtil.getAutoincrementValue();
 		System.out.println("timeStamp:"+timeStamp);
+		System.out.println("transactionID:"+transactionID);
 		return ShengyiSubscribeUtil.consumeCoins(userId, userToken, amount, shengyiCPID, shengyiCPPassWord, shengyiUserIdType, shengyiProductId, timeStamp, transactionID);
 	}
 	

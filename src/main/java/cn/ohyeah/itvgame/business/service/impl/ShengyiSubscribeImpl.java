@@ -38,14 +38,22 @@ public class ShengyiSubscribeImpl extends AbstractSubscribeImpl {
 	@Override
 	public PurchaseRelation queryPurchaseRelation(ProductDetail detail,
 			String subscribeType, int period, int amount) {
+		PurchaseRelation pr = null;
 		String subType = subscribeType;
 		if ("recharge".equals(subscribeType)
                 && (Configuration.isRechargeManagerGame(detail.getAppName())
                 || Configuration.isRechargeManagerPlatform(detail.getAppName()))) {
 			subType = "expend";
+			pr = prDao.read(detail.getProductId(), "shengyi", subType, 0, 0);
+		}else if("period".equals(subscribeType)
+                && (Configuration.isRechargeManagerGame(detail.getAppName())
+                || Configuration.isRechargeManagerPlatform(detail.getAppName()))){
+			pr = prDao.read(detail.getProductId(), "shengyi", subType, period, amount);
+		}else{
+			pr = prDao.read(detail.getProductId(), "shengyi", subType, 0, 0);
 		}
+		
 		log.info("subType:"+subType);
-		PurchaseRelation pr = prDao.read(detail.getProductId(), "shengyi", subType, 0, 0);
 		if (pr != null) {
 			pr.setValue(period);
 			pr.setAmount(amount);

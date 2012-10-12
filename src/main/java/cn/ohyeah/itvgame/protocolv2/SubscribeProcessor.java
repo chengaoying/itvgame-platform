@@ -51,6 +51,9 @@ public class SubscribeProcessor implements IProcessor {
 		case Constant.SUBSCRIBE_CMD_RECHARGE_SHENGYI:
 			processCommandRechargeShengYiReq(context, req);
 			break;
+		case Constant.SUBSCRIBE_CMD_SUBSCRIBE_PRODUCT_SHENGYI:
+			processCommandSubscribeProductShengyiReq(context, req);
+			break;
 		default: 
 			String msg = "无效的协议命令, cmd="+context.getHeadWrapper().getCommand();
 			context.setErrorCode(Constant.EC_INVALID_CMD);
@@ -60,7 +63,42 @@ public class SubscribeProcessor implements IProcessor {
 	}
 
   
-    private void processCommandRechargeShengYiReq(ProcessorContext context,
+    private void processCommandSubscribeProductShengyiReq(	ProcessorContext context, ByteBuffer req) {
+		int accountId = req.readInt();
+		String accountName = req.readUTF();
+		context.setProp("accountName", accountName);
+		String userToken = req.readUTF();
+		context.setProp("userToken", userToken);
+		int productId = req.readInt();
+		String subscribeType = req.readUTF();
+		int payType = req.readInt();
+		context.setProp("payType", payType);
+		String remark = req.readUTF();
+		String shengyiCPID = req.readUTF();
+		context.setProp("shengyiCPID", shengyiCPID);
+		String shengyiCPPassWord = req.readUTF();
+		context.setProp("shengyiCPPassWord", shengyiCPPassWord);
+		String shengyiUserIdType = req.readUTF();
+		context.setProp("shengyiUserIdType", shengyiUserIdType);
+		String shengyiProductId = req.readUTF();
+		context.setProp("shengyiProductId", shengyiProductId);
+		try {
+			ResultInfo info = subServ.subscribeProduct(context.getPropsMap(), 
+					accountId, productId, subscribeType, remark);
+			if (!info.isSuccess()) {
+				context.setErrorCode(info.getErrorCode());
+				context.setMessage(info.getMessage());
+			}
+		}
+		catch (ServiceException e) {
+			context.setErrorCode(ErrorCode.EC_SERVICE_FAILED);
+			context.setMessage(ErrorCode.getErrorMessage(ErrorCode.EC_SERVICE_FAILED));
+			throw new RequestProcessException(e);
+		}
+	}
+
+
+	private void processCommandRechargeShengYiReq(ProcessorContext context,
 			ByteBuffer req) {
     	String buyURL = req.readUTF();
 		context.setProp("buyURL", buyURL);

@@ -26,6 +26,11 @@
 	String userToken = (String)request.getAttribute("userToken");
 	Integer productId = (Integer)request.getAttribute("productId");
 	
+	/*盛翼参数*/
+	String cpId = "1";
+	String cpPassWord = "BD55778DFE0";
+	String userIdType = "0";
+	
 	Product product = productServ.read(productId);
 	String appName = product.getAppName();
 	String appPathPre = request.getContextPath()+"/data/apps/"+appName+"/"+appName;
@@ -60,8 +65,13 @@ setTimeout("document.onkeypress = PageScroll",8000);
 			<param name="accountName" value="<%=accountName %>" />
 			<param name="userToken" value="<%=userToken %>" />
 			<param name="productId" value="<%=productId %>" />
-			<param name="appName" value="<%=product.getAppName() %>" />
+			<param name="appName" value="<%=appName %>" />
 			<param name="server" value="<%=protocolLocation %>" />
+			
+			<!-- 盛翼参数 -->
+			<param name="cpId" value="<%=cpId %>" />
+			<param name="cpPassWord" value="<%=cpPassWord %>" />
+			<param name="userIdType" value="<%=userIdType %>" />
 		</object>
 	</div>
  </body>

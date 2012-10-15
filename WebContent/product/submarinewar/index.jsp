@@ -29,6 +29,8 @@ String productId = request.getParameter("productId");
 //String userToken = "userToken";
 //String productId = "10";
 System.out.println("userId:"+userId);
+System.out.println("userToken:"+userToken);
+System.out.println("productId:"+productId);
 String backUrl = URLEncoder.encode("index.jsp?returnUrl="+URLEncoder.encode(returnUrl, "GBK")
 		+"&accountId="+accountId
 		+"&userId="+userId

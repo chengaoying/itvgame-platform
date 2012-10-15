@@ -14,6 +14,8 @@
 <ul>
 <li><a href="tools/keyTest.jsp">九城键值测试</a></li>
 <li><a href="video.html">视频测试</a></li>
+<li><a href="http://222.66.209.183:8080/itvgamesh/action/gateway/chinagamesEntry?productId=10">游戏登入测试</a></li>
+<li><a href="http://113.106.54.37:8080/ohyeah/login.jsp">掌世界</a></li>
 <li><a href="http://222.66.209.183/itvgamesh/action/gateway/chinagamesEntry">183测试服中游平台</a></li>
 <li><a href="http://222.66.209.183/itvgamethe9/action/gateway/the9Entry">183测试服九城平台</a></li>
 <li><a href="http://192.168.16.70:8080/itvgame/action/gateway/chinagamesEntry?uid=igsuper00&pwd=itvgame">内网中游平台</a></li>

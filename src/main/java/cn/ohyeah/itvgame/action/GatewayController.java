@@ -280,6 +280,64 @@ public class GatewayController {
 		}
 	}
 	
+	public void shengyiEntry(RequestContext rc) throws IOException, ServletException {
+		String returnUrl = null;
+		int productId = -1;
+		String userId = null;
+		String userToken = null;
+		String stbID = null;
+		Enumeration<String> params = rc.params();
+		while (params.hasMoreElements()) {
+			String name = params.nextElement();
+			String lname = name.toLowerCase();
+			if (returnUrl==null && "returnurl".equals(lname)) {
+				returnUrl = rc.param(name);
+			}
+			if (productId==-1 && "productid".equals(lname)) {
+				productId = rc.param(name, -1);
+			}
+			if (userId==null && "userid".equals(lname)) {
+				userId = rc.param(name);
+				rc.sessionAdd("userId", userId);
+			}
+			if (userToken==null && "usertoken".equals(lname)) {
+				userToken = rc.param(name);
+				rc.sessionAdd("userToken", userToken);
+			}
+			if (stbID==null && "stbid".equals(lname)) {
+				stbID = rc.param(name);
+				rc.sessionAdd("stbID", stbID);
+			}
+		}
+		rc.sessionAdd("entrance", "shengyi");
+		if (StringUtils.isEmpty(returnUrl)) {
+			returnUrl = (String)rc.sessionAttr("returnUrl");
+		}
+		if (StringUtils.isEmpty(returnUrl)||"bestv".equalsIgnoreCase(returnUrl)) {
+			returnUrl = Configuration.formatEpgUrl(rc);
+		}
+		rc.sessionAdd("returnUrl", returnUrl);
+		log.debug("[chinagamesEntry]: returnUrl ==> "+returnUrl);
+		
+		String accountName = (String)rc.sessionAttr("accountName");
+		if (StringUtils.isNotEmpty(userId)
+				&& StringUtils.isNotEmpty(userToken)) {
+			Integer accountId = (Integer)rc.sessionAttr("accountId");
+			if (accountId == null) {
+				Account account = accServ.read(userId);
+				if (account == null) {
+					account = accServ.addNewStbUser(userId);
+				}
+				accountId = account.getAccountId();
+				rc.sessionAdd("accountId", account.getAccountId());
+			}
+			authorize(rc, accountId, accountName, userId, userToken, productId, returnUrl);
+		}
+		else {
+			login(rc, returnUrl);
+		}
+	}
+	
 	public void the9Entry(RequestContext rc) throws ServletException, IOException {
 		String returnUrl = null;
 		String accountName = null;

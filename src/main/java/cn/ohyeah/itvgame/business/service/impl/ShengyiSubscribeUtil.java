@@ -3,6 +3,7 @@ package cn.ohyeah.itvgame.business.service.impl;
 import java.rmi.RemoteException;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -44,6 +45,7 @@ public class ShengyiSubscribeUtil {
 		order.setServiceOrderForm(form);
 		try {
 			TelecomServeStub  stub = new TelecomServeStub();
+			// stub._getServiceClient().getOptions().setProperty(HTTPConstants.CHUNKED,"false"); 
 			ServiceOrderResponse res = stub.serviceOrder(order);
 			ServiceOrderRsp orderRsp = res.get_return();
 			log.info("¶©¹º½á¹û£º"+orderRsp.getResult()+orderRsp.getDescription());

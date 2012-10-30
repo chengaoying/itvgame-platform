@@ -64,7 +64,7 @@ public class DijoySubscribeUtil {
 	    	DijoyResponseEntry entry = new DijoyResponseEntry();
 	    	entry.setOrder(String.valueOf(node.get("order")));
 	    	entry.setFeeCode(String.valueOf(node.get("feeCode")));
-	    	entry.setSum(Integer.parseInt(String.valueOf(node.get("Sum"))));
+	    	entry.setSum(Integer.parseInt(String.valueOf(node.get("Sum")==null?0:node.get("Sum"))));
 	    	entry.setPayResult(Integer.parseInt(String.valueOf(node.get("payResult"))));
 	    	entry.setSign(String.valueOf(node.get("sign")));
 	    	log.info("entry-->"+entry);

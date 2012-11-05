@@ -60,7 +60,7 @@ setTimeout("document.onkeypress = PageScroll",8000);
 			<param name="jar" value="<%=appPathPre+".jar" %>" />
 			<param name="-Xkeypass" value="true" />
 			<param name="systemTimeMillis" value="<%=time.getTime() %>" />
-			<param name="accountId" value="<%=accountId %>" />
+			<%-- <param name="accountId" value="<%=accountId %>" />
 			<param name="userId" value="<%=userId %>" />
 			<param name="accountName" value="<%=accountName %>" />
 			<param name="userToken" value="<%=userToken %>" />
@@ -71,7 +71,7 @@ setTimeout("document.onkeypress = PageScroll",8000);
 			<!-- Ê¢Òí²ÎÊý -->
 			<param name="cpId" value="<%=cpId %>" />
 			<param name="cpPassWord" value="<%=cpPassWord %>" />
-			<param name="userIdType" value="<%=userIdType %>" />
+			<param name="userIdType" value="<%=userIdType %>" /> --%>
 		</object>
 	</div>
  </body>

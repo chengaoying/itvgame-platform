@@ -66,6 +66,14 @@
 		<property name="cashToPointsRatio">100</property>
 	</configuration>
 	
+	<configuration id="telcomfj">
+		<property name="amountUnit">元</property>
+		<property name="cashToAmountRatio">10</property>
+		<property name="supportPoints">false</property>
+		<property name="pointsUnit">积分</property>
+		<property name="cashToPointsRatio">100</property>
+	</configuration>
+	
 	<configuration id="telcomhn">
 		<property name="amountUnit">元</property>
 		<property name="cashToAmountRatio">1</property>
@@ -151,6 +159,9 @@
 		</property>
 		<property name="rechargeUrl">
 			<![CDATA[order_coins?userid=%s&username=%s&money=%s&spid=%s&product=%s&userToken=%s&checkCode=%s]]>
+		</property>
+		<property name="rechargePageUrl">
+			<![CDATA[goto_order_page?userid=%s]]>
 		</property>
 	</configuration>
 	

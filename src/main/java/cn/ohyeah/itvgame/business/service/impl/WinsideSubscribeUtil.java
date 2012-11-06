@@ -22,6 +22,7 @@ public class WinsideSubscribeUtil {
 	private static final String queryCoinsUrlPattern;
 	private static final String rechargeUrlPatternWinsidegd;
 	private static final String rechargeUrlPatternWinside;
+	private static final String rechargePageUrlPatternWinside;
 	
 	static {
 		httpClient = ThreadSafeClientConnManagerUtil.buildDefaultHttpClient();
@@ -29,6 +30,7 @@ public class WinsideSubscribeUtil {
 		queryCoinsUrlPattern = Configuration.getProperty("winside", "queryCoinsUrl");
 		rechargeUrlPatternWinsidegd = Configuration.getProperty("winsidegd", "rechargeUrl");
 		rechargeUrlPatternWinside = Configuration.getProperty("winside", "rechargeUrl");
+		rechargePageUrlPatternWinside = Configuration.getProperty("winside", "rechargePageUrl");
 	}
 	
 	public static ResultInfo recharge(String buyURL, String spid, String userid, String username, int money, 
@@ -188,6 +190,41 @@ public class WinsideSubscribeUtil {
 		}
 		catch (Exception e) {
 			throw new SubscribeException(e);
+		}
+	}
+	
+	public static ResultInfo gotoRechargePage(String buyUrl, String userId){
+		ResultInfo info = new ResultInfo();
+		try {
+			String winsideUrlPattern = null;
+			if (!buyUrl.endsWith("/")&&!consumeCoinsUrlPattern.startsWith("/")) {
+				winsideUrlPattern = buyUrl + "/" +rechargePageUrlPatternWinside;
+			}
+			else {
+				winsideUrlPattern = buyUrl + rechargePageUrlPatternWinside;
+			}
+			String url = String.format(winsideUrlPattern, userId);
+			log.debug("[Winside consumeCoins Url] ==> "+url);
+	    	HttpGet httpget = new HttpGet(url);
+	    	String body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpget);
+	    	log.debug("[Winside consumeCoins Result] ==> "+body);
+	    	String[] result = body.split("#");
+	    	//info.setInfo(11);
+	    	if (!"success".equalsIgnoreCase(result[0].trim())) {
+	    		info.setErrorCode(ErrorCode.EC_GOTO_RECHARGE_PAGE);
+	    		//info.setMessage(getConsumeCoinsErrorMessage(Integer.parseInt(result[1].trim())));
+	    		info.setMessage(result[2].trim());
+	    	}
+	    	else {
+	    		info.setInfo(result[0].trim());
+	    	}
+	    	return info;
+		}
+		catch (Exception e) {
+			info.setErrorCode(ErrorCode.EC_GOTO_RECHARGE_PAGE);
+    		info.setMessage("跳转充值界面失败，原因：请求地址有误");
+    		return info;
+			//throw new SubscribeException(e);
 		}
 	}
 	

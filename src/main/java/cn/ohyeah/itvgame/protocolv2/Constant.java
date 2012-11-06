@@ -23,6 +23,7 @@ public interface Constant {
 	/*协议命令*/
 	public static final byte SYS_SERV_CMD_SYN_TIME = 1;				/*时间同步*/
 	public static final byte SYS_SERV_CMD_ADD_FAVORITEGD = 2;		/*广东，添加到收藏夹*/
+	public static final byte SYS_SERV_CMD_GOTO_RECHARGE_PAGE = 3;	/*掌世界少数地区，进入充值页面*/
 	
 	public static final byte RECORD_CMD_SAVE = 1;					/*保存记录*/
 	public static final byte RECORD_CMD_READ = 2;					/*读取记录*/
@@ -53,6 +54,7 @@ public interface Constant {
 	public static final byte PURCHASE_CMD_EXPEND = 2;					/*花费金币*/
 	public static final byte PURCHASE_CMD_QUERY_PURCHASE_RECORD = 3;		/*查询消费记录*/
 	public static final byte PURCHASE_CMD_EXPEND_DIJOY = 4;				/*dijoy花费金币*/
+	public static final byte PURCHASE_CMD_EXPEND_WINSIDE_LACK = 5;		/*掌世界少数地区花费金币*/
 	
 	public static final byte ACCOUNT_CMD_QUERY_AUTHORIZATION = 1;		/*查询鉴权信息*/
 	public static final byte ACCOUNT_CMD_QUERY_SUB_PROPS = 2;			/*查询订购相关属性*/

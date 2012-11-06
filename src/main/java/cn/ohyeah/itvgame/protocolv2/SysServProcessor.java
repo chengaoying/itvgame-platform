@@ -22,6 +22,9 @@ public class SysServProcessor implements IProcessor {
 		case Constant.SYS_SERV_CMD_ADD_FAVORITEGD:
 			processCommandAddFavoritegdReq(context, req);
 			break;
+		case Constant.SYS_SERV_CMD_GOTO_RECHARGE_PAGE:
+			processCommandGotoRechargePageReq(context, req);
+			break;
 		default: 
 			String msg = "无效的协议命令, cmd="+context.getHeadWrapper().getCommand();
 			context.setErrorCode(Constant.EC_INVALID_CMD);
@@ -29,6 +32,24 @@ public class SysServProcessor implements IProcessor {
 			throw new RequestProcessException(msg);
 		}
 	}
+
+	private void processCommandGotoRechargePageReq(ProcessorContext context,
+			ByteBuffer req) {
+		String buyUrl = req.readUTF();
+		String userId = req.readUTF();
+		try {
+			ResultInfo info = platServ.gotoRechargePage(buyUrl, userId);
+			if (!info.isSuccess()) {
+				context.setErrorCode(info.getErrorCode());
+				context.setMessage(info.getMessage());
+			}
+		}
+		catch (ServiceException e) {
+			context.setErrorCode(ErrorCode.EC_SERVICE_FAILED);
+			context.setMessage(ErrorCode.getErrorMessage(ErrorCode.EC_SERVICE_FAILED));
+			throw new RequestProcessException(e);
+		}
+	}	
 
 	private void processCommandAddFavoritegdReq(ProcessorContext context, ByteBuffer req) {
 		String hosturl = req.readUTF();
@@ -61,6 +82,8 @@ public class SysServProcessor implements IProcessor {
 			processCommandSynTimeRsp(context, rsp);
 			break;
 		case Constant.SYS_SERV_CMD_ADD_FAVORITEGD:
+			break;
+		case Constant.SYS_SERV_CMD_GOTO_RECHARGE_PAGE:
 			break;
 		default: break;
 		}

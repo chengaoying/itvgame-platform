@@ -3,7 +3,6 @@ package cn.ohyeah.itvgame.business.service.impl;
 import java.rmi.RemoteException;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

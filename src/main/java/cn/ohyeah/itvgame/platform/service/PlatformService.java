@@ -7,6 +7,7 @@ import cn.ohyeah.itvgame.business.service.IPointsService;
 import cn.ohyeah.itvgame.business.service.IRecharge;
 import cn.ohyeah.itvgame.business.service.ISubscribe;
 import cn.ohyeah.itvgame.business.service.impl.ChinagamesgdUtil;
+import cn.ohyeah.itvgame.business.service.impl.WinsideSubscribeUtil;
 import cn.ohyeah.itvgame.global.BeanManager;
 import cn.ohyeah.itvgame.platform.model.Account;
 import cn.ohyeah.itvgame.platform.model.AccountPermission;
@@ -77,6 +78,15 @@ public class PlatformService {
 			String gameid, String spid, String code, String timeStmp) {
 		try {
 			return ChinagamesgdUtil.addFavorite(hosturl, userId, accountName, gameid, spid, code, timeStmp);
+		}
+		catch (Exception e) {
+			throw new ServiceException(e);
+		}
+	}
+	
+	public ResultInfo gotoRechargePage(String buyUrl, String userId){
+		try {
+			return WinsideSubscribeUtil.gotoRechargePage(buyUrl, userId);
 		}
 		catch (Exception e) {
 			throw new ServiceException(e);

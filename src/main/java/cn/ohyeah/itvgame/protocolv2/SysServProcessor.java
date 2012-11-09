@@ -25,11 +25,33 @@ public class SysServProcessor implements IProcessor {
 		case Constant.SYS_SERV_CMD_GOTO_RECHARGE_PAGE:
 			processCommandGotoRechargePageReq(context, req);
 			break;
+		case Constant.SYS_SERV_CMD_ONLINE:
+			processCommandSendHeartbeatPacketReq(context, req);
+			break;
 		default: 
 			String msg = "无效的协议命令, cmd="+context.getHeadWrapper().getCommand();
 			context.setErrorCode(Constant.EC_INVALID_CMD);
 			context.setMessage(msg);
 			throw new RequestProcessException(msg);
+		}
+	}
+
+	private void processCommandSendHeartbeatPacketReq(ProcessorContext context,
+			ByteBuffer req) {
+		String buyUrl = req.readUTF();
+		String userId = req.readUTF();
+		String product = req.readUTF();
+		try {
+			ResultInfo info = platServ.sendHeartBeatPacket(buyUrl, userId, product);
+			if (!info.isSuccess()) {
+				context.setErrorCode(info.getErrorCode());
+				context.setMessage(info.getMessage());
+			}
+		}
+		catch (ServiceException e) {
+			context.setErrorCode(ErrorCode.EC_SERVICE_FAILED);
+			context.setMessage(ErrorCode.getErrorMessage(ErrorCode.EC_SERVICE_FAILED));
+			throw new RequestProcessException(e);
 		}
 	}
 
@@ -84,6 +106,8 @@ public class SysServProcessor implements IProcessor {
 		case Constant.SYS_SERV_CMD_ADD_FAVORITEGD:
 			break;
 		case Constant.SYS_SERV_CMD_GOTO_RECHARGE_PAGE:
+			break;
+		case Constant.SYS_SERV_CMD_ONLINE:
 			break;
 		default: break;
 		}

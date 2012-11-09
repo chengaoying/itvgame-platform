@@ -24,6 +24,7 @@ public interface Constant {
 	public static final byte SYS_SERV_CMD_SYN_TIME = 1;				/*时间同步*/
 	public static final byte SYS_SERV_CMD_ADD_FAVORITEGD = 2;		/*广东，添加到收藏夹*/
 	public static final byte SYS_SERV_CMD_GOTO_RECHARGE_PAGE = 3;	/*掌世界少数地区，进入充值页面*/
+	public static final byte SYS_SERV_CMD_ONLINE = 4;				/*掌世界深圳天威，添加心跳机制*/
 	
 	public static final byte RECORD_CMD_SAVE = 1;					/*保存记录*/
 	public static final byte RECORD_CMD_READ = 2;					/*读取记录*/
@@ -48,7 +49,7 @@ public interface Constant {
 	public static final byte SUBSCRIBE_CMD_SUBSCRIBE_PRODUCT = 5;		/*订购产品*/
 	public static final byte SUBSCRIBE_CMD_RECHARGE_WINSIDEGD = 6;		/*winsidegd充值*/
 	public static final byte SUBSCRIBE_CMD_RECHARGE_SHENGYI = 7;			/*shengyi充值*/
-	public static final byte SUBSCRIBE_CMD_SUBSCRIBE_PRODUCT_SHENGYI = 8;		/*shengyi订购产品*/
+	public static final byte SUBSCRIBE_CMD_SUBSCRIBE_PRODUCT_SHENGYI = 8;/*shengyi订购产品*/
 	
 	public static final byte PURCHASE_CMD_PURCHASE_PROP = 1;				/*购买道具*/
 	public static final byte PURCHASE_CMD_EXPEND = 2;					/*花费金币*/

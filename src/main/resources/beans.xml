@@ -75,11 +75,12 @@
 	<bean name="winside.subscribeImpl" class="cn.ohyeah.itvgame.business.service.impl.WinsideSubscribeImpl"/>
 	<bean name="winside.rechargeImpl" class="cn.ohyeah.itvgame.business.service.impl.WinsideRechargeImpl"/>
 	
-	<!-- winside at fj -->
-	<bean name="winsidefj.rechargeImpl" class="cn.ohyeah.itvgame.business.service.impl.WinsidefjRechargeImpl"/>
-	
 	<!-- winside recharge implementor which not support operator of recharge -->
 	<bean name="winsidelack.rechargeImpl" class="cn.ohyeah.itvgame.business.service.impl.WinsideLackRechargeImpl"/>
+	
+	<!-- winside at tianwei -->
+	<bean name="winsidetw.subscribeImpl" class="cn.ohyeah.itvgame.business.service.impl.WinsidetwSubscribeImpl"/>
+	<bean name="winsidetw.rechargeImpl" class="cn.ohyeah.itvgame.business.service.impl.WinsidetwRechargeImpl"/>
 	
 	<!-- ohyeah platform service -->
 	<bean name="game.rechargeImpl" class="cn.ohyeah.itvgame.business.service.impl.GameRechargeImpl"/>

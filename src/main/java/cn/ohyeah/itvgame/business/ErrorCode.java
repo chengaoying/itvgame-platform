@@ -36,6 +36,7 @@ public class ErrorCode {
 	public static final int EC_SERVICE_FAILED = -1026;				/*服务错误*/
 	public static final int EC_ADD_FAVOR_FAILED = -1027;				/*添加收藏夹失败*/
 	public static final int EC_GOTO_RECHARGE_PAGE = -1028;				/*跳转充值界面失败*/
+	public static final int EC_SEND_HEARTBEAT = -1029;				/*发送心跳包失败*/
 	
 	public static String getErrorMessage(int errorCode) {
 		String message = null;

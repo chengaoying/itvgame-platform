@@ -4,7 +4,7 @@
 		<property name="supportCache">false</property>
 		<property name="sql.dialect">sqlserver</property>
 		<property name="connection.xml">/sqlserver.config.xml</property>
-		<property name="telcomOperator">telcomfj</property>
+		<property name="telcomOperator">tianweisz</property>
 		<property name="serviceProvider">winside</property>
 		<users>
 			<user>
@@ -67,6 +67,14 @@
 	</configuration>
 	
 	<configuration id="telcomfj">
+		<property name="amountUnit">元</property>
+		<property name="cashToAmountRatio">10</property>
+		<property name="supportPoints">false</property>
+		<property name="pointsUnit">积分</property>
+		<property name="cashToPointsRatio">100</property>
+	</configuration>
+	
+	<configuration id="tianweisz">
 		<property name="amountUnit">元</property>
 		<property name="cashToAmountRatio">10</property>
 		<property name="supportPoints">false</property>
@@ -172,6 +180,25 @@
 		<property name="subscribeMode">webservice</property>
 		<property name="rechargeUrl">
 			<![CDATA[order_coins?userid=%s&username=%s&spid=%s&stbType=%s&product=%s&money=%s&gameid=%s&enterURL=%s&zyUserToken=%s&checkCode=%s&payType=%s]]>
+		</property>
+	</configuration>
+	
+	<configuration id="winsidetw">
+		<property name="amountUnit">v币</property>
+		<property name="cashToAmountRatio">10</property>
+		<property name="supportPoints">true</property>
+		<property name="subscribeMode">webservice</property>
+		<property name="rechargeUrl">
+			<![CDATA[order_coins?userid=%s&username=%s&money=%s&spid=%s&product=%s&userToken=%s&checkCode=%s]]>
+		</property>
+		<property name="consumeCoinsUrl">
+			<![CDATA[consume_coins?userid=%s&username=&product=%s&contents=%s&amount=%s&coins=%s&checkcode=%s&memo=%s]]>
+		</property>
+		<property name="queryCoinsUrl">
+			<![CDATA[query_coins?userid=%s]]>
+		</property>
+		<property name="onlineUrl">
+			<![CDATA[online_game?userid=%s&product=%s]]>
 		</property>
 	</configuration>
 	

@@ -4,8 +4,8 @@
 		<property name="supportCache">false</property>
 		<property name="sql.dialect">sqlserver</property>
 		<property name="connection.xml">/sqlserver.config.xml</property>
-		<property name="telcomOperator">tianweisz</property>
-		<property name="serviceProvider">winside</property>
+		<property name="telcomOperator">telcomsh</property>
+		<property name="serviceProvider">ohyeah</property>
 		<users>
 			<user>
 				<name>igtest01</name>

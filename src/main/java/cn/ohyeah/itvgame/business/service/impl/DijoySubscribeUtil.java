@@ -24,7 +24,7 @@ import cn.ohyeah.itvgame.business.service.BusinessException;
 import cn.ohyeah.itvgame.business.service.SubscribeException;
 
 public class DijoySubscribeUtil {
-	private static final Log log = LogFactory.getLog(WinsideSubscribeUtil.class);
+	private static final Log log = LogFactory.getLog(DijoySubscribeUtil.class);
 	private static final DefaultHttpClient httpClient;
 	
 	static {

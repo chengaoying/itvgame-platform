@@ -30,6 +30,7 @@
 	Product product = productServ.read(Integer.parseInt(productId));
 	String appName = product.getAppName();
 	String appPathPre = request.getContextPath()+"/data/apps/"+appName+"/"+appName;
+	System.out.println("path:"+appPathPre);
 	
 	java.util.Date time = new java.util.Date();
 	String protocolLocation = Configuration.formProtocolLocation(RequestContext.get());
@@ -55,13 +56,13 @@ setTimeout("document.onkeypress = PageScroll",16000);
 			<param name="jar" value="../../data/apps/NewSanguo/NewSanguo.jar" />
 			<param name="-Xkeypass" value="true" />
 			<param name="systemTimeMillis" value="<%=time.getTime() %>" />
-			<%-- <param name="accountId" value="<%=accountId %>" />
+			 <param name="accountId" value="<%=accountId %>" />
 			<param name="userId" value="<%=userId %>" />
 			<param name="accountName" value="<%=accountName %>" />
 			<param name="userToken" value="<%=userToken %>" />
 			<param name="productId" value="<%=productId %>" />
 			<param name="appName" value="<%=product.getAppName() %>" />
-			<param name="server" value="<%=protocolLocation %>" /> --%>
+			<param name="server" value="<%=protocolLocation %>" /> 
 		</object>
 	</div>
  </body>

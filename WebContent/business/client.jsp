@@ -34,9 +34,11 @@
 	Product product = productServ.read(productId);
 	String appName = product.getAppName();
 	String appPathPre = request.getContextPath()+"/data/apps/"+appName+"/"+appName;
+	System.out.println("path:"+appPathPre);
 	
 	java.util.Date time = new java.util.Date();
 	String protocolLocation = Configuration.formProtocolLocation(RequestContext.get());
+	System.out.println("加载游戏");
 %>
 <script language="javascript1.3">
 function PageScroll(evt)
@@ -60,18 +62,14 @@ setTimeout("document.onkeypress = PageScroll",8000);
 			<param name="jar" value="<%=appPathPre+".jar" %>" />
 			<param name="-Xkeypass" value="true" />
 			<param name="systemTimeMillis" value="<%=time.getTime() %>" />
-			<%-- <param name="accountId" value="<%=accountId %>" />
+			 <param name="accountId" value="<%=accountId %>" />
 			<param name="userId" value="<%=userId %>" />
 			<param name="accountName" value="<%=accountName %>" />
 			<param name="userToken" value="<%=userToken %>" />
 			<param name="productId" value="<%=productId %>" />
-			<param name="appName" value="<%=appName %>" />
+			<param name="appName" value="<%=product.getAppName() %>" />
 			<param name="server" value="<%=protocolLocation %>" />
-			
-			<!-- 盛翼参数 -->
-			<param name="cpId" value="<%=cpId %>" />
-			<param name="cpPassWord" value="<%=cpPassWord %>" />
-			<param name="userIdType" value="<%=userIdType %>" /> --%>
+			<param name="price" value="<%=2/5/10/20 %>"/> 
 		</object>
 	</div>
  </body>

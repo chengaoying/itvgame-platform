@@ -4,8 +4,8 @@
 		<property name="supportCache">false</property>
 		<property name="sql.dialect">sqlserver</property>
 		<property name="connection.xml">/sqlserver.config.xml</property>
-		<property name="telcomOperator">telcomsh</property>
-		<property name="serviceProvider">ohyeah</property>
+		<property name="telcomOperator">telcomgs</property>
+		<property name="serviceProvider">shixian</property>
 		<users>
 			<user>
 				<name>igtest01</name>
@@ -83,6 +83,14 @@
 	</configuration>
 	
 	<configuration id="telcomhn">
+		<property name="amountUnit">元</property>
+		<property name="cashToAmountRatio">1</property>
+		<property name="supportPoints">false</property>
+		<property name="pointsUnit">积分</property>
+		<property name="cashToPointsRatio">100</property>
+	</configuration>
+	
+	<configuration id="telcomgs">
 		<property name="amountUnit">元</property>
 		<property name="cashToAmountRatio">1</property>
 		<property name="supportPoints">false</property>
@@ -223,6 +231,16 @@
 		<property name="subscribeMode">webservice</property>
 		<property name="rechargeUrl">
 			<![CDATA[order_coins?userid=%s&username=%s&spid=%s&stbType=%s&product=%s&money=%s&gameid=%s&enterURL=%s&zyUserToken=%s&checkCode=%s&payType=%s]]>
+		</property>
+	</configuration>
+	
+	<configuration id="shixian">
+		<property name="amountUnit">元宝</property>
+		<property name="cashToAmountRatio">10</property>
+		<property name="supportPoints">true</property>
+		<property name="subscribeMode">webservice</property>
+		<property name="rechargeUrl">
+			<![CDATA[http://192.168.10.253:8086/tvplat4/pay/pay_epibolyPayment.action?payChoose=%s]]>
 		</property>
 	</configuration>
 </configurations>

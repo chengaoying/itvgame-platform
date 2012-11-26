@@ -18,7 +18,7 @@ import cn.ohyeah.itvgame.business.service.BusinessException;
 import cn.ohyeah.itvgame.business.service.SubscribeException;
 
 public class ShengyiSubscribeUtil {
-	private static final Log log = LogFactory.getLog(WinsideSubscribeUtil.class);
+	private static final Log log = LogFactory.getLog(ShengyiSubscribeUtil.class);
 	
 	public static ResultInfo recharge(String userId, String appId, int number, String feeCode, 
 			  String returnUrl, String notifyUrl, String platformExt, String appExt){

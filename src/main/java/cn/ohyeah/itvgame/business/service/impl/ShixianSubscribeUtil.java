@@ -2,16 +2,12 @@ package cn.ohyeah.itvgame.business.service.impl;
 
 import java.util.Map;
 
-import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.cookie.CookiePolicy;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
+import cn.halcyon.utils.ThreadSafeClientConnManagerUtil;
 import cn.ohyeah.itvgame.business.ErrorCode;
 import cn.ohyeah.itvgame.business.ResultInfo;
 import cn.ohyeah.itvgame.business.service.SubscribeException;
@@ -19,11 +15,11 @@ import cn.ohyeah.itvgame.global.Configuration;
 
 public class ShixianSubscribeUtil {
 	private static final Log log = LogFactory.getLog(ShixianSubscribeUtil.class);
-	//private static final DefaultHttpClient httpClient;
+	private static final DefaultHttpClient httpClient;
 	private static final String rechargeUrlShixian;
 	
 	static {
-		//httpClient = ThreadSafeClientConnManagerUtil.buildDefaultHttpClient();
+		httpClient = ThreadSafeClientConnManagerUtil.buildDefaultHttpClient();
 		rechargeUrlShixian = Configuration.getProperty("shixian", "rechargeUrl");
 	}
 	
@@ -49,25 +45,21 @@ public class ShixianSubscribeUtil {
 		String rechargeUrl = String.format(buyUrl, ammount);
 		log.info("rechargeUrl:"+rechargeUrl);
 		ResultInfo info = new ResultInfo();
-		/*info.setInfo(100);
-		return info;*/
+		//HttpGet httpget = new HttpGet("http://localhost:8080/test/showCookie.jsp");
 		
-		HttpClient client = new HttpClient();
-		HttpMethod method = new GetMethod(rechargeUrl);
+		HttpGet httpget = new HttpGet(rechargeUrl);
+		
+		//往header中写入cookie，cookie中的是接口所学参数
+		httpget.addHeader("cookie", params);
+    	String body;
 		try {
-			method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,	new DefaultHttpMethodRetryHandler());
-			method.getParams().setCookiePolicy(CookiePolicy.RFC_2109);
-			method.setRequestHeader("cookie", params);
-			int statusCode = client.executeMethod(method);
-			if (statusCode != HttpStatus.SC_OK) {
-				throw new SubscribeException("Method failed: " + method.getStatusLine());
-			}
 			// 读取内容
-			String body = method.getResponseBodyAsString();
+			body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpget);
 			log.info("body==>"+body);
-			
+			/*System.out.println("\n页面的结果:");
+			System.out.println(body);
+			info.setInfo("11");*/
 			String ss = body.substring(body.indexOf("*"),body.lastIndexOf("*"));
-			
 			if(!isErrorMessage(ss)){
 				if(ss.equals("恭喜您")){
 					info.setInfo(ammount);
@@ -87,12 +79,9 @@ public class ShixianSubscribeUtil {
 				info.setErrorCode(ErrorCode.EC_SUBSCRIBE_FAILED);
 				info.setMessage(ss);
 			}
-			
 			return info;
 		} catch (Exception e) {
 			throw new SubscribeException(e);
-		} finally{
-			method.releaseConnection();
 		}
 	}
 

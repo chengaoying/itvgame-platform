@@ -46,7 +46,6 @@ public class ShixianSubscribeUtil {
 		log.info("rechargeUrl:"+rechargeUrl);
 		ResultInfo info = new ResultInfo();
 		//HttpGet httpget = new HttpGet("http://localhost:8080/test/showCookie.jsp");
-		
 		HttpGet httpget = new HttpGet(rechargeUrl);
 		
 		//往header中写入cookie，cookie中的是接口所学参数

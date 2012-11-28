@@ -17,50 +17,46 @@ public class ShixianSubscribeUtil {
 	private static final Log log = LogFactory.getLog(ShixianSubscribeUtil.class);
 	private static final DefaultHttpClient httpClient;
 	private static final String rechargeUrlShixian;
+	private static final String appid;
 	
 	static {
 		httpClient = ThreadSafeClientConnManagerUtil.buildDefaultHttpClient();
 		rechargeUrlShixian = Configuration.getProperty("shixian", "rechargeUrl");
+		appid = Configuration.getProperty("shixian", "appid");
 	}
 	
 	public static ResultInfo consumeCoins(Map<String, Object> props){
-		String buyUrl = (String) props.get("buyURL");
+		//String buyUrl = (String) props.get("buyURL");
 		String feeaccount = (String) props.get("feeaccount");
-		String returnurl = (String) props.get("returnurl");
+		//String returnurl = (String) props.get("returnurl");
 		String dwjvl = (String) props.get("dwjvl");
 		String opcomkey = (String) props.get("opcomkey");
 		String paysubway = (String) props.get("paysubway");
-		String gameid = (String) props.get("gameid");
-		String user_group_id = (String) props.get("user_group_id");
-		String userToken = (String) props.get("userToken");
+		//String gameid = (String) props.get("gameid");
+		//String user_group_id = (String) props.get("user_group_id");
+		//String userToken = (String) props.get("userToken");
 		int ammount = (Integer) props.get("amount");
 		String userId = (String) props.get("userId");
-		if(buyUrl==""||buyUrl==null){
-			buyUrl = rechargeUrlShixian;
-		}
-		String params = "vplat#feeaccount="+feeaccount+";tvplat#returnurl="+returnurl+"; tvplat#numbercode="+userId
-				+"; tvplat#dwjvl="+dwjvl+"; tvplat#opcomkey="+opcomkey+"; tvplat#paysubway="+paysubway+"; tvplat#gameid="+gameid
-				+"; USER_TOKEN="+userToken+"; USER_GROUP_ID="+user_group_id;
-		
-		String rechargeUrl = String.format(buyUrl, ammount);
+		String	buyUrl = rechargeUrlShixian;
+		String params = "tvplat#feeaccount="+feeaccount+";tvplat#returnurl="+/*returnurl*/""+"; tvplat#numbercode="+userId
+				+"; tvplat#dwjvl="+dwjvl+"; tvplat#opcomkey="+opcomkey+"; tvplat#paysubway="+paysubway/*+"; tvplat#gameid="+gameid
+				+"; USER_TOKEN="+userToken+"; USER_GROUP_ID="+user_group_id*/;
+		log.info("cookie:"+params);
+		String rechargeUrl = String.format(buyUrl, ammount, appid);
 		log.info("rechargeUrl:"+rechargeUrl);
 		ResultInfo info = new ResultInfo();
-		//HttpGet httpget = new HttpGet("http://localhost:8080/test/showCookie.jsp");
 		HttpGet httpget = new HttpGet(rechargeUrl);
 		
-		//往header中写入cookie，cookie中的是接口所学参数
+		//往header中写入cookie，cookie中的是接口所需参数
 		httpget.addHeader("cookie", params);
     	String body;
 		try {
-			// 读取内容
 			body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpget);
 			log.info("body==>"+body);
-			/*System.out.println("\n页面的结果:");
-			System.out.println(body);
-			info.setInfo("11");*/
-			String ss = body.substring(body.indexOf("*"),body.lastIndexOf("*"));
+			String ss = body.substring(body.indexOf("*")+1,body.lastIndexOf("*"));
+			log.info("returnMessage:"+ss);
 			if(!isErrorMessage(ss)){
-				if(ss.equals("恭喜您")){
+				if(ss.startsWith("恭喜您")){
 					info.setInfo(ammount);
 				}else if(ss.equalsIgnoreCase("password")){
 					info.setErrorCode(ErrorCode.EC_SUBSCRIBE_FAILED);

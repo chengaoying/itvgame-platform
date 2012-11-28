@@ -42,7 +42,6 @@ public class WinsideSubscribeUtil {
 							+ "|" + checkKey
 							+ "|" + money;
 			checkcode = DigestUtils.md5Hex(checkcode);
-			
 			String winsideUrlPattern = null;
 			if (!buyURL.endsWith("/")&&!rechargeUrlPatternWinside.startsWith("/")) {
 				winsideUrlPattern = buyURL + "/" +rechargeUrlPatternWinside;
@@ -55,10 +54,10 @@ public class WinsideSubscribeUtil {
 			if (StringUtils.isNotEmpty(password)) {
 				rechargeUrl += "&passwd="+password;
 			}
-			log.debug("[Winside recharge Url] ==> "+rechargeUrl);
+			log.info("[Winside recharge Url] ==> "+rechargeUrl);
 	    	HttpGet httpget = new HttpGet(rechargeUrl);
 	    	String body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpget);
-	    	log.debug("[Winside recharge Result] ==> "+body);
+	    	log.info("[Winside recharge Result] ==> "+body);
 	    	ResultInfo info = new ResultInfo();
 	    	String[] result = body.split("#");
 	    	if (!"success".equalsIgnoreCase(result[0].trim())) {
@@ -99,10 +98,10 @@ public class WinsideSubscribeUtil {
 			if (StringUtils.isNotEmpty(password)) {
 				rechargeUrl += "&passwd="+password;
 			}
-			log.debug("[Winside rechargegd Url] ==> "+rechargeUrl);
+			log.info("[Winside rechargegd Url] ==> "+rechargeUrl);
 	    	HttpGet httpget = new HttpGet(rechargeUrl);
 	    	String body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpget);
-	    	log.debug("[Winside rechargegd Result] ==> "+body);
+	    	log.info("[Winside rechargegd Result] ==> "+body);
 	    	ResultInfo info = new ResultInfo();
 	    	String[] result = body.split("#");
 	    	if (!"success".equalsIgnoreCase(result[0].trim())) {
@@ -131,6 +130,7 @@ public class WinsideSubscribeUtil {
 							+ "|" + coins
 							+ "|" +checkKey;
 			checkcode = DigestUtils.md5Hex(checkcode);
+			log.info("checkcode:"+checkcode);
 			String winsideUrlPattern = null;
 			if (!buyURL.endsWith("/")&&!consumeCoinsUrlPattern.startsWith("/")) {
 				winsideUrlPattern = buyURL + "/" +consumeCoinsUrlPattern;

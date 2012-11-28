@@ -4,8 +4,8 @@
 		<property name="supportCache">false</property>
 		<property name="sql.dialect">sqlserver</property>
 		<property name="connection.xml">/sqlserver.config.xml</property>
-		<property name="telcomOperator">telcomfj</property>
-		<property name="serviceProvider">winside</property>
+		<property name="telcomOperator">telcomgs</property>
+		<property name="serviceProvider">shixian</property>
 		<users>
 			<user>
 				<name>igtest01</name>
@@ -235,12 +235,16 @@
 	</configuration>
 	
 	<configuration id="shixian">
+		<property name="appid">sp000003</property>
 		<property name="amountUnit">元宝</property>
 		<property name="cashToAmountRatio">10</property>
 		<property name="supportPoints">true</property>
 		<property name="subscribeMode">webservice</property>
 		<property name="rechargeUrl">
-			<![CDATA[http://192.168.10.253:8086/tvplat4/pay/pay_epibolyPayment.action?payChoose=%s]]>
+			<![CDATA[http://115.195.174.71:8082/tvplat4/pay/pay_epibolyPayment.action?payChoose=%s&appid=%s]]>
+		</property>
+		<property name="urlPattern">
+			<![CDATA[payChoose=%s&appid=%s]]>
 		</property>
 	</configuration>
 </configurations>

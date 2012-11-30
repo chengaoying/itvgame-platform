@@ -75,7 +75,7 @@ public class PurchaseProcessor implements IProcessor {
 	        context.setProp("payType", payType);
 	        String remark = req.readUTF();
 	        String payKey = req.readUTF();
-	        context.setProp("payKey", payKey);
+	        context.setProp("checkKey", payKey);
 		  try {
 	            String password = req.readUTF();
 	            context.setProp("password", password);
@@ -120,7 +120,7 @@ public class PurchaseProcessor implements IProcessor {
 	        String appId = req.readUTF();
 	        context.setProp("appId", appId);
 	        String payKey = req.readUTF();
-	        context.setProp("payKey", payKey);
+	        context.setProp("checkKey", payKey);
 	        String platformExt = req.readUTF();
 	        context.setProp("platformExt", platformExt);
 	        int feeCode = propServ.read(propId).getFeeCode();

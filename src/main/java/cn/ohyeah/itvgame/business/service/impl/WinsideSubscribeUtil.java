@@ -120,8 +120,9 @@ public class WinsideSubscribeUtil {
 	}
 	
 	public static ResultInfo consumeCoins(String buyURL, String userid, String username, String checkKey,
-			String product, String contents, int amount, int coins) {
+			String product, String con, int amount, int coins) {
 		try {
+			String contents = "consumeCoins";
 			String checkcode = userid 
 							+ "|" + username
 							+ "|" + product
@@ -129,6 +130,7 @@ public class WinsideSubscribeUtil {
 							+ "|" + amount
 							+ "|" + coins
 							+ "|" +checkKey;
+			log.info("checkcode:"+checkcode);
 			checkcode = DigestUtils.md5Hex(checkcode);
 			log.info("checkcode:"+checkcode);
 			String winsideUrlPattern = null;
@@ -138,7 +140,7 @@ public class WinsideSubscribeUtil {
 			else {
 				winsideUrlPattern = buyURL + consumeCoinsUrlPattern;
 			}
-			String consumeCoinsUrl = String.format(winsideUrlPattern, userid, username, product, URLEncoder.encode(contents, "UTF-8"), amount, coins, checkcode);
+			String consumeCoinsUrl = String.format(winsideUrlPattern, userid, username, product, contents, amount, coins, checkcode);
 			log.debug("[Winside consumeCoins Url] ==> "+consumeCoinsUrl);
 	    	HttpGet httpget = new HttpGet(consumeCoinsUrl);
 	    	String body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpget);

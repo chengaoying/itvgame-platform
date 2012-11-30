@@ -85,7 +85,7 @@ public class DijoySubscribeImpl extends AbstractSubscribeImpl {
 		String buyUrl = (String) props.get("buyURL");
 		String platformExt = (String) props.get("platformExt");
 		String appExt = "appExt";
-		String payKey = (String) props.get("payKey");
+		String payKey = (String) props.get("checkKey");
 		return DijoySubscribeUtil.consumeCoins(userId, appId, number, feeCode, returnUrl, notifyUrl, platformExt, appExt, payKey, buyUrl);
 	}
 	

@@ -9,9 +9,9 @@ flush privileges;
 	<property name="jdbc.queryKeySql">select LAST_INSERT_ID()</property>
 	<property name="jdbc.datasource">com.mchange.v2.c3p0.ComboPooledDataSource</property>
 	<property name="jdbc.driverClass">com.mysql.jdbc.Driver</property>
-	<property name="jdbc.jdbcUrl">jdbc:mysql://localhost:3306/itvgame?characterEncoding=GBK</property>
-	<property name="jdbc.user">root</property>
-	<property name="jdbc.password"></property>
+	<property name="jdbc.jdbcUrl">jdbc:mysql://61.191.192.102:3306/oyeah_itvgame?characterEncoding=GBK</property>
+	<property name="jdbc.user">oyeah</property>
+	<property name="jdbc.password">ooo.game,*-yeah</property>
 	
 	<property name="jdbc.maxPoolSize">200</property>
 	<property name="jdbc.minPoolSize">10</property>

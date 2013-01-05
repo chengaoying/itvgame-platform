@@ -44,10 +44,9 @@ public class ShengyiSubscribeUtil {
 		order.setServiceOrderForm(form);
 		try {
 			TelecomServeStub  stub = new TelecomServeStub();
-			// stub._getServiceClient().getOptions().setProperty(HTTPConstants.CHUNKED,"false"); 
 			ServiceOrderResponse res = stub.serviceOrder(order);
 			ServiceOrderRsp orderRsp = res.get_return();
-			log.info("订购结果："+orderRsp.getResult()+orderRsp.getDescription());
+			log.info("订购结果："+orderRsp.getResult()+",信息:"+orderRsp.getDescription());
 			ResultInfo info = new ResultInfo();
 	    	//info.setInfo(11);
 	    	if(orderRsp.getResult().equals("0")){

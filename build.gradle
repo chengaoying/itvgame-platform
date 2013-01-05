@@ -98,7 +98,7 @@ dependencies {
 	compile ':telcomsh-ws-points:0.1@jar'
 	compile ':telcomsh-ws-userinfo:0.1@jar'
 	compile ':the9-ws-acc:0.1@jar'
-	compile ':hunan-ws:3.0@jar'
+	compile ':hunan-ws:3.2@jar'
 	
 	runtime 'jstl:jstl:1.2'
 	runtime 'javax.faces:jsf-api:1.2_15'

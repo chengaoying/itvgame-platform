@@ -186,6 +186,13 @@ public class SubscribeProcessor implements IProcessor {
 		String shengyiProductId = req.readUTF();
 		context.setProp("shengyiProductId", shengyiProductId);
 		try {
+			String password = req.readUTF();
+			context.setProp("password", password);
+		}
+		catch (Exception e) {
+			context.setProp("password", "");
+		}
+		try {
 			ResultInfo info = rechargeServ.recharge(context.getPropsMap(), accountId, productId, 
 					amount, remark, new java.util.Date());
 			if (info.isSuccess()) {

@@ -91,11 +91,24 @@ public class ShengyiSubscribeImpl extends AbstractSubscribeImpl {
 		String shengyiCPPassWord = (String) props.get("shengyiCPPassWord");
 		String shengyiUserIdType = (String) props.get("shengyiUserIdType");
 		String shengyiProductId = (String) props.get("shengyiProductId");
+		String passWd = (String) props.get("password");
 		String timeStamp = DateUtil.createTimeId(DateUtil.PATTERN_DEFAULT);
 		String transactionID = shengyiCPID + timeStamp + ToolUtil.getAutoincrementValue();
 		System.out.println("timeStamp:"+timeStamp);
 		System.out.println("transactionID:"+transactionID);
-		return ShengyiSubscribeUtil.consumeCoins(userId, userToken, amount, shengyiCPID, shengyiCPPassWord, shengyiUserIdType, shengyiProductId, timeStamp, transactionID);
+		System.out.println("passWd:"+passWd);
+		ResultInfo info = ShengyiSubscribeUtil.judgAccount(userId, userToken, timeStamp, transactionID);
+		ResultInfo info2;
+		if(info.getInfo()!=null && info.getInfo().equals("0")){
+			info2 = ShengyiSubscribeUtil.checkPassword(userId, userToken, timeStamp, transactionID, passWd);
+			if(info2.getInfo()!=null && info2.getInfo().equals("0")){
+				return ShengyiSubscribeUtil.consumeCoins(userId, userToken, amount, shengyiCPID, shengyiCPPassWord, shengyiUserIdType, shengyiProductId, timeStamp, transactionID);
+			}else{
+				return info2;
+			}
+		}else{
+			return ShengyiSubscribeUtil.consumeCoins(userId, userToken, amount, shengyiCPID, shengyiCPPassWord, shengyiUserIdType, shengyiProductId, timeStamp, transactionID);
+		}
 	}
 	
 	@Override

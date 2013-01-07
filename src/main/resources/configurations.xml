@@ -225,8 +225,8 @@
     </configuration>
     
     <configuration id="shengyi">
-		<property name="amountUnit">元宝</property>
-		<property name="cashToAmountRatio">10</property>
+		<property name="amountUnit">元</property>
+		<property name="cashToAmountRatio">1</property>
 		<property name="supportPoints">true</property>
 		<property name="subscribeMode">webservice</property>
 		<property name="rechargeUrl">

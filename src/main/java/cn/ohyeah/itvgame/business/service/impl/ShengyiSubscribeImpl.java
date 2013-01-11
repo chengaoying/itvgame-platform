@@ -97,10 +97,10 @@ public class ShengyiSubscribeImpl extends AbstractSubscribeImpl {
 		System.out.println("timeStamp:"+timeStamp);
 		System.out.println("transactionID:"+transactionID);
 		System.out.println("passWd:"+passWd);
-		ResultInfo info = ShengyiSubscribeUtil.judgAccount(userId, userToken, timeStamp, transactionID);
+		ResultInfo info = ShengyiSubscribeUtil.judgAccount(userId, userToken, timeStamp, transactionID, shengyiCPID, shengyiCPPassWord);
 		ResultInfo info2;
 		if(info.getInfo()!=null && info.getInfo().equals("0")){
-			info2 = ShengyiSubscribeUtil.checkPassword(userId, userToken, timeStamp, transactionID, passWd);
+			info2 = ShengyiSubscribeUtil.checkPassword(userId, userToken, timeStamp, transactionID, passWd, shengyiCPID, shengyiCPPassWord);
 			if(info2.getInfo()!=null && info2.getInfo().equals("0")){
 				return ShengyiSubscribeUtil.consumeCoins(userId, userToken, amount, shengyiCPID, shengyiCPPassWord, shengyiUserIdType, shengyiProductId, timeStamp, transactionID);
 			}else{

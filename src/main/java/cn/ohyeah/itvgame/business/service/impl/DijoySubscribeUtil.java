@@ -55,8 +55,8 @@ public class DijoySubscribeUtil {
 			nvps.add(new BasicNameValuePair("appExt", appExt));
 			nvps.add(new BasicNameValuePair("sign", sign));
 			HttpPost httpPost = new HttpPost(buyUrl);
-						UrlEncodedFormEntity urlEntity = new UrlEncodedFormEntity(nvps, HTTP.UTF_8);
-						httpPost.setEntity(urlEntity);
+			UrlEncodedFormEntity urlEntity = new UrlEncodedFormEntity(nvps, HTTP.UTF_8);
+			httpPost.setEntity(urlEntity);
 
 	    	String body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpPost);
 	    	ObjectMapper op = new ObjectMapper();

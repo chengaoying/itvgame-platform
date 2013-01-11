@@ -11,9 +11,8 @@ import com.sy.service.cpservice.action.TelecomServeStub;
 import com.sy.service.cpservice.action.TelecomServeStub.AccountAuth;
 import com.sy.service.cpservice.action.TelecomServeStub.AccountAuthForm;
 import com.sy.service.cpservice.action.TelecomServeStub.AccountAuthResponse;
-import com.sy.service.cpservice.action.TelecomServeStub.AccountAuthRsp;
+import com.sy.service.cpservice.action.TelecomServeStub.AccountRsp;
 import com.sy.service.cpservice.action.TelecomServeStub.AccountSetJudgForm;
-import com.sy.service.cpservice.action.TelecomServeStub.AccountSetJudgRsp;
 import com.sy.service.cpservice.action.TelecomServeStub.ServiceOrder;
 import com.sy.service.cpservice.action.TelecomServeStub.ServiceOrderForm;
 import com.sy.service.cpservice.action.TelecomServeStub.ServiceOrderResponse;
@@ -82,7 +81,7 @@ public class ShengyiSubscribeUtil {
 	 * @param transactionId
 	 * @return
 	 */
-	public static ResultInfo judgAccount(String userId, String userToken, String TimeStamp, String transactionId){
+	public static ResultInfo judgAccount(String userId, String userToken, String TimeStamp, String transactionId, String cpId, String cpPW){
 		try {
 			TelecomServeStub  stub = new TelecomServeStub();
 			SetAndJudgAccount saja = new SetAndJudgAccount();
@@ -91,9 +90,11 @@ public class ShengyiSubscribeUtil {
 			asjForm.setUserToken(userToken);
 			asjForm.setTimeStamp(TimeStamp);
 			asjForm.setTransactionID(transactionId);
+			asjForm.setCPID(cpId);
+			asjForm.setCPPassWord(cpPW);
 			saja.setAccountSetJudgForm(asjForm);
 			SetAndJudgAccountResponse res = stub.setAndJudgAccount(saja);
-			AccountSetJudgRsp asrsp = res.get_return();
+			AccountRsp asrsp = res.get_return();
 			log.info("setAndJudgAccount return:"+asrsp.getResult()+", message:"+asrsp.getDescription());
 			ResultInfo info = new ResultInfo();
 			if(asrsp.getResult().equals("0")){
@@ -119,7 +120,8 @@ public class ShengyiSubscribeUtil {
 	 * @param passWd
 	 * @return
 	 */
-	public static ResultInfo checkPassword(String userId, String userToken, String TimeStamp, String transactionId, String passWd){
+	public static ResultInfo checkPassword(String userId, String userToken, String TimeStamp, String transactionId, String passWd,
+			String cpId, String cpPw){
 		TelecomServeStub stub;
 		try {
 			stub = new TelecomServeStub();
@@ -130,16 +132,18 @@ public class ShengyiSubscribeUtil {
 			aaForm.setTimeStamp(TimeStamp);
 			aaForm.setTransactionID(transactionId);
 			aaForm.setPassword(passWd);
+			aaForm.setCPID(cpId);
+			aaForm.setCPPassWord(cpPw);
 			aa.setAccountAuthForm(aaForm);
 			AccountAuthResponse aaRes = stub.accountAuth(aa);
-			AccountAuthRsp aaRsp = aaRes.get_return();
+			AccountRsp aaRsp = aaRes.get_return();
 			log.info("accountAuth return:"+aaRsp.getResult()+", message:"+aaRsp.getDescription());
 			ResultInfo info = new ResultInfo();
 			if(aaRsp.getResult().equals("0")){
 				info.setInfo(aaRsp.getResult());
 			}else{
 				info.setErrorCode(ErrorCode.EC_SUBSCRIBE_FAILED);
-				info.setMessage("校验失败,原因："+aaRsp.getResult()+aaRsp.getDescription());
+				info.setMessage(aaRsp.getDescription()+", 错误码："+aaRsp.getResult());
 			}
 			return info;
 		} catch (AxisFault e) {

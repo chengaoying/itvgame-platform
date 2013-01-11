@@ -18,7 +18,7 @@
 <li><a href="http://113.106.54.37:8080/ohyeah/login.jsp">掌世界</a></li>
 <li><a href="http://222.66.209.183/itvgamesh/action/gateway/chinagamesEntry">183测试服中游平台</a></li>
 <li><a href="http://222.66.209.183/itvgamethe9/action/gateway/the9Entry">183测试服九城平台</a></li>
-<li><a href="http://192.168.16.70:8080/itvgame/action/gateway/chinagamesEntry?uid=igsuper00&pwd=itvgame">内网中游平台</a></li>
+<li><a href="http://192.168.16.70:8080/itvgame/action/gateway/shengyiEntry?uid=igsuper00&pwd=itvgame">内网中游平台</a></li>
 <li><a href="http://192.168.16.46:8080/itvgamethe9/action/gateway/the9Entry">内网九城平台</a></li>
 <li><a href="http://222.66.209.183:81/iptv/beach?ReturnURL=http%3A%2F%2F222.66.209.183%2Fitvgamesh%2F">抢滩登陆</a></li>
 <li><a href="http://222.66.209.183:81/iptv/battleeagle2?ReturnURL=http%3A%2F%2F222.66.209.183%2Fitvgamesh%2F">战鹰2</a></li>

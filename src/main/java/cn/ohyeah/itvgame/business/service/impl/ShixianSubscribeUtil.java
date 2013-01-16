@@ -17,16 +17,16 @@ public class ShixianSubscribeUtil {
 	private static final Log log = LogFactory.getLog(ShixianSubscribeUtil.class);
 	private static final DefaultHttpClient httpClient;
 	private static final String rechargeUrlShixian;
-	private static final String appid;
+	//private static final String appid;
 	
 	static {
 		httpClient = ThreadSafeClientConnManagerUtil.buildDefaultHttpClient();
-		rechargeUrlShixian = Configuration.getProperty("shixian", "rechargeUrl");
-		appid = Configuration.getProperty("shixian", "appid");
+		rechargeUrlShixian = Configuration.getProperty("shixian", "urlPattern");
+		//appid = Configuration.getProperty("shixian", "appid");
 	}
 	
 	public static ResultInfo consumeCoins(Map<String, Object> props){
-		//String buyUrl = (String) props.get("buyURL");
+		String buyUrl = (String) props.get("buyURL")+rechargeUrlShixian;
 		String feeaccount = (String) props.get("feeaccount");
 		//String returnurl = (String) props.get("returnurl");
 		String dwjvl = (String) props.get("dwjvl");
@@ -37,12 +37,13 @@ public class ShixianSubscribeUtil {
 		//String userToken = (String) props.get("userToken");
 		int ammount = (Integer) props.get("amount");
 		String userId = (String) props.get("userId");
-		String	buyUrl = rechargeUrlShixian;
+		String appId = (String) props.get("appId");
+		//String	buyUrl = rechargeUrlShixian;
 		String params = "tvplat#feeaccount="+feeaccount+";tvplat#returnurl="+/*returnurl*/""+"; tvplat#numbercode="+userId
 				+"; tvplat#dwjvl="+dwjvl+"; tvplat#opcomkey="+opcomkey+"; tvplat#paysubway="+paysubway/*+"; tvplat#gameid="+gameid
 				+"; USER_TOKEN="+userToken+"; USER_GROUP_ID="+user_group_id*/;
 		log.info("cookie:"+params);
-		String rechargeUrl = String.format(buyUrl, ammount, appid);
+		String rechargeUrl = String.format(buyUrl, ammount, appId);
 		log.info("rechargeUrl:"+rechargeUrl);
 		ResultInfo info = new ResultInfo();
 		HttpGet httpget = new HttpGet(rechargeUrl);

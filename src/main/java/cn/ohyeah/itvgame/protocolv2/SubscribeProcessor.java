@@ -98,6 +98,8 @@ public class SubscribeProcessor implements IProcessor {
 		context.setProp("gameid", gameid);
 		String user_group_id = req.readUTF();
 		context.setProp("user_group_id", user_group_id);
+		String appId = req.readUTF();
+		context.setProp("appId", appId);
 		try {
 			String password = req.readUTF();
 			context.setProp("password", password);

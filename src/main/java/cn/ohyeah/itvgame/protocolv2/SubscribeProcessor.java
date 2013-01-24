@@ -145,6 +145,7 @@ public class SubscribeProcessor implements IProcessor {
 		context.setProp("shengyiUserIdType", shengyiUserIdType);
 		String shengyiProductId = req.readUTF();
 		context.setProp("shengyiProductId", shengyiProductId);
+		context.setProp("subscribe", "subscribeProduct");
 		try {
 			ResultInfo info = subServ.subscribeProduct(context.getPropsMap(), 
 					accountId, productId, subscribeType, remark);

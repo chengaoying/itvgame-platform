@@ -65,17 +65,40 @@ public class ShengyiSubscribeImpl extends AbstractSubscribeImpl {
 	public ResultInfo subscribeAction(Map<String, Object> props,
 			Account account, ProductDetail detail, PurchaseRelation pr,
 			String remark, Date time) {
-		if ("recharge".equalsIgnoreCase(pr.getSubscribeType())) {
-			return recharge(props, account, detail, pr, remark);
+		
+		String str = "";
+		if(props.get("subscribe")!=null){
+			str = (String)props.get("subscribe");
+		}
+		if ("recharge".equalsIgnoreCase(pr.getSubscribeType()) || str.equals("subscribeProduct")) {
+			return subscribeProuduct(props, account, detail, pr, remark);
 		}
 		else {
 			return expend(props, account, detail, pr, remark);
 		}
 	}
 
-	protected ResultInfo recharge(Map<String, Object> props, Account account,
+	protected ResultInfo subscribeProuduct(Map<String, Object> props, Account account,
 			ProductDetail detail, PurchaseRelation pr, String remark) {
-		throw new BusinessException("not supported");
+		String userId = account.getUserId();
+		int amount = pr.getAmount();
+		//String buyUrl = (String) props.get("buyURL");
+		String userToken = (String) props.get("userToken");
+		//String checkKey = (String) props.get("checkKey");
+		String shengyiCPID = (String) props.get("shengyiCPID");
+		String shengyiCPPassWord = (String) props.get("shengyiCPPassWord");
+		String shengyiUserIdType = (String) props.get("shengyiUserIdType");
+		String shengyiProductId = (String) props.get("shengyiProductId");
+		//String passWd = (String) props.get("password");
+		String timeStamp = DateUtil.createTimeId(DateUtil.PATTERN_DEFAULT);
+		String transactionID = shengyiCPID + timeStamp + ToolUtil.getAutoincrementValue();
+		ProductDetail product = (ProductDetail) props.get("productDetail");
+		String rechargeDesc = product.getProductName()+"游戏包月";
+		System.out.println("timeStamp:"+timeStamp);
+		System.out.println("transactionID:"+transactionID);
+		System.out.println("rechargeDesc:"+rechargeDesc);
+		return ShengyiSubscribeUtil.consumeCoins(userId, userToken, amount, shengyiCPID, shengyiCPPassWord, 
+				shengyiUserIdType, shengyiProductId, timeStamp, transactionID, rechargeDesc);
 	}
 	
 
@@ -94,20 +117,25 @@ public class ShengyiSubscribeImpl extends AbstractSubscribeImpl {
 		String passWd = (String) props.get("password");
 		String timeStamp = DateUtil.createTimeId(DateUtil.PATTERN_DEFAULT);
 		String transactionID = shengyiCPID + timeStamp + ToolUtil.getAutoincrementValue();
+		ProductDetail product = (ProductDetail) props.get("productDetail");
+		String rechargeDesc = product.getProductName()+"游戏充值";
 		System.out.println("timeStamp:"+timeStamp);
 		System.out.println("transactionID:"+transactionID);
 		System.out.println("passWd:"+passWd);
+		System.out.println("rechargeDesc:"+rechargeDesc);
 		ResultInfo info = ShengyiSubscribeUtil.judgAccount(userId, userToken, timeStamp, transactionID, shengyiCPID, shengyiCPPassWord);
 		ResultInfo info2;
 		if(info.getInfo()!=null && info.getInfo().equals("0")){
 			info2 = ShengyiSubscribeUtil.checkPassword(userId, userToken, timeStamp, transactionID, passWd, shengyiCPID, shengyiCPPassWord);
 			if(info2.getInfo()!=null && info2.getInfo().equals("0")){
-				return ShengyiSubscribeUtil.consumeCoins(userId, userToken, amount, shengyiCPID, shengyiCPPassWord, shengyiUserIdType, shengyiProductId, timeStamp, transactionID);
+				return ShengyiSubscribeUtil.consumeCoins(userId, userToken, amount, shengyiCPID, shengyiCPPassWord,
+						shengyiUserIdType, shengyiProductId, timeStamp, transactionID, rechargeDesc);
 			}else{
 				return info2;
 			}
 		}else{
-			return ShengyiSubscribeUtil.consumeCoins(userId, userToken, amount, shengyiCPID, shengyiCPPassWord, shengyiUserIdType, shengyiProductId, timeStamp, transactionID);
+			return ShengyiSubscribeUtil.consumeCoins(userId, userToken, amount, shengyiCPID, shengyiCPPassWord, 
+					shengyiUserIdType, shengyiProductId, timeStamp, transactionID, rechargeDesc);
 		}
 	}
 	

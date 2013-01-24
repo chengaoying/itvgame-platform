@@ -36,7 +36,7 @@ public class ShengyiSubscribeUtil {
 	
 	public static ResultInfo consumeCoins(String userId, String userToken, int amount,
 									  String shengyiCPID, String shengyiCPPassWord, String shengyiUserIdType,
-									  String shengyiProductId, String timeStamp, String transactionID){
+									  String shengyiProductId, String timeStamp, String transactionID, String desc){
 		
 		ServiceOrderForm form = new ServiceOrderForm();
 		form.setUserID(userId);
@@ -48,10 +48,11 @@ public class ShengyiSubscribeUtil {
 		form.setProductID(shengyiProductId);
 		form.setTimeStamp(timeStamp);
 		form.setTransactionID(transactionID);
+		form.setConsumption(desc);
 		ServiceOrder order = new ServiceOrder();
 		order.setServiceOrderForm(form);
 		try {
-			TelecomServeStub  stub = new TelecomServeStub();
+			TelecomServeStub  stub = new TelecomServeStub();  
 			stub._getServiceClient().getOptions().setProperty(HTTPConstants.CHUNKED,"false"); 
 			ServiceOrderResponse res = stub.serviceOrder(order);
 			ServiceOrderRsp orderRsp = res.get_return();

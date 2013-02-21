@@ -185,8 +185,8 @@ public class WinsideSubscribeUtil {
 	    			return 0;
 	    		}
 	    		else {
-	    			//throw new SubscribeException(getQueryCoinsErrorMessage(Integer.parseInt(result[1].trim())));
-	    			throw new SubscribeException(result[2].trim());
+	    			throw new SubscribeException(getQueryCoinsErrorMessage(Integer.parseInt(result[1].trim())));
+	    			//throw new SubscribeException(result[2].trim());
 	    		}
 	    	}
 		}

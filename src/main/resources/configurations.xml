@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configurations>
 	<configuration id="global">
-		<property name="supportCache">false</property>
+		<property name="supportCache">true</property>
 		<property name="sql.dialect">sqlserver</property>
 		<property name="connection.xml">/sqlserver.config.xml</property>
-		<property name="telcomOperator">telcomhn</property>
-		<property name="serviceProvider">shengyi</property>
+		<property name="telcomOperator">telcomgd</property>
+		<property name="serviceProvider">winside</property>
 		<users>
 			<user>
 				<name>igtest01</name>
@@ -22,7 +22,7 @@
 	
 	<configuration id="ohyeah">
 		<property name="protocolLocation">
-			<![CDATA[/protocolv2/processor]]>
+			<![CDATA[/protocolv2/processor]]>   
 		</property>
 		<property name="amountUnit">元宝</property>
 		<property name="cashToAmountRatio">10</property>

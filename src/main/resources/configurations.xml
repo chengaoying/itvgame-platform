@@ -4,8 +4,8 @@
 		<property name="supportCache">true</property>
 		<property name="sql.dialect">sqlserver</property>
 		<property name="connection.xml">/sqlserver.config.xml</property>
-		<property name="telcomOperator">telcomgd</property>
-		<property name="serviceProvider">winside</property>
+		<property name="telcomOperator">telcomsh</property>
+		<property name="serviceProvider">ohyeah</property>
 		<users>
 			<user>
 				<name>igtest01</name>
@@ -43,6 +43,14 @@
 	</configuration>
 	
 	<configuration id="telcomCommon">
+		<property name="amountUnit">元</property>
+		<property name="cashToAmountRatio">1</property>
+		<property name="supportPoints">false</property>
+		<property name="pointsUnit">积分</property>
+		<property name="cashToPointsRatio">100</property>
+	</configuration>
+	
+	<configuration id="telcomah">
 		<property name="amountUnit">元</property>
 		<property name="cashToAmountRatio">1</property>
 		<property name="supportPoints">false</property>
@@ -136,6 +144,18 @@
 			<pattern name="backUrl"><![CDATA[<a.*?onclick\s?=\s?"?location\.href='([^']*)'"?.*?>]]></pattern>
 			<pattern name="result"><![CDATA[[?&]result=([^&]*)]]></pattern>
 		</patterns>
+		
+		<!-- 电信积分畅游参数 -->
+		
+		<property name="privateKey">ohyeahGame</property>
+		
+		<!-- 喜洋洋积分兑换ID -->
+		<property name="productID">1000</property>
+		<property name="gameCoin">300</property>
+		
+		<!-- 龙猫勇士兑换ID -->
+		<property name="productID2">2000</property>
+		<property name="gameCoin2">400</property>
 	</configuration>
 	
 	<configuration id="the9">

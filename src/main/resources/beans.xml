@@ -106,5 +106,6 @@
 	<bean name="subscribeService" class="cn.ohyeah.itvgame.platform.service.SubscribeService"/>
 	<bean name="rechargeService" class="cn.ohyeah.itvgame.platform.service.RechargeService"/>
 	<bean name="purchaseService" class="cn.ohyeah.itvgame.platform.service.PurchaseService"/>
+	<bean name="pointService" class="cn.ohyeah.itvgame.point.service.PointService"/>
 	
 </beans>

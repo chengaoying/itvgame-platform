@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
+
 import cn.ohyeah.itvgame.global.BeanManager;
 import cn.ohyeah.itvgame.point.service.PointService;
 
@@ -31,18 +33,25 @@ public class PointServlet extends HttpServlet {
 	protected void service(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		
-		String pId = (String) req.getAttribute("ProductID");
-		String userId = (String) req.getAttribute("UserId");
-		String transactionId = (String) req.getAttribute("transactionid");
-		String sign = (String) req.getAttribute("Sign");
+		String pId = (String) req.getParameter("ProductID");
+		String userId = (String) req.getParameter("UserId");
+		String transactionId = (String) req.getParameter("transactionid");
+		String sign = (String) req.getParameter("Sign");
 		
 		map.put("pId", pId);
 		map.put("userId", userId);   
 		map.put("transactionId", transactionId);
 		map.put("sign", sign);
 		
-		Map<Integer, String> resultMap = pointService.pointRecharge(map);
+		Map<String, String> resultMap = pointService.pointRecharge(map);
 		
-		JSONObject
+		resp.setContentType("text/html;charset=GBK");
+		//resp.setContentType("application/x-javascript;charset=UTF-8");
+		
+		JSONObject json = JSONObject.fromObject(resultMap); 
+		System.out.println(json);
+		resp.getWriter().write(json.toString()); 
+		resp.getWriter().flush();
+		resp.getWriter().close();
 	}
 }

@@ -61,6 +61,15 @@
     <servlet-name>protocolv2</servlet-name>
     <url-pattern>/protocolv2/processor</url-pattern>
   </servlet-mapping>
+   <servlet>
+    <servlet-name>point</servlet-name>
+    <servlet-class>cn.ohyeah.itvgame.point.servlet.PointServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>point</servlet-name>
+    <url-pattern>/point</url-pattern>
+  </servlet-mapping>
   <session-config>
     <session-timeout>30</session-timeout>
   </session-config>

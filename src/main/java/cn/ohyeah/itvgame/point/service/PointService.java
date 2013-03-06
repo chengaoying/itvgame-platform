@@ -25,8 +25,6 @@ public class PointService {
 	private static final int gameCoin;
 	private static final int gameCoin2;
 	
-	private static final Map<Integer, String> resultMap;
-	
 	static {
 		productServ = (ProductService)BeanManager.getBean("productService");
 		accServ = (AccountService)BeanManager.getBean("accountService");
@@ -36,25 +34,34 @@ public class PointService {
 		pointId2 = Configuration.getProperty("telcomsh", "productID2");
 		gameCoin = Integer.parseInt(Configuration.getProperty("telcomsh", "gameCoin"));
 		gameCoin2 = Integer.parseInt(Configuration.getProperty("telcomsh", "gameCoin2"));
-		resultMap = new HashMap<Integer, String>();
+		
 	}
 	
 	
-	public Map<Integer, String> pointRecharge(Map<String, String> map){
+	public Map<String, String> pointRecharge(Map<String, String> map){
 		String pId = map.get("pId");
 		String userId = map.get("userId");
 		String transactionId = map.get("transactionId");
 		String sign = map.get("sign");
 		
 		Account account = accServ.read(userId);
+		Map<String, String> resultMap = new HashMap<String, String>();
 		
 		if(!pId.equals(pointId) && !pId.equals(pointId2)){
-			resultMap.put(-1, "积分产品ID不正确");
+			resultMap.put("result", "-1,ProductID不正确");
+			resultMap.put("ProductID", pId);
+			resultMap.put("UserId", userId);
+			resultMap.put("transactionId", transactionId);
+			resultMap.put("Sign", sign);
 			return resultMap;
 		}
 		
 		if(account == null){
-			resultMap.put(-2, "userId不正确");
+			resultMap.put("result", "-2,UserId错误");
+			resultMap.put("ProductID", pId);
+			resultMap.put("UserId", userId);
+			resultMap.put("transactionId", transactionId);
+			resultMap.put("Sign", sign);
 			return resultMap;
 		}
 		
@@ -71,8 +78,12 @@ public class PointService {
 		Authorization auth = authDao.read(account.getAccountId(), productId);
 		auth.incGoldCoin(gold);
 		authDao.updateCoins(auth);
-		log.info("<<积分畅游,兑换游戏币:"+gold+",游戏产品Id:"+productId);
-		resultMap.put(0, "success");
+		log.info(">>积分畅游,兑换游戏币:"+gold+", 游戏产品Id:"+productId+", userId:"+userId+", transactionId:"+transactionId+", sign:"+sign);
+		resultMap.put("result", "0,success");
+		resultMap.put("ProductID", pId);
+		resultMap.put("UserId", userId);
+		resultMap.put("transactionId", transactionId);
+		resultMap.put("Sign", sign);
 		return resultMap;
 	}
 	

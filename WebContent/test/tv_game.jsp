@@ -13,7 +13,7 @@
 
 <%
 	
-	String appPathPre = request.getContextPath()+"/data/apps/SheepFarm/SheepFarm";
+	String appPathPre = request.getContextPath()+"/data/apps/tv_game/tv_game";
 	
 %>
 <script language="javascript1.3">

@@ -4,8 +4,8 @@
 		<property name="supportCache">true</property>
 		<property name="sql.dialect">sqlserver</property>
 		<property name="connection.xml">/sqlserver.config.xml</property>
-		<property name="telcomOperator">telcomsh</property>
-		<property name="serviceProvider">ohyeah</property>
+		<property name="telcomOperator">tianweisz</property>
+		<property name="serviceProvider">winside</property>
 		<users>
 			<user>
 				<name>igtest01</name>
@@ -220,7 +220,7 @@
 			<![CDATA[order_coins?userid=%s&username=%s&money=%s&spid=%s&product=%s&userToken=%s&checkCode=%s]]>
 		</property>
 		<property name="consumeCoinsUrl">
-			<![CDATA[consume_coins?userid=%s&username=&product=%s&contents=%s&amount=%s&coins=%s&checkcode=%s&memo=%s]]>
+			<![CDATA[consume_coins?userid=%s&username=%s&product=%s&contents=%s&amount=%s&coins=%s&checkcode=%s&memo=%s]]>
 		</property>
 		<property name="queryCoinsUrl">
 			<![CDATA[query_coins?userid=%s]]>

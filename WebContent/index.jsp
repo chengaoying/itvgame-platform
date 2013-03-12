@@ -28,6 +28,7 @@
 <li><a href="http://222.66.209.183:81/iptv/leon?ReturnURL=http%3A%2F%2F222.66.209.183%2Fitvgamesh%2F">绿豆蛙大战河马</a></li>
 <li><a href="http://222.66.209.183:81/iptv/f1?ReturnURL=http%3A%2F%2F222.66.209.183%2Fitvgamesh%2F">极速F1</a></li>
 <li><a href="test/sheepFarm.jsp">绵羊农场</a></li>
+<li><a href="test/tv_game.jsp">我为合体狂</a></li>
 </ul>
 </body>
 </html>

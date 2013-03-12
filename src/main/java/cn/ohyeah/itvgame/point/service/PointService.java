@@ -3,6 +3,7 @@ package cn.ohyeah.itvgame.point.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -46,21 +47,36 @@ public class PointService {
 		
 		Account account = accServ.read(userId);
 		Map<String, String> resultMap = new HashMap<String, String>();
+		//Sign=md5(ProductID+ Result+ UserId+ transactionid+ privateKey)
+		String s = DigestUtils.md5Hex(pId+userId+transactionId+privateKey);
 		
 		if(!pId.equals(pointId) && !pId.equals(pointId2)){
-			resultMap.put("result", "-1,ProductID不正确");
+			resultMap.put("result", "-1");
 			resultMap.put("ProductID", pId);
 			resultMap.put("UserId", userId);
 			resultMap.put("transactionId", transactionId);
+			resultMap.put("privateKey", privateKey);
 			resultMap.put("Sign", sign);
 			return resultMap;
 		}
 		
 		if(account == null){
-			resultMap.put("result", "-2,UserId错误");
+			//accServ.addNewStbUser(userId);
+			resultMap.put("result", "-2");
 			resultMap.put("ProductID", pId);
 			resultMap.put("UserId", userId);
 			resultMap.put("transactionId", transactionId);
+			resultMap.put("privateKey", privateKey);
+			resultMap.put("Sign", sign);
+			return resultMap;
+		}
+		
+		if(!sign.equals(s)){
+			resultMap.put("result", "-3");
+			resultMap.put("ProductID", pId);
+			resultMap.put("UserId", userId);
+			resultMap.put("transactionId", transactionId);
+			resultMap.put("privateKey", privateKey);
 			resultMap.put("Sign", sign);
 			return resultMap;
 		}
@@ -78,11 +94,12 @@ public class PointService {
 		Authorization auth = authDao.read(account.getAccountId(), productId);
 		auth.incGoldCoin(gold);
 		authDao.updateCoins(auth);
-		log.info(">>积分畅游,兑换游戏币:"+gold+", 游戏产品Id:"+productId+", userId:"+userId+", transactionId:"+transactionId+", sign:"+sign);
-		resultMap.put("result", "0,success");
+		log.info(">>积分畅游,兑换游戏币:"+gold+", 游戏产品Id:"+productId+", userId:"+userId+", transactionId:"+transactionId+", sign:"+sign+", privateKey:"+privateKey);
+		resultMap.put("result", "0");
 		resultMap.put("ProductID", pId);
 		resultMap.put("UserId", userId);
 		resultMap.put("transactionId", transactionId);
+		resultMap.put("privateKey", privateKey);
 		resultMap.put("Sign", sign);
 		return resultMap;
 	}

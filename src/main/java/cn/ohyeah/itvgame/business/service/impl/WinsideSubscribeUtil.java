@@ -1,6 +1,5 @@
 package cn.ohyeah.itvgame.business.service.impl;
 
-import java.net.URLEncoder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;

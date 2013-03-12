@@ -56,7 +56,7 @@ public class WinsidetwSubscribeImpl extends AbstractSubscribeImpl {
 		String checkKey = (String)props.get("checkKey");
 		Product product = (Product)props.get("product");
 		String password = (String)props.get("password");
-		return WinsidetwSubscribeUtil.recharge(buyURL, spid, userid, username, pr.getAmount(), product.getAppName(), userToken, checkKey, password);
+		return WinsideSubscribeUtil.recharge(buyURL, spid, userid, username, pr.getAmount(), product.getAppName(), userToken, checkKey, password);
 	}
 	
 	protected ResultInfo expend(Map<String, Object> props, Account account,
@@ -68,7 +68,7 @@ public class WinsidetwSubscribeImpl extends AbstractSubscribeImpl {
 		Product product = (Product)props.get("product");
 		int costAmount = pr.getAmount()*getCashToAmountRatio(detail);
 		log.debug("[Subscribe Amount] ==> "+costAmount);
-		return WinsidetwSubscribeUtil.consumeCoins(buyURL, userid, 
+		return WinsideSubscribeUtil.consumeCoins(buyURL, userid, 
 				username, checkKey, product.getAppName(), remark, 1, costAmount);
 	}
 

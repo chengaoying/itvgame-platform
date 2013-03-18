@@ -22,13 +22,18 @@ import cn.ohyeah.itvgame.business.ResultInfo;
 import cn.ohyeah.itvgame.business.model.DijoyResponseEntry;
 import cn.ohyeah.itvgame.business.service.BusinessException;
 import cn.ohyeah.itvgame.business.service.SubscribeException;
+import cn.ohyeah.itvgame.global.Configuration;
 
 public class DijoySubscribeUtil {
 	private static final Log log = LogFactory.getLog(DijoySubscribeUtil.class);
 	private static final DefaultHttpClient httpClient;
+	private static final String consumeUrl;
+	private static final String payUrlConfiguration;
 	
 	static {
 		httpClient = ThreadSafeClientConnManagerUtil.buildDefaultHttpClient();
+		consumeUrl =  Configuration.getProperty("dijoy", "payUrl");
+		payUrlConfiguration =  Configuration.getProperty("dijoy", "payUrlConfiguration");
 	}
 	
 	public static ResultInfo recharge(String userId, String appId, int number, String feeCode, 
@@ -40,10 +45,18 @@ public class DijoySubscribeUtil {
 	public static ResultInfo consumeCoins(String userId, String appId, int number, int feeCode, 
 									  String returnUrl, String notifyUrl, String platformExt, String appExt, 
 									  String payKey, String buyUrl){
+		
+		String url = "";
+		if(payUrlConfiguration.equals("true")){
+			url = consumeUrl;
+		}else{
+			url = buyUrl;
+		}
+		
 		try {
 			String sign = userId + appId + feeCode + number + returnUrl + notifyUrl + platformExt + appExt + payKey;
 			sign = DigestUtils.md5Hex(sign).toUpperCase();
-			log.debug("[Dijoy expend UrlPattern] ==> "+buyUrl);
+			log.debug("[Dijoy expend UrlPattern] ==> "+url);
 			List <NameValuePair> nvps = new ArrayList <NameValuePair>();
 			nvps.add(new BasicNameValuePair("userId", userId));
 			nvps.add(new BasicNameValuePair("appId", appId));
@@ -54,7 +67,7 @@ public class DijoySubscribeUtil {
 			nvps.add(new BasicNameValuePair("platformExt", platformExt));
 			nvps.add(new BasicNameValuePair("appExt", appExt));
 			nvps.add(new BasicNameValuePair("sign", sign));
-			HttpPost httpPost = new HttpPost(buyUrl);
+			HttpPost httpPost = new HttpPost(url);
 			UrlEncodedFormEntity urlEntity = new UrlEncodedFormEntity(nvps, HTTP.UTF_8);
 			httpPost.setEntity(urlEntity);
 

@@ -4,8 +4,8 @@
 		<property name="supportCache">true</property>
 		<property name="sql.dialect">sqlserver</property>
 		<property name="connection.xml">/sqlserver.config.xml</property>
-		<property name="telcomOperator">tianweisz</property>
-		<property name="serviceProvider">winside</property>
+		<property name="telcomOperator">telcomCommon</property>
+		<property name="serviceProvider">dijoy</property>
 		<users>
 			<user>
 				<name>igtest01</name>
@@ -240,8 +240,12 @@
         <property name="amountUnit">金币</property>
         <property name="cashToAmountRatio">1</property>
         <property name="supportPoints">false</property>
-        <property name="feecodes">1/2/3/4</property>
-        <property name="amounts">1/2/5/10</property>
+        <property name="payUrl">
+			<![CDATA[http://220.248.44.50:11000/common/php/business/apppay.php]]>
+		</property>
+		
+		<!-- 该参数为true时，payUrl值用配置的值，否则用前台传递的值 -->
+		<property name="payUrlConfiguration">true</property>
     </configuration>
     
     <configuration id="shengyi">

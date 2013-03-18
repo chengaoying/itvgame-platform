@@ -20,13 +20,9 @@ import cn.ohyeah.itvgame.platform.model.PurchaseRelation;
 public class DijoySubscribeImpl extends AbstractSubscribeImpl {
 	private static final Log log = LogFactory.getLog(DijoySubscribeImpl.class);
 	private static final IPurchaseRelationDao prDao;
-	//private static final String[] feecodes;
-	//private static final String[] amounts;
 	
 	static {
 		prDao = (IPurchaseRelationDao)BeanManager.getDao("purchaseRelationDao");
-		//feecodes = Configuration.getProperty("dijoy", "feecodes").split("/");
-		//amounts = Configuration.getProperty("dijoy", "amounts").split("/");
 	}
 
 	public DijoySubscribeImpl() {

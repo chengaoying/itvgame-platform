@@ -245,7 +245,7 @@
 		</property>
 		
 		<!-- 该参数为true时，payUrl值用配置的值，否则用前台传递的值 -->
-		<property name="payUrlConfiguration">true</property>
+		<property name="payUrlConfiguration">false</property>
     </configuration>
     
     <configuration id="shengyi">

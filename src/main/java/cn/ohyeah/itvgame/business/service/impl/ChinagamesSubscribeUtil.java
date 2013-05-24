@@ -197,4 +197,10 @@ public class ChinagamesSubscribeUtil {
 		}
 		return info;
 	}
+	
+	public static ResultInfo consume(String userid, String spid, String gameid, String des, int amount){
+		ResultInfo info = new ResultInfo();
+        	
+		return info;
+	}
 }

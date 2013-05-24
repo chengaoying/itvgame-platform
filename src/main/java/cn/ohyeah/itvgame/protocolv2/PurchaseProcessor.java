@@ -49,6 +49,9 @@ public class PurchaseProcessor implements IProcessor {
 		 case Constant.PURCHASE_CMD_EXPEND_WINSIDE_LACK:
 			 processCommandPurchaseWinsideLackReq(context, req);
             break;
+		 case Constant.PURCHASE_CMD_EXPEND_TELCOMSH:
+			 processCommandPurchaseTelcomshReq(context, req);
+			break;
 		default: 
 			String msg = "无效的协议命令, cmd="+context.getHeadWrapper().getCommand();
 			context.setErrorCode(Constant.EC_INVALID_CMD);
@@ -57,7 +60,46 @@ public class PurchaseProcessor implements IProcessor {
 		}
 	}
 	
-	  private void processCommandPurchaseWinsideLackReq(ProcessorContext context,
+	  private void processCommandPurchaseTelcomshReq(ProcessorContext context,ByteBuffer req) {
+		  	String buyURL = req.readUTF();
+	        context.setProp("buyURL", buyURL);
+	        int accountId = req.readInt();
+	        String accountName = req.readUTF();
+	        context.setProp("accountName", accountName);
+	        String userToken = req.readUTF();
+	        context.setProp("userToken", userToken);
+	        int productId = req.readInt();
+	        int propId = req.readInt();
+	        //context.setProp("propId", propId);
+	        int payType = req.readInt();
+	        context.setProp("payType", payType);
+	        String remark = req.readUTF();
+	        context.setProp("remark", remark);
+	        String gameid = req.readUTF();
+	        context.setProp("gameid", gameid);
+	        String spid = req.readUTF();
+	        context.setProp("spid", spid);
+	        String payKey = req.readUTF();
+	        context.setProp("checkKey", payKey);
+	        try {
+	        	//ResultInfo info = purchaseServ.expend(context.getPropsMap(), accountId, productId, amount, remark);
+	            ResultInfo info = purchaseServ.purchaseProp(context.getPropsMap(), accountId, productId, propId, 1, remark);
+	            if (info.isSuccess()) {
+	                context.setResult((Integer)info.getInfo());
+	            }
+	            else {
+	                context.setErrorCode(info.getErrorCode());
+	                context.setMessage(info.getMessage());
+	            }
+	        }
+	        catch (ServiceException e) {
+	            context.setErrorCode(ErrorCode.EC_SERVICE_FAILED);
+	            context.setMessage(ErrorCode.getErrorMessage(ErrorCode.EC_SERVICE_FAILED));
+	            throw new RequestProcessException(e);
+	        }
+	}
+
+	private void processCommandPurchaseWinsideLackReq(ProcessorContext context,
 			ByteBuffer req) {
 		    String buyURL = req.readUTF();
 	        context.setProp("buyURL", buyURL);
@@ -247,8 +289,16 @@ public class PurchaseProcessor implements IProcessor {
 		case Constant.PURCHASE_CMD_EXPEND_WINSIDE_LACK:
 			processCommandPurchaseWinsideLack(context, rsp);
 			break;
+		case Constant.PURCHASE_CMD_EXPEND_TELCOMSH:
+			processCommandPurchaseTelcomshRsp(context, rsp);
+			break;
 		default:break;
 		}
+	}
+
+	private void processCommandPurchaseTelcomshRsp(ProcessorContext context,
+			ByteBuffer rsp) {
+		rsp.writeInt((Integer) context.getResult());
 	}
 
 	@SuppressWarnings("unchecked")

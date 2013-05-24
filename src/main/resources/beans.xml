@@ -48,6 +48,7 @@
 	<!-- telcom shanghai -->
 	<bean name="telcomsh.pointsServiceImpl" class="cn.ohyeah.itvgame.business.service.impl.TelcomshPointsServiceImpl"/>
 	<bean name="telcomsh.subscribeImpl" class="cn.ohyeah.itvgame.business.service.impl.TelcomshSubscribeImpl"/>
+	<bean name="telcomsh.rechargeImpl" class="cn.ohyeah.itvgame.business.service.impl.TelcomshRechargeImpl"/>
 	
 	<!-- telcom guangdong -->
 	<bean name="telcomgd.pointsServiceImpl" class="cn.ohyeah.itvgame.business.service.impl.WinsidegdPointsServiceImpl"/>

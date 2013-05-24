@@ -29,14 +29,15 @@ public class ChinagamesSubscribeImpl extends TelcomshSubscribeImpl {
 			String remark, Date time) {
 		log.debug("[Subscribe Amount] ==> " + pr.getAmount());
 		String userToken = (String)props.get("userToken");
-		if (account.isPrivilegeSuperUser()) {
-			log.debug("≤‚ ‘’À∫≈∂©π∫[userId="+account.getUserId()+", amount="+ pr.getAmount()+", subImpl="+getImplementorName()+"]");
-			return new ResultInfo();
-		}
-		else {
-			return ChinagamesSubscribeUtil.subscribe(account.getUserId(), pr.getSubscribeId(), userToken, 
-					Configuration.getSpid(), Integer.toString((Integer)props.get("payType")));
-		}
+		String gameid = (String)props.get("gameid");
+		int amount = pr.getAmount();
+		String des = (String)props.get("remark");
+		//if (account.isPrivilegeSuperUser()) {
+			//log.debug("≤‚ ‘’À∫≈∂©π∫[userId="+account.getUserId()+", amount="+ pr.getAmount()+", subImpl="+getImplementorName()+"]");
+			//return new ResultInfo();
+		//}
+		//else {
+			return ChinagamesSubscribeUtil.consume(account.getUserId(), Configuration.getSpid(), gameid, des, amount);
 	}
 
 	@Override

@@ -2,7 +2,12 @@ package cn.ohyeah.itvgame.business.service.impl;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,12 +15,17 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.ProtocolException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultRedirectStrategy;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
@@ -41,7 +51,8 @@ public class ChinagamesSubscribeUtil {
     			 Header locationHeader = response.getFirstHeader("location");
     			 String location = locationHeader.getValue();
     			 if (StringUtils.startsWithIgnoreCase(location, subscribeReturnUrl)) {
-	    			 int pos = StringUtils.indexOfIgnoreCase(location, "Result=", subscribeReturnUrl.length());
+    				 body = location.substring(subscribeReturnUrl.length()+1, location.length());
+	    			 /*int pos = StringUtils.indexOfIgnoreCase(location, "Result=", subscribeReturnUrl.length());
     				 if (pos > 0) {
     					 int npos = location.indexOf('&', pos);
     					 if (npos > 0) {
@@ -50,7 +61,7 @@ public class ChinagamesSubscribeUtil {
     					 else {
     						 body = location.substring(pos);
     					 }
-    				 }
+    				 }*/
     			 }
             }
     		else {
@@ -64,9 +75,10 @@ public class ChinagamesSubscribeUtil {
     };
     
     static {
-    	subscribeUrl = Configuration.getSubscribeUrl("chinagames");
+    	//subscribeUrl = Configuration.getSubscribeUrl("chinagames");
+    	subscribeUrl = Configuration.getProperty("telcomsh", "expenseUrl");
     	try {
-			encSubscribeReturnUrl = java.net.URLEncoder.encode(subscribeReturnUrl, "gbk");
+			encSubscribeReturnUrl = java.net.URLEncoder.encode(subscribeReturnUrl, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException("URL编码错误", e);
 		}
@@ -98,12 +110,33 @@ public class ChinagamesSubscribeUtil {
 	    });
 	}
 	
+	/**
+	 * @param result
+	 * @return
+	 */
     public static String getErrorMessage(int result) {
     	String message = null;
     	switch(result) {
     	case 9001:	message = "超过产品的单月消费限额"; break;
     	case 9002:	message = "超过用户的单月消费限额"; break;
     	default:	message = TelcomshSubscribeUtil.getErrorMessage(result);
+    	}
+    	return message;
+    }
+    
+    private static String getErrorInfo(int result){
+    	String message = null;
+    	switch(result) {
+    	case -1:	message = "余额不足"; break;
+    	case -2:	message = "用户为黑名单不允许消费"; break;
+    	case -3:	message = "MD5校验错误"; break;
+    	case -4:	message = "SP不存在"; break;
+    	case -5:	message = "游戏不存在"; break;
+    	case -6:	message = "接口版本不可用"; break;
+    	case -7:	message = "参数错误"; break;
+    	case -8:	message = "订单号已存在"; break;
+    	case -99:	message = "系统内部错误"; break;
+    	default:	message = "未知错误,错误："+result;
     	}
     	return message;
     }
@@ -116,7 +149,7 @@ public class ChinagamesSubscribeUtil {
     	return TelcomshSubscribeUtil.filterSubRedirect(userId, payType, subUrlPre, body, deep);
     }
 
-    private static String execSubRequest(String subUrl) throws Exception {
+    public static String execSubRequest(String subUrl) throws Exception {
     	HttpGet httpget = new HttpGet(subUrl);
     	return ThreadSafeClientConnManagerUtil.execute(httpClient, httpget, bodyHandler);
     }
@@ -170,7 +203,7 @@ public class ChinagamesSubscribeUtil {
 		            	String backUrl = extractBackUrl(body);
 		            	log.debug("[backUrl ===>]"+backUrl);
 			            String result = extractSubResult(backUrl);
-			            execStatRequest(backUrl);
+			            execStatRequest(backUrl);   
 			            log.debug("[subscribe result] ==> "+result);
 			            if (result != null) {
 			            	try {
@@ -198,9 +231,123 @@ public class ChinagamesSubscribeUtil {
 		return info;
 	}
 	
-	public static ResultInfo consume(String userid, String spid, String gameid, String des, int amount){
+	public static ResultInfo consume(String user_id, String sp_id, String game_id, String order_id, String description, 
+			long timestamp, int amount, String sp_key, String userToken){
 		ResultInfo info = new ResultInfo();
-        	
+        try {
+        	String version = Configuration.getProperty("telcomsh", "expenseVersion");
+        	String notify_url = null;
+        	String digest = DigestUtils.md5Hex(amount 
+        									   + description 
+        									   + game_id
+        									   //+ notify_url
+        									   + order_id 
+        									   + subscribeReturnUrl 
+        									   + sp_id 
+        									   + timestamp 
+        									   + version 
+        									   + sp_key);
+            String subUrl = String.format(subscribeUrl,sp_id, game_id, order_id, java.net.URLEncoder.encode(description, "UTF-8"), timestamp,encSubscribeReturnUrl,/*notify_url,*/amount,version,digest);
+            log.debug("[subscribe url] ==> "+subUrl);
+            String body = execSubRequest(subUrl);
+            //log.debug("body==>"+body);
+            
+            if (body == null) {
+            	info.setErrorCode(ErrorCode.EC_SUBSCRIBE_FAILED);
+				info.setMessage("无法获取电信订购重定向页面");
+            }
+            else {
+            	int rst = -9;
+            	String[] ps = body.split("&");
+            	for(String s:ps){
+            		if(StringUtils.startsWithIgnoreCase(s, "Result=")){
+            			rst = Integer.parseInt(s.split("=")[1]);
+            		}
+            	}
+            	if(rst == -9){
+            		String str = "";
+            		/*sso认证*/
+            		String url = Configuration.getProperty("telcomsh", "secondSSOUrl");
+            		str = filter3authentication(url, body, userToken);
+                	
+                	/*sso认证第二步*/
+                	url = Configuration.getProperty("telcomsh", "thirdSSOUrl");
+                	str = filter3authentication(url, str, userToken);
+                	
+                	/*提交认证成功表单*/
+                	url = Configuration.getProperty("telcomsh", "prefixexpenseUrl");
+                	str = filter3authentication(url, str, userToken);
+                	
+                	/*再次调用消费接口*/
+                	//body = execSubRequest(subUrl);
+                	log.debug("subscribe SSO authorization===>"+str);
+                	if(str == null || "".equals(str)){
+                		//info.setInfo(message);
+                		info.setInfo(0);
+                	}else{
+                		info.setErrorCode(ErrorCode.EC_SUBSCRIBE_FAILED);
+                		info.setMessage("订购认证出错");
+                	}
+            	}else{
+            		int result = -9;
+                	String message = "";
+                	String[] params = body.split("&");
+                	for(String s:params){
+                		if(StringUtils.startsWithIgnoreCase(s, "Result=")){
+                			result = Integer.parseInt(s.split("=")[1]);
+                		}
+                		if(StringUtils.startsWithIgnoreCase(s, "message=")){
+                			message = s.split("=")[1];
+                		}
+                	}
+                	
+                	if(result < 0){
+                		log.debug("[subscribe result] ==> "+result);
+                		info.setErrorCode(ErrorCode.EC_SUBSCRIBE_FAILED);
+                		if(result == -1){
+                			info.setMessage(getErrorInfo(result)+",余额为:"+message);
+                		}else{
+                			info.setMessage(getErrorInfo(result));
+                		}
+                	}else{
+                		log.debug("[subscribe result] ==> "+result);
+                		//info.setInfo(message);
+                		info.setInfo(0);
+                	}
+            	}
+            }
+		} catch (Exception e) {
+			throw new SubscribeException(e);
+		}
 		return info;
+	}
+
+	private static String filter3authentication(String url,String body, String userToken) throws Exception{
+		Matcher m = TelcomshSubscribeUtil.formPattern.matcher(body);
+		if (m.find()) {
+			List <NameValuePair> nvps = new ArrayList <NameValuePair>();
+			m = TelcomshSubscribeUtil.inputPattern.matcher(body);
+			String paramer = "";
+			while (m.find()) {
+				String key = m.group(1);
+				String value = m.group(2);
+				if("usertoken".equalsIgnoreCase(key)){
+					value = userToken;
+				}
+				paramer += key + "=" + value + "&";
+				//log.debug(key+" ==> "+value);
+				nvps.add(new BasicNameValuePair(key, value));
+			}
+			url += "?" + paramer.substring(0,paramer.length()-1);
+			HttpGet httpget = new HttpGet(url);
+			body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpget);
+			/*HttpPost httpost = new HttpPost(url);
+			UrlEncodedFormEntity urlEntity = new UrlEncodedFormEntity(nvps, HTTP.UTF_8);
+			httpost.setEntity(urlEntity);
+			body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpost);*/
+			//log.debug("sso body==>"+body);
+			return body;
+		}	
+		return null;
 	}
 }

@@ -42,15 +42,18 @@ public class TelcomshRechargeImpl implements IRecharge{
 		int newAmount = amount;
 		pr.setAmount(newAmount);
 		log.debug("[Expend Amount] ==> "+newAmount);
+		ResultInfo info = new ResultInfo();
 		if (auth.getGoldCoin() >= amount) {
-			ResultInfo info = new ResultInfo();
 			auth.decGoldCoin(amount);
 			authDao.updateCoins(auth);
-			info.setInfo(amount);
-			return info;
+			info.setInfo(auth.getGoldCoin());
 		}else{
-			return subImpl.subscribe(props, account, detail, auth, pr, remark, prTime);
+			info = subImpl.subscribe(props, account, detail, auth, pr, remark, prTime);
+			if(info.getInfo() != null && info.getInfo().equals("0")){
+				info.setInfo(auth.getGoldCoin());
+			}
 		}
+		return info;
 	}
 
 	@Override

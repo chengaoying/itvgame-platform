@@ -11,6 +11,8 @@ import cn.ohyeah.itvgame.global.Configuration;
 import cn.ohyeah.itvgame.platform.model.Account;
 import cn.ohyeah.itvgame.platform.model.ProductDetail;
 import cn.ohyeah.itvgame.platform.model.PurchaseRelation;
+import cn.ohyeah.itvgame.utils.DateUtil;
+import cn.ohyeah.itvgame.utils.ToolUtil;
 
 public class ChinagamesSubscribeImpl extends TelcomshSubscribeImpl {
 	private static final Log log = LogFactory.getLog(ChinagamesSubscribeImpl.class);
@@ -28,16 +30,25 @@ public class ChinagamesSubscribeImpl extends TelcomshSubscribeImpl {
 			Account account, ProductDetail detail, PurchaseRelation pr,
 			String remark, Date time) {
 		log.debug("[Subscribe Amount] ==> " + pr.getAmount());
+		String userId = account.getUserId();
+		String sp_id = Configuration.getProperty("telcomsh", "sp_id");
+		String sp_key = Configuration.getProperty("telcomsh", "sp_key");
 		String userToken = (String)props.get("userToken");
-		String gameid = (String)props.get("gameid");
+		String game_id = (String)props.get("gameid");
 		int amount = pr.getAmount();
 		String des = (String)props.get("remark");
-		//if (account.isPrivilegeSuperUser()) {
-			//log.debug("≤‚ ‘’À∫≈∂©π∫[userId="+account.getUserId()+", amount="+ pr.getAmount()+", subImpl="+getImplementorName()+"]");
-			//return new ResultInfo();
-		//}
-		//else {
-			return ChinagamesSubscribeUtil.consume(account.getUserId(), Configuration.getSpid(), gameid, des, amount);
+		if (account.isPrivilegeSuperUser()) {
+			log.debug("≤‚ ‘’À∫≈∂©π∫[userId="+account.getUserId()+", amount="+ pr.getAmount()+", subImpl="+getImplementorName()+"]");
+			ResultInfo info = new ResultInfo();
+			info.setInfo(0);
+			return info;
+		}
+		else {
+			//String timeStamp = DateUtil.createTimeId(DateUtil.PATTERN_DEFAULT);
+			long timeStamp = System.currentTimeMillis();
+			String order_id =  userId + timeStamp /*+ ToolUtil.getAutoincrementValue()*/;
+			return ChinagamesSubscribeUtil.consume(userId, sp_id, game_id, order_id, des, timeStamp, amount, sp_key,userToken);
+		}
 	}
 
 	@Override

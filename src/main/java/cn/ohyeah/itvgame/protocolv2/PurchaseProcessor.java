@@ -70,17 +70,16 @@ public class PurchaseProcessor implements IProcessor {
 	        context.setProp("userToken", userToken);
 	        int productId = req.readInt();
 	        int propId = req.readInt();
-	        //context.setProp("propId", propId);
 	        int payType = req.readInt();
 	        context.setProp("payType", payType);
 	        String remark = req.readUTF();
 	        context.setProp("remark", remark);
 	        String gameid = req.readUTF();
 	        context.setProp("gameid", gameid);
-	        String spid = req.readUTF();
-	        context.setProp("spid", spid);
-	        String payKey = req.readUTF();
-	        context.setProp("checkKey", payKey);
+	        //String spid = req.readUTF();
+	        //context.setProp("spid", spid);
+	        //String payKey = req.readUTF();
+	        //context.setProp("checkKey", payKey);
 	        try {
 	        	//ResultInfo info = purchaseServ.expend(context.getPropsMap(), accountId, productId, amount, remark);
 	            ResultInfo info = purchaseServ.purchaseProp(context.getPropsMap(), accountId, productId, propId, 1, remark);

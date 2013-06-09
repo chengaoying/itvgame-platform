@@ -7,8 +7,6 @@ import cn.ohyeah.itvgame.business.service.IPointsService;
 import cn.ohyeah.itvgame.business.service.IRecharge;
 import cn.ohyeah.itvgame.business.service.ISubscribe;
 import cn.ohyeah.itvgame.business.service.impl.ChinagamesgdUtil;
-import cn.ohyeah.itvgame.business.service.impl.WinsideSubscribeUtil;
-import cn.ohyeah.itvgame.business.service.impl.WinsidetwSubscribeUtil;
 import cn.ohyeah.itvgame.global.BeanManager;
 import cn.ohyeah.itvgame.platform.model.Account;
 import cn.ohyeah.itvgame.platform.model.AccountPermission;
@@ -85,21 +83,4 @@ public class PlatformService {
 		}
 	}
 	
-	public ResultInfo gotoRechargePage(String buyUrl, String userId){
-		try {
-			return WinsideSubscribeUtil.gotoRechargePage(buyUrl, userId);
-		}
-		catch (Exception e) {
-			throw new ServiceException(e);
-		}
-	}
-	
-	public ResultInfo sendHeartBeatPacket(String buyUrl, String userId, String product){
-		try {
-			return WinsidetwSubscribeUtil.sendHeartbeatPacket(buyUrl, userId, product);
-		}
-		catch (Exception e) {
-			throw new ServiceException(e);
-		}
-	}
 }

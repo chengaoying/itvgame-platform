@@ -64,11 +64,18 @@
    <servlet>
     <servlet-name>point</servlet-name>
     <servlet-class>cn.ohyeah.itvgame.point.servlet.PointServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>point</servlet-name>
     <url-pattern>/point</url-pattern>
+  </servlet-mapping>
+   <servlet>
+    <servlet-name>subscribeAction</servlet-name>
+    <servlet-class>cn.ohyeah.itvgame.point.servlet.SubscribeAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>subscribeAction</servlet-name>
+    <url-pattern>/subscribe/subscribeAction</url-pattern>
   </servlet-mapping>
   <session-config>
     <session-timeout>30</session-timeout>

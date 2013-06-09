@@ -39,8 +39,8 @@ import cn.ohyeah.itvgame.global.Configuration;
 public final class TelcomshSubscribeUtil {
 	private static final Log log = LogFactory.getLog(TelcomshSubscribeUtil.class);
 	private static final DefaultHttpClient httpClient;
-    private static final Pattern formPattern;
-    private static final Pattern inputPattern;
+	public static final Pattern formPattern;
+    public static final Pattern inputPattern;
     private static final Pattern anchorPattern;
     private static final Pattern resultPattern;
     private static final String subscribeUrl;

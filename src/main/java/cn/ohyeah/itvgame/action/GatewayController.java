@@ -165,6 +165,7 @@ public class GatewayController {
 		String resultUrl = java.net.URLEncoder.encode(rc.baseUrl()+"/action/gateway/telcomshSsoResult", "GBK");
 		returnInfo = returnInfo+"!!!"+rc.param("productId", -1);
 		String ssoUrl = String.format(Configuration.getSsoUrl(), spid, resultUrl, returnInfo);
+		log.debug("ssoUrl ==>"+ssoUrl);
 		rc.redirect(ssoUrl);
 	}
 	

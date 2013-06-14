@@ -105,9 +105,11 @@ public class InitUtil {
 			cell = sheet.getCell(c++, r);
 			product.setLocation(cell.getContents());
 			cell = sheet.getCell(c++, r);
-			product.setState(Integer.parseInt(cell.getContents()));
+			product.setGameid(Integer.parseInt(cell.getContents()));
 			cell = sheet.getCell(c++, r);
 			product.setProviderID(Integer.parseInt(cell.getContents()));
+			cell = sheet.getCell(c++, r);
+			product.setState(Integer.parseInt(cell.getContents()));
 			productServ.save(product);
 			
 			if (product.isSupportDataManager()) {

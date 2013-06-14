@@ -20,14 +20,15 @@ public class SqlserverProductDaoImpl implements IProductDao {
 	public void save(Product product) {
 		java.math.BigDecimal key = (java.math.BigDecimal)QueryHelper.updateReturnKey("insert into " +
 				"[Product](productName, productClass, appName, appType, description, " +
-				"supportDataManager, location, state, createTime, updateTime, providerID) " +
-				"values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+				"supportDataManager, location, gameid, createTime, updateTime, providerID,state) " +
+				"values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)", 
 				product.getProductName(), product.getProductClass(), product.getAppName(), 
 				product.getAppType(), product.getDescription(), product.isSupportDataManager(),
-				product.getLocation(), product.getState(), 
+				product.getLocation(), product.getGameid(), 
 				DateUtil.convertToSqlDate(product.getCreateTime()), 
 				DateUtil.convertToSqlDate(product.getUpdateTime()), 
-				product.getProviderID());
+				product.getProviderID(),
+				product.getState());
 		product.setProductId(key.intValue());
 		Configuration.setCache("product", product.getProductId(), product);
 	}
@@ -36,12 +37,12 @@ public class SqlserverProductDaoImpl implements IProductDao {
 	public void update(Product product) {
 		QueryHelper.update("update [Product] set " +
 				"productName=?, productClass=?, appName=?, appType=?, description=?, " +
-				"supportDataManager=?, location=?, state=?, updateTime=?, providerID=? where productId=?", 
+				"supportDataManager=?, location=?, gameid=?, updateTime=?, providerID=?,state=? where productId=?", 
 				product.getProductName(), product.getProductClass(), product.getAppName(), 
 				product.getAppType(), product.getDescription(), product.isSupportDataManager(),
-				product.getLocation(), product.getState(), 
+				product.getLocation(), product.getGameid(), 
 				DateUtil.convertToSqlDate(product.getUpdateTime()), 
-				product.getProviderID(), product.getProductId());
+				product.getProviderID(),product.getState(), product.getProductId());
 	}
 
 	@Override

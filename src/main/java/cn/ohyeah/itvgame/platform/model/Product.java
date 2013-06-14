@@ -33,11 +33,18 @@ public class Product implements java.io.Serializable {
 	private String description;
 	private boolean supportDataManager;
 	private String location;
-	private int state;
+	private int gameid;
 	private java.util.Date updateTime;
 	private java.util.Date createTime;
 	private int providerID;
+	private int state;
 	
+	public int getGameid() {
+		return gameid;
+	}
+	public void setGameid(int gameid) {
+		this.gameid = gameid;
+	}
 	public int getProductId() {
 		return productId;
 	}

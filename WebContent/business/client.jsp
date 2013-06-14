@@ -68,6 +68,7 @@ setTimeout("document.onkeypress = PageScroll",8000);
 			<param name="userToken" value="<%=userToken %>" />
 			<param name="productId" value="<%=productId %>" />
 			<param name="appName" value="<%=product.getAppName() %>" />
+			<param name="gameid" value="<%=product.getGameid() %>" />
 			<param name="server" value="<%=protocolLocation %>" />
 			<param name="price" value="<%=2/5/10/20 %>"/>  --%>
 		</object>

@@ -19,12 +19,12 @@ public class MysqlProductDaoImpl implements IProductDao {
 	public void save(Product product) {
 		QueryHelper.update("insert into " +
 				"Product(productName, productClass, appName, appType, description, " +
-				"supportDataManager, location, state, createTime, updateTime, providerID) " +
-				"values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", 
+				"supportDataManager, location, gameid, createTime, updateTime, providerID,state) " +
+				"values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)", 
 				product.getProductName(), product.getProductClass(), product.getAppName(), 
 				product.getAppType(), product.getDescription(), product.isSupportDataManager(),
-				product.getLocation(), product.getState(), product.getCreateTime(), 
-				product.getUpdateTime(), product.getProviderID());
+				product.getLocation(), product.getGameid(), product.getCreateTime(), 
+				product.getUpdateTime(), product.getProviderID(),product.getState());
 		int productId = QueryHelper.read(long.class, "select LAST_INSERT_ID()").intValue();
 		product.setProductId(productId);
 		Configuration.setCache("product", product.getProductId(), product);
@@ -34,11 +34,11 @@ public class MysqlProductDaoImpl implements IProductDao {
 	public void update(Product product) {
 		QueryHelper.update("update Product set " +
 				"productName=?, productClass=?, appName=?, appType=?, description=?, " +
-				"supportDataManager=?, location=?, state=?, updateTime=?, providerID=? where productId=?", 
+				"supportDataManager=?, location=?, gameid=?, updateTime=?, providerID=?, state=? where productId=?", 
 				product.getProductName(), product.getProductClass(), product.getAppName(), 
 				product.getAppType(), product.getDescription(), product.isSupportDataManager(),
-				product.getLocation(), product.getState(), product.getUpdateTime(), 
-				product.getProviderID(), product.getProductId());
+				product.getLocation(), product.getGameid(), product.getUpdateTime(), 
+				product.getProviderID(), product.getState(), product.getProductId());
 	}
 
 	@Override

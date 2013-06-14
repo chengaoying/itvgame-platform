@@ -82,10 +82,11 @@ create table if not exists Product(
 	description varchar(255),
 	supportDataManager tinyint(1) not null default 0,
 	location varchar(128),
-	state int not null default 0,
+	gameid int not null default 0,
 	createTime datetime not null,
 	updateTime datetime not null,
 	providerId int not null default 0,
+	state int not null default 0,
 	primary key(productId)
 );
 

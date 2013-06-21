@@ -2,8 +2,11 @@ package cn.ohyeah.itvgame.business.service.impl;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 
 import org.apache.commons.codec.binary.Base64;
@@ -28,16 +31,20 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import cn.halcyon.utils.ThreadSafeClientConnManagerUtil;
 import cn.ohyeah.itvgame.business.ErrorCode;
 import cn.ohyeah.itvgame.business.ResultInfo;
 import cn.ohyeah.itvgame.business.service.SubscribeException;
 import cn.ohyeah.itvgame.global.Configuration;
+import cn.ohyeah.itvgame.utils.ToolUtil;
 
 public class ChinagamesSubscribeUtil {
 	private static final Log log = LogFactory.getLog(ChinagamesSubscribeUtil.class);
-	private static final String subscribeReturnUrl = "http://127.0.0.1/notexist/subresult";
+	private static final String subscribeReturnUrl; /*= "http://127.0.0.1/notexist/subresult"*/
 	private static final String subscribeUrl;
 	private static String encSubscribeReturnUrl;
 	private static DefaultHttpClient httpClient;
@@ -50,8 +57,10 @@ public class ChinagamesSubscribeUtil {
     		if (responseCode == 301 || responseCode == 302) {
     			 Header locationHeader = response.getFirstHeader("location");
     			 String location = locationHeader.getValue();
+    			 log.debug("subscribe returnUrl===>"+location);
     			 if (StringUtils.startsWithIgnoreCase(location, subscribeReturnUrl)) {
     				 body = location.substring(subscribeReturnUrl.length()+1, location.length());
+    				 log.debug("subscribe return info===>"+body);
 	    			 /*int pos = StringUtils.indexOfIgnoreCase(location, "Result=", subscribeReturnUrl.length());
     				 if (pos > 0) {
     					 int npos = location.indexOf('&', pos);
@@ -77,6 +86,7 @@ public class ChinagamesSubscribeUtil {
     static {
     	//subscribeUrl = Configuration.getSubscribeUrl("chinagames");
     	subscribeUrl = Configuration.getProperty("telcomsh", "expenseUrl");
+    	subscribeReturnUrl = Configuration.getProperty("telcomsh", "serverUrl");
     	try {
 			encSubscribeReturnUrl = java.net.URLEncoder.encode(subscribeReturnUrl, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
@@ -248,6 +258,145 @@ public class ChinagamesSubscribeUtil {
         									   + version 
         									   + sp_key);
             String subUrl = String.format(subscribeUrl,sp_id, game_id, order_id, java.net.URLEncoder.encode(description, "UTF-8"), timestamp,encSubscribeReturnUrl,/*notify_url,*/amount,version,digest);
+            //subUrl += "&ran="+ToolUtil.getAutoincrementValue();
+            log.debug("[subscribe url] ==> "+subUrl);
+            
+            Element e = Jsoup.connect(subUrl).get();
+    		e = submitFirstForm1(e,userToken);
+    	
+    		e = submitFirstForm2(e);
+    		e = submitFirstForm2(e);
+    		
+    		System.out.println(e.html());
+    		Element div = e.getElementsByTag("div").get(0);
+    		int result = Integer.parseInt(String.valueOf(div.attr("name")));
+    		if(result == 0){
+    			info.setInfo(0);
+    		}else{
+    			info.setErrorCode(ErrorCode.EC_SUBSCRIBE_FAILED);
+    			info.setMessage(getErrorInfo(result));
+    		}
+            
+		} catch (Exception e) {
+			throw new SubscribeException(e);
+		}
+		return info;
+	}
+	
+	private static Element submitFirstForm1(Element e,String userToken){
+		Element form = e.getElementsByTag("form").get(0);
+//		String url = form.attr("action");
+		String url = "http://124.75.29.164:7001/iptv3a/VASGetUserinfoMoreAction.do";
+		Elements paramsE = form.select("input[name]");
+		Map<String, String> params = new HashMap<String, String>();
+		for (Element element : paramsE)
+		{
+			String key = element.attr("name");
+			String value = element.attr("value");
+			if("usertoken".equals(key)){
+				params.put(key, userToken);
+			}else{
+				params.put(key, value);
+			}
+			
+		}
+		Element result =null;
+		try {
+			result = Jsoup.connect(url).data(params).post();
+		} catch (IOException e1) {
+			throw new RuntimeException(e1);
+		}
+		return result;
+	}
+	private static Element submitFirstForm2(Element e){
+		Element form = e.getElementsByTag("form").get(0);
+		String url = form.attr("action");
+		Elements paramsE = form.select("input[name]");
+		Map<String, String> params = new HashMap<String, String>();
+		for (Element element : paramsE)
+		{
+			String key = element.attr("name");
+			String value = element.attr("value");
+			params.put(key, value);
+		}
+		Element result =null;
+		try {
+			result = Jsoup.connect(url).data(params).post();
+		} catch (IOException e1) {
+			throw new RuntimeException(e1);
+		}
+		return result;
+	}
+	
+	private static Element submitFirstForm3(Element e) throws UnsupportedEncodingException{
+		Element form = e.getElementsByTag("form").get(0);
+		String url = form.attr("action");
+		Elements paramsE = form.select("input[name]");
+		Map<String, String> params = new HashMap<String, String>();
+		for (Element element : paramsE)
+		{
+			String key = element.attr("name");
+			String value = URLEncoder.encode(element.attr("value"), "UTF-8");
+			params.put(key, value);
+		}
+		Element result =null;
+		try {
+			result = Jsoup.connect(url).data(params).get();
+		} catch (IOException e1) {
+			throw new RuntimeException(e1);
+		}
+		return result;
+	}
+	
+	private static Element filter3authentication(String url,Element e, String userToken, boolean isGet) throws Exception{
+		Elements paramsE = e.select("input[name]");
+		Map<String, String> params = new HashMap<String, String>();
+		for (Element element : paramsE)
+		{
+			String key = element.attr("name");
+			String value = element.attr("value");
+			if("usertoken".equals(key)){
+				params.put(key, userToken);
+			}else if(key.equalsIgnoreCase("Description") || key.equalsIgnoreCase("EPGProviderDomain")){
+				params.put(key, java.net.URLEncoder.encode(value, "UTF-8"));
+			}else{
+				params.put(key, value);
+			}
+			
+		}
+		Element result =null;
+		try {
+			if(!isGet){
+				result = Jsoup.connect(url).data(params).post();
+			}else{
+				result = Jsoup.connect(url).data(params).get();
+			}
+			
+			log.debug("result==>"+result);
+		} catch (IOException e1) {
+			throw new RuntimeException(e1);
+		}
+		return result;
+	}
+	
+	/*public static ResultInfo consume(String user_id, String sp_id, String game_id, String order_id, String description, 
+			long timestamp, int amount, String sp_key, String userToken){
+		ResultInfo info = new ResultInfo();
+        try {
+        	String version = Configuration.getProperty("telcomsh", "expenseVersion");
+        	String notify_url = null;
+        	String digest = DigestUtils.md5Hex(amount 
+        									   + description 
+        									   + game_id
+        									   //+ notify_url
+        									   + order_id 
+        									   + subscribeReturnUrl 
+        									   + sp_id 
+        									   + timestamp 
+        									   + version 
+        									   + sp_key);
+            String subUrl = String.format(subscribeUrl,sp_id, game_id, order_id, java.net.URLEncoder.encode(description, "UTF-8"), timestamp,encSubscribeReturnUrl,notify_url,amount,version,digest);
+            subUrl += "&ran="+ToolUtil.getAutoincrementValue();
             log.debug("[subscribe url] ==> "+subUrl);
             String body = execSubRequest(subUrl);
             //log.debug("body==>"+body);
@@ -266,19 +415,19 @@ public class ChinagamesSubscribeUtil {
             	}
             	if(rst == -9){
             		String str = "";
-            		/*sso认证*/
+            		sso认证
             		String url = Configuration.getProperty("telcomsh", "secondSSOUrl");
             		str = filter3authentication(url, body, userToken);
                 	
-                	/*sso认证第二步*/
+                	sso认证第二步
                 	url = Configuration.getProperty("telcomsh", "thirdSSOUrl");
                 	str = filter3authentication(url, str, userToken);
                 	
-                	/*提交认证成功表单*/
+                	提交认证成功表单
                 	url = Configuration.getProperty("telcomsh", "prefixexpenseUrl");
                 	str = filter3authentication(url, str, userToken);
                 	
-                	/*再次调用消费接口*/
+                	再次调用消费接口
                 	//body = execSubRequest(subUrl);
                 	log.debug("subscribe SSO authorization===>"+str);
                 	if(str == null || "".equals(str)){
@@ -320,9 +469,9 @@ public class ChinagamesSubscribeUtil {
 			throw new SubscribeException(e);
 		}
 		return info;
-	}
+	}*/
 
-	private static String filter3authentication(String url,String body, String userToken) throws Exception{
+	/*private static String filter3authentication(String url,String body, String userToken) throws Exception{
 		Matcher m = TelcomshSubscribeUtil.formPattern.matcher(body);
 		if (m.find()) {
 			List <NameValuePair> nvps = new ArrayList <NameValuePair>();
@@ -341,13 +490,13 @@ public class ChinagamesSubscribeUtil {
 			url += "?" + paramer.substring(0,paramer.length()-1);
 			HttpGet httpget = new HttpGet(url);
 			body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpget);
-			/*HttpPost httpost = new HttpPost(url);
+			HttpPost httpost = new HttpPost(url);
 			UrlEncodedFormEntity urlEntity = new UrlEncodedFormEntity(nvps, HTTP.UTF_8);
 			httpost.setEntity(urlEntity);
-			body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpost);*/
-			//log.debug("sso body==>"+body);
+			body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpost);
+			log.debug("sso body==>"+body);
 			return body;
 		}	
 		return null;
-	}
+	}*/
 }

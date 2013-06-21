@@ -35,6 +35,7 @@
 	String appName = product.getAppName();
 	String appPathPre = request.getContextPath()+"/data/apps/"+appName+"/"+appName;
 	System.out.println("path:"+appPathPre);
+	System.out.println("gameid:"+product.getGameid());
 	
 	java.util.Date time = new java.util.Date();
 	String protocolLocation = Configuration.formProtocolLocation(RequestContext.get());

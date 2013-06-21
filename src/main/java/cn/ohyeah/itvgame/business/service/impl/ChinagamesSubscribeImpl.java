@@ -46,7 +46,7 @@ public class ChinagamesSubscribeImpl extends TelcomshSubscribeImpl {
 		else {
 			//String timeStamp = DateUtil.createTimeId(DateUtil.PATTERN_DEFAULT);
 			long timeStamp = System.currentTimeMillis();
-			String order_id =  userId + timeStamp /*+ ToolUtil.getAutoincrementValue()*/;
+			String order_id =  userId.substring(0, 8) + timeStamp /*+ ToolUtil.getAutoincrementValue()*/;
 			return ChinagamesSubscribeUtil.consume(userId, sp_id, game_id, order_id, des, timeStamp, amount, sp_key,userToken);
 		}
 	}

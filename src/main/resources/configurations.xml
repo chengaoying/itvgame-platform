@@ -104,6 +104,9 @@
 		<property name="prefixexpenseUrl">
 			<![CDATA[http://222.68.195.16:82/gp/consume.html]]>
 		</property>
+		<property name="serverUrl">
+			<![CDATA[http://222.68.195.67/itvgame/subscribe/subscribeAction]]>
+		</property>
 		
 		
 		<ids>

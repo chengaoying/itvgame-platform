@@ -246,7 +246,7 @@ public class ChinagamesSubscribeUtil {
 		ResultInfo info = new ResultInfo();
         try {
         	String version = Configuration.getProperty("telcomsh", "expenseVersion");
-        	String notify_url = null;
+        	//String notify_url = null;
         	String digest = DigestUtils.md5Hex(amount 
         									   + description 
         									   + game_id
@@ -267,7 +267,7 @@ public class ChinagamesSubscribeUtil {
     		e = submitFirstForm2(e);
     		e = submitFirstForm2(e);
     		
-    		System.out.println(e.html());
+    		log.debug("[body] ==> "+e.html());
     		Element div = e.getElementsByTag("div").get(0);
     		int result = Integer.parseInt(String.valueOf(div.attr("name")));
     		if(result == 0){
@@ -328,7 +328,7 @@ public class ChinagamesSubscribeUtil {
 		return result;
 	}
 	
-	private static Element submitFirstForm3(Element e) throws UnsupportedEncodingException{
+	/*private static Element submitFirstForm3(Element e) throws UnsupportedEncodingException{
 		Element form = e.getElementsByTag("form").get(0);
 		String url = form.attr("action");
 		Elements paramsE = form.select("input[name]");
@@ -346,157 +346,6 @@ public class ChinagamesSubscribeUtil {
 			throw new RuntimeException(e1);
 		}
 		return result;
-	}
-	
-	private static Element filter3authentication(String url,Element e, String userToken, boolean isGet) throws Exception{
-		Elements paramsE = e.select("input[name]");
-		Map<String, String> params = new HashMap<String, String>();
-		for (Element element : paramsE)
-		{
-			String key = element.attr("name");
-			String value = element.attr("value");
-			if("usertoken".equals(key)){
-				params.put(key, userToken);
-			}else if(key.equalsIgnoreCase("Description") || key.equalsIgnoreCase("EPGProviderDomain")){
-				params.put(key, java.net.URLEncoder.encode(value, "UTF-8"));
-			}else{
-				params.put(key, value);
-			}
-			
-		}
-		Element result =null;
-		try {
-			if(!isGet){
-				result = Jsoup.connect(url).data(params).post();
-			}else{
-				result = Jsoup.connect(url).data(params).get();
-			}
-			
-			log.debug("result==>"+result);
-		} catch (IOException e1) {
-			throw new RuntimeException(e1);
-		}
-		return result;
-	}
-	
-	/*public static ResultInfo consume(String user_id, String sp_id, String game_id, String order_id, String description, 
-			long timestamp, int amount, String sp_key, String userToken){
-		ResultInfo info = new ResultInfo();
-        try {
-        	String version = Configuration.getProperty("telcomsh", "expenseVersion");
-        	String notify_url = null;
-        	String digest = DigestUtils.md5Hex(amount 
-        									   + description 
-        									   + game_id
-        									   //+ notify_url
-        									   + order_id 
-        									   + subscribeReturnUrl 
-        									   + sp_id 
-        									   + timestamp 
-        									   + version 
-        									   + sp_key);
-            String subUrl = String.format(subscribeUrl,sp_id, game_id, order_id, java.net.URLEncoder.encode(description, "UTF-8"), timestamp,encSubscribeReturnUrl,notify_url,amount,version,digest);
-            subUrl += "&ran="+ToolUtil.getAutoincrementValue();
-            log.debug("[subscribe url] ==> "+subUrl);
-            String body = execSubRequest(subUrl);
-            //log.debug("body==>"+body);
-            
-            if (body == null) {
-            	info.setErrorCode(ErrorCode.EC_SUBSCRIBE_FAILED);
-				info.setMessage("无法获取电信订购重定向页面");
-            }
-            else {
-            	int rst = -9;
-            	String[] ps = body.split("&");
-            	for(String s:ps){
-            		if(StringUtils.startsWithIgnoreCase(s, "Result=")){
-            			rst = Integer.parseInt(s.split("=")[1]);
-            		}
-            	}
-            	if(rst == -9){
-            		String str = "";
-            		sso认证
-            		String url = Configuration.getProperty("telcomsh", "secondSSOUrl");
-            		str = filter3authentication(url, body, userToken);
-                	
-                	sso认证第二步
-                	url = Configuration.getProperty("telcomsh", "thirdSSOUrl");
-                	str = filter3authentication(url, str, userToken);
-                	
-                	提交认证成功表单
-                	url = Configuration.getProperty("telcomsh", "prefixexpenseUrl");
-                	str = filter3authentication(url, str, userToken);
-                	
-                	再次调用消费接口
-                	//body = execSubRequest(subUrl);
-                	log.debug("subscribe SSO authorization===>"+str);
-                	if(str == null || "".equals(str)){
-                		//info.setInfo(message);
-                		info.setInfo(0);
-                	}else{
-                		info.setErrorCode(ErrorCode.EC_SUBSCRIBE_FAILED);
-                		info.setMessage("订购认证出错");
-                	}
-            	}else{
-            		int result = -9;
-                	String message = "";
-                	String[] params = body.split("&");
-                	for(String s:params){
-                		if(StringUtils.startsWithIgnoreCase(s, "Result=")){
-                			result = Integer.parseInt(s.split("=")[1]);
-                		}
-                		if(StringUtils.startsWithIgnoreCase(s, "message=")){
-                			message = s.split("=")[1];
-                		}
-                	}
-                	
-                	if(result < 0){
-                		log.debug("[subscribe result] ==> "+result);
-                		info.setErrorCode(ErrorCode.EC_SUBSCRIBE_FAILED);
-                		if(result == -1){
-                			info.setMessage(getErrorInfo(result)+",余额为:"+message);
-                		}else{
-                			info.setMessage(getErrorInfo(result));
-                		}
-                	}else{
-                		log.debug("[subscribe result] ==> "+result);
-                		//info.setInfo(message);
-                		info.setInfo(0);
-                	}
-            	}
-            }
-		} catch (Exception e) {
-			throw new SubscribeException(e);
-		}
-		return info;
 	}*/
-
-	/*private static String filter3authentication(String url,String body, String userToken) throws Exception{
-		Matcher m = TelcomshSubscribeUtil.formPattern.matcher(body);
-		if (m.find()) {
-			List <NameValuePair> nvps = new ArrayList <NameValuePair>();
-			m = TelcomshSubscribeUtil.inputPattern.matcher(body);
-			String paramer = "";
-			while (m.find()) {
-				String key = m.group(1);
-				String value = m.group(2);
-				if("usertoken".equalsIgnoreCase(key)){
-					value = userToken;
-				}
-				paramer += key + "=" + value + "&";
-				//log.debug(key+" ==> "+value);
-				nvps.add(new BasicNameValuePair(key, value));
-			}
-			url += "?" + paramer.substring(0,paramer.length()-1);
-			HttpGet httpget = new HttpGet(url);
-			body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpget);
-			HttpPost httpost = new HttpPost(url);
-			UrlEncodedFormEntity urlEntity = new UrlEncodedFormEntity(nvps, HTTP.UTF_8);
-			httpost.setEntity(urlEntity);
-			body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpost);
-			log.debug("sso body==>"+body);
-			return body;
-		}	
-		return null;
-	}*/
+	
 }

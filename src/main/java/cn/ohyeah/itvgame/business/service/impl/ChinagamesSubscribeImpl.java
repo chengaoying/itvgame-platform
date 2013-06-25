@@ -11,8 +11,6 @@ import cn.ohyeah.itvgame.global.Configuration;
 import cn.ohyeah.itvgame.platform.model.Account;
 import cn.ohyeah.itvgame.platform.model.ProductDetail;
 import cn.ohyeah.itvgame.platform.model.PurchaseRelation;
-import cn.ohyeah.itvgame.utils.DateUtil;
-import cn.ohyeah.itvgame.utils.ToolUtil;
 
 public class ChinagamesSubscribeImpl extends TelcomshSubscribeImpl {
 	private static final Log log = LogFactory.getLog(ChinagamesSubscribeImpl.class);

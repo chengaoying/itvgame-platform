@@ -68,9 +68,9 @@ dependencies {
 	compile 'net.sourceforge.jexcelapi:jxl:2.6.12'
 	compile 'axis:axis:1.4'
 	compile 'org.apache.axis:axis-ant:1.4'
-        compile 'com.fasterxml.jackson.core:jackson-core:2.0.4'
-    	compile 'com.fasterxml.jackson.core:jackson-databind:2.0.4'
-    	compile 'com.fasterxml.jackson.core:jackson-annotations:2.0.4'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.0.4'
+	compile 'com.fasterxml.jackson.core:jackson-databind:2.0.4'
+	compile 'com.fasterxml.jackson.core:jackson-annotations:2.0.4'
 	
 	compile ':axiom-api:1.2.9@jar'
 	compile ':axiom-dom:1.2.9@jar'

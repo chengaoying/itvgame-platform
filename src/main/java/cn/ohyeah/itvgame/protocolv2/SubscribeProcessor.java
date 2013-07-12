@@ -341,6 +341,8 @@ public class SubscribeProcessor implements IProcessor {
 		context.setProp("checkKey", checkKey);
 		String spid = req.readUTF();
 		context.setProp("spid", spid);
+		String gameid = req.readUTF();
+		context.setProp("gameid", gameid);
 		try {
 			String password = req.readUTF();
 			context.setProp("password", password);

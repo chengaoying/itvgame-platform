@@ -14,6 +14,7 @@ import cn.ohyeah.itvgame.business.service.BusinessException;
 import cn.ohyeah.itvgame.global.BeanManager;
 import cn.ohyeah.itvgame.platform.dao.IPurchaseRelationDao;
 import cn.ohyeah.itvgame.platform.model.Account;
+import cn.ohyeah.itvgame.platform.model.Authorization;
 import cn.ohyeah.itvgame.platform.model.ProductDetail;
 import cn.ohyeah.itvgame.platform.model.PurchaseRelation;
 
@@ -82,6 +83,14 @@ public class The9SubscribeImpl extends AbstractSubscribeImpl{
 			pr.setAmount(amount);
 		}
 		return pr;
+	}
+
+	@Override
+	public ResultInfo expend(Map<String, Object> props, Account account,
+			ProductDetail detail, Authorization auth, PurchaseRelation pr,
+			String remark, Date time) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

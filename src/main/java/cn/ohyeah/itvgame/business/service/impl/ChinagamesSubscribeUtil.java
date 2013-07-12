@@ -35,9 +35,13 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import cn.halcyon.utils.ThreadSafeClientConnManagerUtil;
 import cn.ohyeah.itvgame.business.ErrorCode;
 import cn.ohyeah.itvgame.business.ResultInfo;
+import cn.ohyeah.itvgame.business.model.TelcomshResponseEntry;
 import cn.ohyeah.itvgame.business.service.SubscribeException;
 import cn.ohyeah.itvgame.global.Configuration;
 import cn.ohyeah.itvgame.utils.ToolUtil;
@@ -46,6 +50,7 @@ public class ChinagamesSubscribeUtil {
 	private static final Log log = LogFactory.getLog(ChinagamesSubscribeUtil.class);
 	private static final String subscribeReturnUrl; /*= "http://127.0.0.1/notexist/subresult"*/
 	private static final String subscribeUrl;
+	private static final String rechargeUrl;
 	private static String encSubscribeReturnUrl;
 	private static DefaultHttpClient httpClient;
     
@@ -86,6 +91,7 @@ public class ChinagamesSubscribeUtil {
     static {
     	//subscribeUrl = Configuration.getSubscribeUrl("chinagames");
     	subscribeUrl = Configuration.getProperty("telcomsh", "expenseUrl");
+    	rechargeUrl = Configuration.getProperty("telcomsh", "rechargeUrl");
     	subscribeReturnUrl = Configuration.getProperty("telcomsh", "serverUrl");
     	try {
 			encSubscribeReturnUrl = java.net.URLEncoder.encode(subscribeReturnUrl, "UTF-8");
@@ -146,7 +152,24 @@ public class ChinagamesSubscribeUtil {
     	case -7:	message = "参数错误"; break;
     	case -8:	message = "订单号已存在"; break;
     	case -99:	message = "系统内部错误"; break;
-    	default:	message = "未知错误,错误："+result;
+    	default:	message = "未知错误："+result;
+    	}
+    	return message;
+    }
+    
+    private static String getReturnMessage(int result){
+    	String message = null;
+    	switch(result) {
+    	case -1:	message = "充值余额不可用"; break;
+    	case -2:	message = "UserID和UserToken验证错误"; break;
+    	case -3:	message = "MD5校验错误"; break;
+    	case -4:	message = "SP不存在"; break;
+    	case -5:	message = "游戏不存在"; break;
+    	case -6:	message = "接口版本不可用"; break;
+    	case -7:	message = "参数错误"; break;
+    	case -8:	message = "用户充值已达充值限额"; break;
+    	case -99:	message = "系统内部错误"; break;
+    	default:	message = "未知错误："+result;
     	}
     	return message;
     }
@@ -239,6 +262,52 @@ public class ChinagamesSubscribeUtil {
 			throw new SubscribeException(e);
 		}
 		return info;
+	}
+	
+	public static ResultInfo recharge(String user_id, String sp_id, String game_id, 
+			long timestamp, int amount, String sp_key, String user_token){
+		//sp_id=%s&game_id=%s&amount=%s&timestamp=%s&user_id=%s&user_token=%s&version=%s&digest=%s
+		String version = Configuration.getProperty("telcomsh", "expenseVersion");
+		//amount game_id sp_id timestamp user_id user_token version sp_key
+		String digest = DigestUtils.md5Hex(amount 
+				   + game_id
+				   + sp_id 
+				   + timestamp 
+				   + user_id
+				   + user_token
+				   + version 
+				   + sp_key);
+		String url = String.format(rechargeUrl, sp_id, game_id, amount,timestamp,user_id,user_token,version,digest);
+		log.debug("rechargeUrl ==>>" + url);
+		ResultInfo info = new ResultInfo();
+		try{
+			HttpGet get = new HttpGet(url);
+			String body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, get);
+			log.debug("return message ==>>" + body);
+			ObjectMapper op = new ObjectMapper();
+	    	JsonNode node = op.readValue(body, JsonNode.class);
+	    	TelcomshResponseEntry entry = new TelcomshResponseEntry();
+	    	entry.setResult(Integer.parseInt(formatString(String.valueOf(node.get("result")))));
+	    	entry.setMessage(formatString(String.valueOf(node.get("message"))));
+	    	entry.setTimestamp(Long.parseLong(formatString(String.valueOf(node.get("timestamp")))));
+	    	entry.setDigest(formatString(String.valueOf(node.get("digest"))));
+	    	if(entry.getResult() == 0){
+	    		info.setInfo(0);
+	    	}else{
+	    		info.setErrorCode(entry.getResult());
+	    		info.setMessage(getReturnMessage(entry.getResult()));
+	    	}
+	    	return info;
+		}catch(Exception e){
+			throw new SubscribeException(e);
+		}
+	}
+	
+	private static String formatString(String str){
+		if(str.contains("\"")){
+			str = str.substring(1, str.length()-1);
+		}
+		return str;
 	}
 	
 	public static ResultInfo consume(String user_id, String sp_id, String game_id, String order_id, String description, 

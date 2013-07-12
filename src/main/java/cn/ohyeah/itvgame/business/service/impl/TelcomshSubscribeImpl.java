@@ -15,6 +15,7 @@ import cn.ohyeah.itvgame.global.BeanManager;
 import cn.ohyeah.itvgame.global.Configuration;
 import cn.ohyeah.itvgame.platform.dao.IPurchaseRelationDao;
 import cn.ohyeah.itvgame.platform.model.Account;
+import cn.ohyeah.itvgame.platform.model.Authorization;
 import cn.ohyeah.itvgame.platform.model.ProductDetail;
 import cn.ohyeah.itvgame.platform.model.PurchaseRelation;
 
@@ -90,5 +91,13 @@ public class TelcomshSubscribeImpl extends AbstractSubscribeImpl {
 	public PurchaseRelation queryPurchaseRelation(ProductDetail detail,
 			String subscribeType, int period, int amount) {
 		return prDao.read(detail.getProductId(), "telcomsh", subscribeType, period, amount);
+	}
+
+	@Override
+	public ResultInfo expend(Map<String, Object> props, Account account,
+			ProductDetail detail, Authorization auth, PurchaseRelation pr,
+			String remark, Date time) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

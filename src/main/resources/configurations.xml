@@ -4,8 +4,8 @@
 		<property name="supportCache">true</property>
 		<property name="sql.dialect">mysql</property>
 		<property name="connection.xml">/mysql.config.xml</property>
-		<property name="telcomOperator">telcomCommon</property>
-		<property name="serviceProvider">dijoy</property>
+		<property name="telcomOperator">telcomsh</property>
+		<property name="serviceProvider">ohyeah</property>
 		<users>
 			<user>
 				<name>igtest01</name>
@@ -86,7 +86,11 @@
 			<![CDATA[http://124.75.29.164:7001/iptv3a/user/subscribe/subscribe.do?Action=2&UserID=%s&ProductID=%s&UserToken=%s&SPID=%s&ReturnURL=%s]]>
 		</property>
 		
-		<!--上海新接口地址-->
+		<!--上海充值新接口地址-->
+		<property name="rechargeUrl">
+			<![CDATA[http://222.68.195.16:2277/gp/recharge.json?sp_id=%s&game_id=%s&amount=%s&timestamp=%s&user_id=%s&user_token=%s&version=%s&digest=%s]]>
+		</property>
+		<!--上海消费新接口地址-->
 		<property name="expenseUrl">
 			<![CDATA[http://222.68.195.16:82/gp/consume.html?sp_id=%s&game_id=%s&order_id=%s&description=%s&timestamp=%s&return_url=%s&amount=%s&version=%s&digest=%s]]>
 		</property>

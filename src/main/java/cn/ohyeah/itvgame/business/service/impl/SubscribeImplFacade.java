@@ -45,6 +45,15 @@ public class SubscribeImplFacade implements ISubscribe {
 		ISubscribe subImpl = getSubscribeImpl(detail);
 		return subImpl.subscribe(props, account, detail, auth, pr, remark, time);
 	}
+	
+	@Override
+	public ResultInfo expend(Map<String, Object> props, Account account,
+			ProductDetail detail, Authorization auth, PurchaseRelation pr,
+			String remark, Date time) {
+		log.debug("[Subscribe Amount] ==> "+pr.getAmount());
+		ISubscribe subImpl = getSubscribeImpl(detail);
+		return subImpl.expend(props, account, detail, auth, pr, remark, time);
+	}
 
 	@Override
 	final public ResultInfo subscribeReq(RequestContext rc,

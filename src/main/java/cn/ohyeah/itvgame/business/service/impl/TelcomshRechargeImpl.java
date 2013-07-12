@@ -11,6 +11,7 @@ import cn.ohyeah.itvgame.business.ResultInfo;
 import cn.ohyeah.itvgame.business.service.IRecharge;
 import cn.ohyeah.itvgame.business.service.ISubscribe;
 import cn.ohyeah.itvgame.global.BeanManager;
+import cn.ohyeah.itvgame.global.Configuration;
 import cn.ohyeah.itvgame.platform.dao.IAuthorizationDao;
 import cn.ohyeah.itvgame.platform.model.Account;
 import cn.ohyeah.itvgame.platform.model.Authorization;
@@ -20,7 +21,7 @@ import cn.ohyeah.itvgame.platform.model.PurchaseRelation;
 public class TelcomshRechargeImpl implements IRecharge{
 	private static final Log log = LogFactory.getLog(TelcomshRechargeImpl.class);
 	private static final IAuthorizationDao authDao;
-	private static final ISubscribe	subImpl;
+	private static final ISubscribe subImpl;
 	
 	static {
 		authDao = (IAuthorizationDao)BeanManager.getDao("authorizationDao");
@@ -48,7 +49,8 @@ public class TelcomshRechargeImpl implements IRecharge{
 			authDao.updateCoins(auth);
 			info.setInfo(auth.getGoldCoin());
 		}else{
-			info = subImpl.subscribe(props, account, detail, auth, pr, remark, prTime);
+			//info = subImpl.subscribe(props, account, detail, auth, pr, remark, prTime);
+			info = subImpl.expend(props, account, detail, auth, pr, remark, prTime);
 			if(info.getInfo() != null && info.getInfo().equals("0")){
 				info.setInfo(auth.getGoldCoin());
 			}
@@ -58,7 +60,7 @@ public class TelcomshRechargeImpl implements IRecharge{
 
 	@Override
 	public boolean isSupportRecharge(ProductDetail detail) {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -83,12 +85,12 @@ public class TelcomshRechargeImpl implements IRecharge{
 			return info;
 		}
 		ResultInfo info = subImpl.subscribe(props, account, detail, auth, pr, remark, time);
-		if (info.isSuccess()) {
+		/*if (info.isSuccess()) {
 			int goldCoin = amount*detail.getRechargeRatio();
 			auth.incGoldCoin(goldCoin);
 			authDao.updateCoins(auth);
 			info.setInfo(goldCoin);
-		}
+		}*/
 		return info;
 	}
 

@@ -48,14 +48,14 @@ public class ShixianSubscribeImpl extends AbstractSubscribeImpl {
 			ProductDetail detail, PurchaseRelation pr, String remark) {
 		props.put("amount", pr.getAmount());
 		props.put("userId", account.getUserId());
-		return ShixianSubscribeUtil.consumeCoins(props);
+		return ShixianSubscribeUtil.recharge(props);
 	}
 	
 	protected ResultInfo expend(Map<String, Object> props, Account account,
 			ProductDetail detail, PurchaseRelation pr, String remark) {
 		props.put("amount", pr.getAmount());
 		props.put("userId", account.getUserId());
-		return ShixianSubscribeUtil.consumeCoins(props);
+		return ShixianSubscribeUtil.expend(props);
 	}
 
 	@Override
@@ -76,13 +76,7 @@ public class ShixianSubscribeImpl extends AbstractSubscribeImpl {
 	@Override
 	public PurchaseRelation queryPurchaseRelation(ProductDetail detail,
 			String subscribeType, int period, int amount) {
-		String subType = subscribeType;
-		if ("recharge".equals(subscribeType)
-                && (Configuration.isRechargeManagerGame(detail.getAppName())
-                || Configuration.isRechargeManagerPlatform(detail.getAppName()))) {
-			subType = "expend";
-		}
-		PurchaseRelation pr = prDao.read(detail.getProductId(), "shixian", subType, 0, 0);
+		PurchaseRelation pr = prDao.read(detail.getProductId(), "telcomgs", subscribeType, 0, 0);
 		if (pr != null) {
 			pr.setValue(period);
 			pr.setAmount(amount);

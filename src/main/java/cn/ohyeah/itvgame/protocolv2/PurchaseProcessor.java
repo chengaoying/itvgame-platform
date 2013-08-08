@@ -52,6 +52,9 @@ public class PurchaseProcessor implements IProcessor {
 		 case Constant.PURCHASE_CMD_EXPEND_TELCOMSH:
 			 processCommandPurchaseTelcomshReq(context, req);
 			break;
+		 case Constant.PURCHASE_CMD_EXPEND_SHIXIAN:
+			 processCommandPurchaseShiXianReq(context, req);
+			break;
 		default: 
 			String msg = "无效的协议命令, cmd="+context.getHeadWrapper().getCommand();
 			context.setErrorCode(Constant.EC_INVALID_CMD);
@@ -60,7 +63,49 @@ public class PurchaseProcessor implements IProcessor {
 		}
 	}
 	
-	  private void processCommandPurchaseTelcomshReq(ProcessorContext context,ByteBuffer req) {
+	  private void processCommandPurchaseShiXianReq(ProcessorContext context,
+			ByteBuffer req) {
+		  	String buyURL = req.readUTF();
+	        context.setProp("buyURL", buyURL);
+	        int accountId = req.readInt();
+	        String accountName = req.readUTF();
+	        context.setProp("accountName", accountName);
+	        String userToken = req.readUTF();
+	        context.setProp("userToken", userToken);
+	        int productId = req.readInt();
+	        int amount = req.readInt();
+	        context.setProp("amount", amount);
+	        String gameCode = req.readUTF();
+	        context.setProp("gameCode", gameCode);
+	        String feeaccount = req.readUTF();
+	        context.setProp("feeaccount", feeaccount);
+	        String dwjtvkey = req.readUTF();
+	        context.setProp("dwjtvkey", dwjtvkey);
+	        String opcomkey = req.readUTF();
+	        context.setProp("opcomkey", opcomkey);
+	        String paysubway = req.readUTF();
+	        context.setProp("paysubway", paysubway);
+	        String vl_zonekey = req.readUTF();
+	        context.setProp("vl_zonekey", vl_zonekey);
+	        
+	        try {
+	        	ResultInfo info = purchaseServ.expend(context.getPropsMap(), accountId, productId, amount,"");
+	            if (info.isSuccess()) {
+	                context.setResult((Integer)info.getInfo());
+	            }
+	            else {
+	                context.setErrorCode(info.getErrorCode());
+	                context.setMessage(info.getMessage());
+	            }
+	        }
+	        catch (ServiceException e) {
+	            context.setErrorCode(ErrorCode.EC_SERVICE_FAILED);
+	            context.setMessage(ErrorCode.getErrorMessage(ErrorCode.EC_SERVICE_FAILED));
+	            throw new RequestProcessException(e);
+	        }
+	}
+
+	private void processCommandPurchaseTelcomshReq(ProcessorContext context,ByteBuffer req) {
 		  	String buyURL = req.readUTF();
 	        context.setProp("buyURL", buyURL);
 	        int accountId = req.readInt();
@@ -291,8 +336,16 @@ public class PurchaseProcessor implements IProcessor {
 		case Constant.PURCHASE_CMD_EXPEND_TELCOMSH:
 			processCommandPurchaseTelcomshRsp(context, rsp);
 			break;
+		case Constant.PURCHASE_CMD_EXPEND_SHIXIAN:
+			processCommandPurchaseShiXianRsp(context, rsp);
+			break;
 		default:break;
 		}
+	}
+
+	private void processCommandPurchaseShiXianRsp(ProcessorContext context,
+			ByteBuffer rsp) {
+		rsp.writeInt((Integer) context.getResult());
 	}
 
 	private void processCommandPurchaseTelcomshRsp(ProcessorContext context,

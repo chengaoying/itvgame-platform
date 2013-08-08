@@ -32,6 +32,7 @@ public class SqlFileUtil {
 					String sql = sqlArr[i].replaceAll("--.*", "").trim();
 					if (!sql.equals("")) {
 						sqlList.add(sql);
+						System.out.println("sql===>"+sql);
 					}
 				}
 				return sqlList;

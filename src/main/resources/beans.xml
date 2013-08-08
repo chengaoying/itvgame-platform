@@ -67,6 +67,7 @@
 	
 	<!-- shixian at gansu -->
 	<bean name="shixian.subscribeImpl" class="cn.ohyeah.itvgame.business.service.impl.ShixianSubscribeImpl"/>
+	<bean name="shixian.rechargeImpl" class="cn.ohyeah.itvgame.business.service.impl.ShiXianRechargeImpl"/>
 	
 	<!-- ohyeah platform service -->
 	<bean name="game.rechargeImpl" class="cn.ohyeah.itvgame.business.service.impl.GameRechargeImpl"/>

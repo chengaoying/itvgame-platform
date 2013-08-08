@@ -4,8 +4,8 @@
 		<property name="supportCache">true</property>
 		<property name="sql.dialect">mysql</property>
 		<property name="connection.xml">/mysql.config.xml</property>
-		<property name="telcomOperator">telcomsh</property>
-		<property name="serviceProvider">ohyeah</property>
+		<property name="telcomOperator">telcomgs</property>
+		<property name="serviceProvider">shixian</property>
 		<users>
 			<user>
 				<name>igtest01</name>
@@ -57,6 +57,13 @@
 		<property name="pointsUnit">积分</property>
 		<property name="cashToPointsRatio">100</property>
 	</configuration>
+	<configuration id="telcomgs">
+		<property name="amountUnit">元</property>
+		<property name="cashToAmountRatio">1</property>
+		<property name="supportPoints">false</property>
+		<property name="pointsUnit">积分</property>
+		<property name="cashToPointsRatio">100</property>
+	</configuration>
 	
 	<configuration id="telcomsh">
 		<property name="spid">HL0154</property>
@@ -71,7 +78,7 @@
 		</property>
 		<property name="amountUnit">元</property>
 		<property name="cashToAmountRatio">1</property>
-		<property name="supportPoints">false</property>
+		<property name="supportPoints">false</property> 
 		<property name="pointsUnit">积分</property>
 		<property name="cashToPointsRatio">100</property>
 		<property name="queryPointsUrl">http://222.68.195.70:8080/remarkDispatcher/PointQueryInterfacePort</property>
@@ -184,15 +191,22 @@
 	
 	<configuration id="shixian">
 		<property name="appid">sp000003</property>
-		<property name="amountUnit">元</property>
+		<property name="amountUnit">晶石</property>
 		<property name="cashToAmountRatio">1</property>
 		<property name="supportPoints">true</property>
 		<property name="subscribeMode">webservice</property>
-		<property name="rechargeUrl">
-			<![CDATA[http://125.119.1.40:8086/tvplat4/pay/pay_epibolyPayment.action?payChoose=%s&appid=%s]]>
+		<property name="vlcode">7c20b9846b7df7b163238b23b36070e889a104d3c39ce9ce</property>
+		<property name="baseUrl">
+			<![CDATA[http://125.119.4.48:8086/tvplat4]]>
 		</property>
-		<property name="urlPattern">
-			<![CDATA[?payChoose=%s&appid=%s]]>
+		<property name="expendUrl">
+			<![CDATA[/cpServer_saveUserLoss.action?gameCode=%s&spar=%s&token=%s&dataType=json]]>
+		</property>
+		<property name="rechargeUrl">
+			<![CDATA[/pay/pay_epibolyPayment.action?payChoose=%s&appid=%s]]>
+		</property>
+		<property name="tokenUrl">
+			<![CDATA[/cpServer_grantTicket.action?vlCode=%s&dataType=json]]>
 		</property>
 	</configuration>
 </configurations>

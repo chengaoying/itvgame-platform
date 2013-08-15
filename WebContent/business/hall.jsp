@@ -67,7 +67,11 @@ function init() {
 <li><a href="../../test/ohyeah.html">”Œœ∑µ«»Î≤‚ ‘</a></li>
 <%
 if (plist != null) {
-	for (Product p : plist) {
+	/* for (Product p : plist) {
+		out.println(String.format(ulText, Integer.toString(p.getProductId()), p.getProductName()));
+	} */
+	for(int i=plist.size()-1;i>=0;i--){
+		Product p = plist.get(i);
 		out.println(String.format(ulText, Integer.toString(p.getProductId()), p.getProductName()));
 	}
 }

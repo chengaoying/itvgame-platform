@@ -1,6 +1,8 @@
 package cn.ohyeah.itvgame.business.service.impl;
 
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,12 +22,14 @@ public class ShixianSubscribeUtil {
 	private static final Log log = LogFactory.getLog(ShixianSubscribeUtil.class);
 	private static final DefaultHttpClient httpClient;
 	private static final String rechargeUrlShixian;
+	private static final String rechargeUrlPWShixian;
 	private static final String expendUrlShixian;
 	private static final String tokenUrl;
 	
 	static {
 		httpClient = ThreadSafeClientConnManagerUtil.buildDefaultHttpClient();
 		rechargeUrlShixian = Configuration.getProperty("shixian", "baseUrl") + Configuration.getProperty("shixian", "rechargeUrl");
+		rechargeUrlPWShixian = Configuration.getProperty("shixian", "baseUrl") + Configuration.getProperty("shixian", "rechargeUrl_pw");
 		expendUrlShixian = Configuration.getProperty("shixian", "baseUrl") + Configuration.getProperty("shixian", "expendUrl");
 		tokenUrl = Configuration.getProperty("shixian", "baseUrl") + Configuration.getProperty("shixian", "tokenUrl");
 	}
@@ -33,15 +37,37 @@ public class ShixianSubscribeUtil {
 	public static ResultInfo recharge(Map<String, Object> props){
 		String feeaccount = (String) props.get("feeaccount");
 		String dwjtvkey = (String) props.get("dwjtvkey");
-		String opcomkey = (String) props.get("opcomkey");
+		String opcomkey = (String) props.get("vl_zonekey");
 		String paysubway = (String) props.get("paysubway");
 		int ammount = (Integer) props.get("amount");
 		String userId = (String) props.get("userId");
 		String appId = (String) props.get("appId");
-		String params = "tvplat#feeaccount="+feeaccount+";tvplat#returnurl="+/*returnurl*/""+"; tvplat#numbercode="+userId
-				+"; tvplat#dwjvl="+dwjtvkey+"; tvplat#opcomkey="+opcomkey+"; tvplat#paysubway="+paysubway;
+		String opcomtoken = (String) props.get("opcomtoken");
+		String opcompara = (String) props.get("opcompara");
+		String returnurl = (String) props.get("returnurl");
+		String gameid = (String) props.get("gameid");
+		String params = "tvplat#feeaccount="+feeaccount
+						+";tvplat#returnurl="+returnurl
+						+";tvplat#numbercode="+userId
+						+";tvplat#dwjvl="+dwjtvkey
+						+";tvplat#opcomkey="+opcomkey
+						+";tvplat#paysubway="+paysubway
+						+";tvplat#pay#fromid="+gameid
+						+";tvplat#pay#from="+1
+						+";USER_TOKEN="+opcomtoken
+						+";USER_GROUP_ID="+opcompara;
 		log.info("cookie:"+params);
-		String rechargeUrl = String.format(rechargeUrlShixian, ammount, appId);
+		
+		/*String userToken = getToken();
+		getUserInfo(userToken);*/
+		
+		String password = (String) props.get("password");
+		String rechargeUrl = null;
+		if(password.equals("")){
+			rechargeUrl = String.format(rechargeUrlShixian, ammount, appId);
+		}else{
+			rechargeUrl = String.format(rechargeUrlPWShixian, password, appId, ammount);
+		}
 		log.info("rechargeUrl:"+rechargeUrl);
 		ResultInfo info = new ResultInfo();
 		HttpGet httpget = new HttpGet(rechargeUrl);
@@ -52,12 +78,12 @@ public class ShixianSubscribeUtil {
 		try {
 			body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpget);
 			log.info("body==>"+body);
-			String ss = body.substring(body.indexOf("*")+1,body.lastIndexOf("*"));
+			String ss = getReturnInfo(body);
 			log.info("returnMessage:"+ss);
 			if(!isErrorMessage(ss)){
-				if(ss.startsWith("¹§Ï²Äú")){
+				if(ss.indexOf("¹§Ï²Äú") >= 0){
 					info.setInfo(ammount);
-				}else if(ss.equalsIgnoreCase("password")){
+				}else if(isError(ss)){
 					info.setErrorCode(ErrorCode.EC_SUBSCRIBE_FAILED);
 					info.setMessage(ss);
 				}else{
@@ -79,14 +105,39 @@ public class ShixianSubscribeUtil {
 		}
 	}
 	
+	private static boolean isError(String str){
+		if(str.indexOf("ÃÜÂë") >= 0){
+			if(str.indexOf("ÓÐÎó")>=0 
+					|| str.indexOf("´íÎó")>=0
+					|| str.indexOf("²»ÕýÈ·")>=0){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private static String getReturnInfo(String body){
+		String str = Configuration.getPattern("shixian", "span");
+		Pattern p = Pattern.compile(str, Pattern.CASE_INSENSITIVE);
+		Matcher m = p.matcher(body);
+		String info = "";
+		if(m.find()){
+			info = m.group(1);    
+			while(info.indexOf("&nbsp;") >= 0){
+				info = info.substring("&nbsp;".length(), info.length());       
+			}
+		}
+		return info;
+	}
+	
 	public static ResultInfo expend(Map<String, Object> props){
 		String feeaccount = (String) props.get("feeaccount");
 		String dwjtvkey = (String) props.get("dwjtvkey");
 		String opcomkey = (String) props.get("opcomkey");
 		String paysubway = (String) props.get("paysubway");
 		String userId = (String) props.get("userId");
-		String userToken = (String)props.get("userToken");
-		//String userToken = getToken();
+		//String userToken = (String)props.get("userToken");
+		String userToken = getToken();
 		String gameCode = (String)props.get("gameCode");
 		int amount = (Integer)props.get("amount");
 		String params = "tvplat#feeaccount="+feeaccount+";tvplat#returnurl="+/*returnurl*/""+"; tvplat#numbercode="+userId
@@ -117,6 +168,19 @@ public class ShixianSubscribeUtil {
 			throw new SubscribeException(e);
 		}
 	}
+	
+	private static void getUserInfo(String token){
+		String url = Configuration.getProperty("shixian", "baseUrl") + Configuration.getProperty("shixian", "userInfoUrl");
+		url = String.format(url, token);
+		HttpGet httpget = new HttpGet(url);
+		String body;
+		try {
+			body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpget);
+			log.info("body==>"+body);
+		} catch (Exception e) {
+			throw new SubscribeException(e);
+		}
+	} 
 	
 	private static String getToken(){
 		String vlcode =  Configuration.getProperty("shixian", "vlcode");

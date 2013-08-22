@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 
-import cn.ohyeah.itvgame.global.Configuration;
-
 import cn.halcyon.utils.RequestContext;
 import cn.ohyeah.itvgame.business.ResultInfo;
 import cn.ohyeah.itvgame.business.service.BusinessException;

@@ -88,14 +88,18 @@ public class SubscribeProcessor implements IProcessor {
 		context.setProp("feeaccount", feeaccount);
 		String dwjtvkey = req.readUTF();
 		context.setProp("dwjtvkey", dwjtvkey);
-		String opcomkey = req.readUTF();
-		context.setProp("opcomkey", opcomkey);
 		String paysubway = req.readUTF();
 		context.setProp("paysubway", paysubway);
 		String gameid = req.readUTF();
 		context.setProp("gameid", gameid);
 		String vl_zonekey = req.readUTF();
 		context.setProp("vl_zonekey", vl_zonekey);
+		String returnurl = req.readUTF();
+		context.setProp("returnurl", returnurl);
+		String opcompara = req.readUTF();
+		context.setProp("opcompara", opcompara);
+		String opcomtoken = req.readUTF();
+		context.setProp("opcomtoken", opcomtoken);
 		String appId = req.readUTF();
 		context.setProp("appId", appId);
 		try {

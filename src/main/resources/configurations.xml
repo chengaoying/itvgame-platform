@@ -195,9 +195,9 @@
 		<property name="cashToAmountRatio">1</property>
 		<property name="supportPoints">true</property>
 		<property name="subscribeMode">webservice</property>
-		<property name="vlcode">7c20b9846b7df7b163238b23b36070e889a104d3c39ce9ce</property>
+		<property name="vlcode">6d9e36f37853c56ff20649785bc18dab89a104d3c39ce9ce</property>
 		<property name="baseUrl">
-			<![CDATA[http://125.119.4.48:8086/tvplat4]]>
+			<![CDATA[http://122.234.233.42:8086/tvplat5]]>
 		</property>
 		<property name="expendUrl">
 			<![CDATA[/cpServer_saveUserLoss.action?gameCode=%s&spar=%s&token=%s&dataType=json]]>
@@ -205,8 +205,18 @@
 		<property name="rechargeUrl">
 			<![CDATA[/pay/pay_epibolyPayment.action?payChoose=%s&appid=%s]]>
 		</property>
+		<property name="rechargeUrl_pw">
+			<![CDATA[/pay/gansu_pay_charge.action?pwd=%s&appid=%s&serviceId=%s]]>
+		</property>
 		<property name="tokenUrl">
 			<![CDATA[/cpServer_grantTicket.action?vlCode=%s&dataType=json]]>
 		</property>
+		<property name="userInfoUrl">
+			<![CDATA[/cpServer_getUserInfo.action?token=%s&dataType=json]]>
+		</property>
+		
+		<patterns>
+			<pattern name="span"><![CDATA[<span.*?class="STYLE2">(.*?)</span>]]></pattern>
+		</patterns>
 	</configuration>
 </configurations>

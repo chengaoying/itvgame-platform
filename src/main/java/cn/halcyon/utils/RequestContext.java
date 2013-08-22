@@ -78,7 +78,7 @@ public class RequestContext {
 		RequestContext rc = new RequestContext();
 		rc.baseUrl = RequestUtils.getBaseUrl(req);
 		rc.context = ctx;
-		rc.request = req;
+		rc.request = req;   
 		rc.response = res;
 		rc.response.setCharacterEncoding(UTF_8);
 		rc.session = req.getSession(false);

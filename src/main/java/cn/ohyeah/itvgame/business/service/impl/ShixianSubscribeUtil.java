@@ -58,9 +58,6 @@ public class ShixianSubscribeUtil {
 						+";USER_GROUP_ID="+opcompara;
 		log.info("cookie:"+params);
 		
-		/*String userToken = getToken();
-		getUserInfo(userToken);*/
-		
 		String password = (String) props.get("password");
 		String rechargeUrl = null;
 		if(password.equals("")){
@@ -81,7 +78,7 @@ public class ShixianSubscribeUtil {
 			String ss = getReturnInfo(body);
 			log.info("returnMessage:"+ss);
 			if(!isErrorMessage(ss)){
-				if(ss.indexOf("¹§Ï²Äú") >= 0){
+				if(ss.indexOf("¹§Ï²Äú") >= 0 || ss.equals("0")){
 					info.setInfo(ammount);
 				}else if(isError(ss)){
 					info.setErrorCode(ErrorCode.EC_SUBSCRIBE_FAILED);
@@ -127,28 +124,28 @@ public class ShixianSubscribeUtil {
 				info = info.substring("&nbsp;".length(), info.length());       
 			}
 		}
+		
+		if(info.equals("") || info == null){
+			String s = Configuration.getPattern("shixian", "input");
+			Pattern pt = Pattern.compile(s, Pattern.CASE_INSENSITIVE);
+			Matcher ma = pt.matcher(body);
+			if(ma.find()){
+				info = formatString(ma.group(3)); 
+			}
+		}
 		return info;
 	}
 	
 	public static ResultInfo expend(Map<String, Object> props){
-		String feeaccount = (String) props.get("feeaccount");
-		String dwjtvkey = (String) props.get("dwjtvkey");
-		String opcomkey = (String) props.get("opcomkey");
-		String paysubway = (String) props.get("paysubway");
-		String userId = (String) props.get("userId");
 		//String userToken = (String)props.get("userToken");
 		String userToken = getToken();
 		String gameCode = (String)props.get("gameCode");
 		int amount = (Integer)props.get("amount");
-		String params = "tvplat#feeaccount="+feeaccount+";tvplat#returnurl="+/*returnurl*/""+"; tvplat#numbercode="+userId
-					+"; tvplat#dwjvl="+dwjtvkey+"; tvplat#opcomkey="+opcomkey+"; tvplat#paysubway="+paysubway;
-		log.info("cookie:"+params);
 		
 		String expendUrl = String.format(expendUrlShixian, gameCode,amount,userToken);
 		log.debug("expendUrl==>"+expendUrl);
 		ResultInfo info = new ResultInfo();
 		HttpGet httpget = new HttpGet(expendUrl);
-		//httpget.addHeader("cookie", params);
 		String body;
 		try {
 			body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpget);
@@ -169,21 +166,26 @@ public class ShixianSubscribeUtil {
 		}
 	}
 	
-	private static void getUserInfo(String token){
+	public static int getUserBalance(String token){
 		String url = Configuration.getProperty("shixian", "baseUrl") + Configuration.getProperty("shixian", "userInfoUrl");
-		url = String.format(url, token);
+		url = String.format(url, getToken()/*token*/);
 		HttpGet httpget = new HttpGet(url);
 		String body;
 		try {
 			body = ThreadSafeClientConnManagerUtil.executeForBodyString(httpClient, httpget);
-			log.info("body==>"+body);
+			log.debug("body==>"+body);
+			ObjectMapper op = new ObjectMapper();
+	    	JsonNode node = op.readValue(body, JsonNode.class);
+	    	int spar = Integer.parseInt(formatString(String.valueOf(node.get("spar"))));
+	    	return spar;
 		} catch (Exception e) {
-			throw new SubscribeException(e);
+			log.debug("shixian get user info error ==>" +e);
+			return 0;
 		}
 	} 
 	
 	private static String getToken(){
-		String vlcode =  Configuration.getProperty("shixian", "vlcode");
+		String vlcode =  "a6b0c48d16249e678b6893a8f6f9e49689a104d3c39ce9ce"/*Configuration.getProperty("shixian", "vlcode")*/;
 		String url = String.format(tokenUrl, vlcode);
 		log.debug("tokenUrl==>"+url);
 		HttpGet get = new HttpGet(url);
@@ -208,6 +210,9 @@ public class ShixianSubscribeUtil {
 	private static String formatString(String str){
 		if(str.contains("\"")){
 			str = str.substring(1, str.length()-1);
+		}
+		if(str.contains("(*")){
+			str = str.substring(2, str.length()-2);
 		}
 		return str;
 	}

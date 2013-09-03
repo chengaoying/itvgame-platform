@@ -8,7 +8,6 @@ import org.apache.commons.logging.LogFactory;
 
 import cn.ohyeah.itvgame.business.ErrorCode;
 import cn.ohyeah.itvgame.business.ResultInfo;
-import cn.ohyeah.itvgame.business.service.BusinessException;
 import cn.ohyeah.itvgame.business.service.IRecharge;
 import cn.ohyeah.itvgame.business.service.ISubscribe;
 import cn.ohyeah.itvgame.global.BeanManager;
@@ -57,7 +56,7 @@ public class ShiXianRechargeImpl implements IRecharge {
 	@Override
 	public int queryBalance(Map<String, Object> props, Account account,
 			ProductDetail detail, Authorization auth) {
-		return 0;
+		return ShixianSubscribeUtil.getUserBalance((String)props.get("userToken"));
 	}
 
 	@Override

@@ -193,11 +193,8 @@
 		<property name="appid">sp000003</property>
 		<property name="amountUnit">晶石</property>
 		<property name="cashToAmountRatio">1</property>
-		<property name="supportPoints">true</property>
-		<property name="subscribeMode">webservice</property>
-		<property name="vlcode">6d9e36f37853c56ff20649785bc18dab89a104d3c39ce9ce</property>
 		<property name="baseUrl">
-			<![CDATA[http://122.234.233.42:8086/tvplat5]]>
+			<![CDATA[http://115.195.181.197:8086/tvplat4]]>
 		</property>
 		<property name="expendUrl">
 			<![CDATA[/cpServer_saveUserLoss.action?gameCode=%s&spar=%s&token=%s&dataType=json]]>
@@ -217,6 +214,7 @@
 		
 		<patterns>
 			<pattern name="span"><![CDATA[<span.*?class="STYLE2">(.*?)</span>]]></pattern>
+			<pattern name="input"><![CDATA[<input.*?type="hidden".*?name="(.*?)".*?id="(.*?)".*?value="(.*?)".*?/>]]></pattern>
 		</patterns>
 	</configuration>
 </configurations>

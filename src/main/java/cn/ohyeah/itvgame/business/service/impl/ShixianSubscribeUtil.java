@@ -25,6 +25,7 @@ public class ShixianSubscribeUtil {
 	private static final String rechargeUrlPWShixian;
 	private static final String expendUrlShixian;
 	private static final String tokenUrl;
+	private static String vlCode;
 	
 	static {
 		httpClient = ThreadSafeClientConnManagerUtil.buildDefaultHttpClient();
@@ -168,7 +169,7 @@ public class ShixianSubscribeUtil {
 	
 	public static int getUserBalance(String token){
 		String url = Configuration.getProperty("shixian", "baseUrl") + Configuration.getProperty("shixian", "userInfoUrl");
-		url = String.format(url, getToken()/*token*/);
+		url = String.format(url, token);
 		HttpGet httpget = new HttpGet(url);
 		String body;
 		try {
@@ -177,6 +178,7 @@ public class ShixianSubscribeUtil {
 			ObjectMapper op = new ObjectMapper();
 	    	JsonNode node = op.readValue(body, JsonNode.class);
 	    	int spar = Integer.parseInt(formatString(String.valueOf(node.get("spar"))));
+	    	vlCode = formatString(String.valueOf(node.get("vlCode")));
 	    	return spar;
 		} catch (Exception e) {
 			log.debug("shixian get user info error ==>" +e);
@@ -184,9 +186,9 @@ public class ShixianSubscribeUtil {
 		}
 	} 
 	
-	private static String getToken(){
-		String vlcode =  "a6b0c48d16249e678b6893a8f6f9e49689a104d3c39ce9ce"/*Configuration.getProperty("shixian", "vlcode")*/;
-		String url = String.format(tokenUrl, vlcode);
+	public static String getToken(){
+		//vlCode =  "a6b0c48d16249e67ae063bae6d50a37789a104d3c39ce9ce";
+		String url = String.format(tokenUrl, vlCode);
 		log.debug("tokenUrl==>"+url);
 		HttpGet get = new HttpGet(url);
 		String body;

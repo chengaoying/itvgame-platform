@@ -21,7 +21,6 @@
 <li><a href="http://192.168.16.70:8080/itvgame/action/gateway/shengyiEntry?uid=igsuper00&pwd=itvgame">内网中游平台</a></li>
 <li><a href="http://192.168.16.46:8080/itvgamethe9/action/gateway/the9Entry">内网九城平台</a></li>
 <li><a href="test/sheepFarm.jsp">绵羊农场</a></li>
-<li><a href="test/tv_game.jsp">我为合体狂</a></li>
 </ul>
 </body>
 </html>

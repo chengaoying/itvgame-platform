@@ -5,7 +5,7 @@ grant all privileges on itvgame.* to 'itvgame'@'%' identified by 'itvgame' with 
 flush privileges;
  -->
 <connection>
-	<property name="jdbc.show_sql">false</property>
+	<property name="jdbc.show_sql">show</property>
 	<property name="jdbc.queryKeySql">select LAST_INSERT_ID()</property>
 	<property name="jdbc.datasource">com.mchange.v2.c3p0.ComboPooledDataSource</property>
 	<property name="jdbc.driverClass">com.mysql.jdbc.Driver</property>

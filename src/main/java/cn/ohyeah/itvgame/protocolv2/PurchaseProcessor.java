@@ -13,6 +13,7 @@ import cn.ohyeah.itvgame.platform.service.PurchaseRecordService;
 import cn.ohyeah.itvgame.platform.service.PurchaseService;
 import cn.ohyeah.itvgame.platform.service.ServiceException;
 import cn.ohyeah.itvgame.platform.viewmodel.PurchaseDesc;
+import cn.ohyeah.itvgame.platform.viewmodel.PurchaseStatis;
 
 /**
  * 计费协议处理器
@@ -43,6 +44,9 @@ public class PurchaseProcessor implements IProcessor {
 		case Constant.PURCHASE_CMD_QUERY_PURCHASE_RECORD: 
 			processCommandQueryPurchaseRecordReq(context, req);
 			break;
+		case Constant.PURCHASE_CMD_QUERY_PURCHASE_RANK: 
+			processCommandQueryPurchaseRankReq(context, req);
+			break;
 		 case Constant.PURCHASE_CMD_EXPEND_DIJOY:
 			 processCommandPurchaseDijoyReq(context, req);
             break;
@@ -63,7 +67,25 @@ public class PurchaseProcessor implements IProcessor {
 		}
 	}
 	
-	  private void processCommandPurchaseShiXianReq(ProcessorContext context,
+	private void processCommandQueryPurchaseRankReq(ProcessorContext context,
+			ByteBuffer req) {
+		int productId = req.readInt();
+		int offset = req.readInt();
+		int lenght = req.readInt();
+		String sTime = req.readUTF();
+		String eTime = req.readUTF();
+		try {
+			List<PurchaseStatis> list = purchaseRevServ.queryPurchaseStatis(productId, offset, lenght, sTime, eTime);
+			context.setResult(list);
+		}
+		catch (ServiceException e) {
+			context.setErrorCode(ErrorCode.EC_SERVICE_FAILED);
+			context.setMessage(ErrorCode.getErrorMessage(ErrorCode.EC_SERVICE_FAILED));
+			throw new RequestProcessException(e);
+		}
+	}
+
+	private void processCommandPurchaseShiXianReq(ProcessorContext context,
 			ByteBuffer req) {
 		  	String buyURL = req.readUTF();
 	        context.setProp("buyURL", buyURL);
@@ -327,6 +349,9 @@ public class PurchaseProcessor implements IProcessor {
 		case Constant.PURCHASE_CMD_QUERY_PURCHASE_RECORD: 
 			processCommandQueryPurchaseRecordRsp(context, rsp);
 			break;
+		case Constant.PURCHASE_CMD_QUERY_PURCHASE_RANK: 
+			processCommandQueryPurchaseRankRsp(context, rsp);
+			break;
 		case Constant.PURCHASE_CMD_EXPEND_DIJOY:
 			processCommandPurchaseDijoy(context, rsp);
 			break;
@@ -340,6 +365,22 @@ public class PurchaseProcessor implements IProcessor {
 			processCommandPurchaseShiXianRsp(context, rsp);
 			break;
 		default:break;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void processCommandQueryPurchaseRankRsp(ProcessorContext context,
+			ByteBuffer rsp) {
+		List<PurchaseStatis> list = (List<PurchaseStatis>)context.getResult();
+		if (list!=null && list.size()>0) {
+			rsp.writeShort((short)list.size());
+			for (PurchaseStatis ps : list) {
+				rsp.writeUTF(ps.getUserId());
+				rsp.writeInt(ps.getSum());
+			}
+		}
+		else {
+			rsp.writeShort((short)0);
 		}
 	}
 

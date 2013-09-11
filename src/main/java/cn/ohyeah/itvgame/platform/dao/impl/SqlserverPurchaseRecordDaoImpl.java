@@ -6,6 +6,7 @@ import cn.halcyon.dao.QueryHelper;
 import cn.ohyeah.itvgame.platform.dao.IPurchaseRecordDao;
 import cn.ohyeah.itvgame.platform.model.PurchaseRecord;
 import cn.ohyeah.itvgame.platform.viewmodel.PurchaseDesc;
+import cn.ohyeah.itvgame.platform.viewmodel.PurchaseStatis;
 import cn.ohyeah.itvgame.utils.DateUtil;
 
 public class SqlserverPurchaseRecordDaoImpl implements IPurchaseRecordDao {
@@ -37,6 +38,13 @@ public class SqlserverPurchaseRecordDaoImpl implements IPurchaseRecordDao {
 	public long queryPurchaseRecordCount(int accountId, int productId) {
 		return QueryHelper.read(int.class,
 				"select count(*) from [PurchaseRecord] where accountId=? and productId=?", accountId, productId) ;
+	}
+
+	@Override
+	public List<PurchaseStatis> queryPruchaseStatis(int productId, int offset, int lenght,
+			String sTime, String eTime) {
+		//TODO
+		return null;
 	}
 
 }

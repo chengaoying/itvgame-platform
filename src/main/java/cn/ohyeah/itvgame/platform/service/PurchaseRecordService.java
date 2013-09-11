@@ -6,6 +6,7 @@ import cn.halcyon.dao.DBException;
 import cn.ohyeah.itvgame.global.BeanManager;
 import cn.ohyeah.itvgame.platform.dao.IPurchaseRecordDao;
 import cn.ohyeah.itvgame.platform.viewmodel.PurchaseDesc;
+import cn.ohyeah.itvgame.platform.viewmodel.PurchaseStatis;
 
 public class PurchaseRecordService {
 	private static final IPurchaseRecordDao prDao;
@@ -39,6 +40,15 @@ public class PurchaseRecordService {
 	public long queryPurchaseRecordCount(int accountId, int productId) {
 		try {
 		   return prDao.queryPurchaseRecordCount(accountId, productId);
+		}
+		catch (DBException e) {
+			throw new ServiceException(e);
+		}
+	}
+	
+	public List<PurchaseStatis> queryPurchaseStatis(int productId, int offset, int lenght, String sTime, String eTime){
+		try {
+			return prDao.queryPruchaseStatis(productId, offset, lenght, sTime, eTime);
 		}
 		catch (DBException e) {
 			throw new ServiceException(e);

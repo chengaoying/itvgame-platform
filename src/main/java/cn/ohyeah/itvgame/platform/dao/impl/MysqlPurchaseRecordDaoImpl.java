@@ -6,6 +6,7 @@ import cn.halcyon.dao.QueryHelper;
 import cn.ohyeah.itvgame.platform.dao.IPurchaseRecordDao;
 import cn.ohyeah.itvgame.platform.model.PurchaseRecord;
 import cn.ohyeah.itvgame.platform.viewmodel.PurchaseDesc;
+import cn.ohyeah.itvgame.platform.viewmodel.PurchaseStatis;
 
 public class MysqlPurchaseRecordDaoImpl implements IPurchaseRecordDao {
 	@Override
@@ -33,6 +34,18 @@ public class MysqlPurchaseRecordDaoImpl implements IPurchaseRecordDao {
 	public long queryPurchaseRecordCount(int accountId, int productId) {
 		return QueryHelper.read(long.class,
 						"select count(*) from PurchaseRecord where accountId=? and productId=?", accountId, productId);
+	}
+	
+	@Override
+	public List<PurchaseStatis> queryPruchaseStatis(int productId, int offset, int lenght,String sTime, String eTime) {
+		return QueryHelper.query(PurchaseStatis.class, 
+				"select userId, sum(amount) as sum " +
+				"from " +
+				"(select userId, amount, time from PurchaseRecord where productId=? and (time > '"+sTime+"') and (time < '"+eTime+"')) as tb1 " +
+				"group by userId "+
+				"order by sum desc "+
+				"limit ?,? ",
+				productId, offset, lenght);
 	}
 
 }

@@ -46,6 +46,15 @@ public class PurchaseRecordService {
 		}
 	}
 	
+	/**
+	 * 查询用户消费总额排行
+	 * @param productId
+	 * @param offset
+	 * @param lenght
+	 * @param sTime
+	 * @param eTime
+	 * @return
+	 */
 	public List<PurchaseStatis> queryPurchaseStatis(int productId, int offset, int lenght, String sTime, String eTime){
 		try {
 			return prDao.queryPruchaseStatis(productId, offset, lenght, sTime, eTime);

@@ -70,6 +70,14 @@
     <url-pattern>/point</url-pattern>
   </servlet-mapping>
    <servlet>
+    <servlet-name>queryPurchaseList</servlet-name>
+    <servlet-class>cn.ohyeah.itvgame.point.servlet.PurchaseRankServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>queryPurchaseList</servlet-name>
+    <url-pattern>/queryPurchaseList</url-pattern>
+  </servlet-mapping>
+   <servlet>
     <servlet-name>subscribeAction</servlet-name>
     <servlet-class>cn.ohyeah.itvgame.point.servlet.SubscribeAction</servlet-class>
   </servlet>

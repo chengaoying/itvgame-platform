@@ -35,6 +35,17 @@ public class ShixianSubscribeUtil {
 		tokenUrl = Configuration.getProperty("shixian", "baseUrl") + Configuration.getProperty("shixian", "tokenUrl");
 	}
 	
+	private static String getGameId(String returnUrl){
+		String[] ss = returnUrl.split("\\?");
+		if(ss.length >= 2){
+			String[] s = ss[1].split("=");
+			if(s.length >= 2){
+				return s[1];
+			}
+		}
+		return "";
+	}
+	
 	public static ResultInfo recharge(Map<String, Object> props){
 		String feeaccount = (String) props.get("feeaccount");
 		String dwjtvkey = (String) props.get("dwjtvkey");
@@ -46,7 +57,7 @@ public class ShixianSubscribeUtil {
 		String opcomtoken = (String) props.get("opcomtoken");
 		String opcompara = (String) props.get("opcompara");
 		String returnurl = (String) props.get("returnurl");
-		String gameid = (String) props.get("gameid");
+		String gameid = getGameId(returnurl);//(String) props.get("gameid");
 		String params = "tvplat#feeaccount="+feeaccount
 						+";tvplat#returnurl="+returnurl
 						+";tvplat#numbercode="+userId
